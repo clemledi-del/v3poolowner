@@ -1,0 +1,4427 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#03263d">
+<meta name="description" content="Carnet de bord pour la gestion de ma piscine : mesures, routines, météo, rappels.">
+
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ma Piscine">
+
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icon-167.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icon-152.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icon-120.png">
+<link rel="apple-touch-icon" sizes="76x76" href="icon-76.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+
+<title>Ma Piscine</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+  :root {
+    --abyss: #03263d;
+    --abyss-deep: #021824;
+    --deep: #064a6e;
+    --mid: #0a7fa8;
+    --shallow: #4ec0d8;
+    --foam: #b4e7e9;
+    --sun: #f5d97e;
+    --sun-deep: #e8b933;
+    --coral: #f57d6f;
+    --leaf: #7ac74f;
+    --warn: #ffb454;
+    --bad: #e94e4e;
+
+    --ink: #f1f8fb;
+    --ink-dim: rgba(241, 248, 251, 0.7);
+    --ink-faint: rgba(241, 248, 251, 0.4);
+    --ink-ghost: rgba(241, 248, 251, 0.18);
+
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-strong: rgba(255, 255, 255, 0.1);
+    --glass-active: rgba(78, 192, 216, 0.12);
+    --line: rgba(255, 255, 255, 0.1);
+    --line-strong: rgba(255, 255, 255, 0.18);
+
+    --display: 'Fraunces', 'Times New Roman', serif;
+    --body: 'Geist', system-ui, sans-serif;
+    --mono: 'Geist Mono', ui-monospace, monospace;
+
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  *:focus { outline: none; }
+
+  html, body {
+    background: var(--abyss-deep);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.5;
+    overscroll-behavior-y: contain;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background:
+      radial-gradient(ellipse 90% 50% at 20% 0%, rgba(78, 192, 216, 0.16), transparent 60%),
+      radial-gradient(ellipse 90% 50% at 80% 100%, rgba(10, 127, 168, 0.22), transparent 60%),
+      linear-gradient(180deg, #03263d 0%, #021824 100%);
+    background-attachment: fixed;
+    padding-bottom: max(100px, calc(100px + env(safe-area-inset-bottom)));
+    padding-top: env(safe-area-inset-top);
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.7 0 0 0 0 0.85 0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    pointer-events: none;
+    opacity: 0.6;
+    z-index: 0;
+    mix-blend-mode: screen;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle 2px at 20% 30%, rgba(180, 231, 233, 0.3), transparent),
+      radial-gradient(circle 1.5px at 80% 60%, rgba(180, 231, 233, 0.2), transparent),
+      radial-gradient(circle 2px at 60% 80%, rgba(180, 231, 233, 0.25), transparent),
+      radial-gradient(circle 1px at 40% 50%, rgba(180, 231, 233, 0.15), transparent);
+    pointer-events: none;
+    z-index: 0;
+    animation: floatBubbles 30s linear infinite;
+  }
+  @keyframes floatBubbles {
+    from { transform: translateY(0); }
+    to { transform: translateY(-100vh); }
+  }
+
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 28px 18px 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  h1, h2, h3 { font-family: var(--display); font-weight: 500; letter-spacing: -0.02em; }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    gap: 14px;
+  }
+  .header-title { flex: 1; min-width: 0; }
+  .header-eyebrow {
+    font-family: var(--body);
+    font-size: 11px;
+    color: var(--shallow);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .header-title h1 {
+    font-family: var(--display);
+    font-size: 32px;
+    line-height: 1;
+    font-weight: 500;
+  }
+  .header-title h1 em { font-style: italic; color: var(--shallow); font-weight: 400; }
+  .header-meta {
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-dim);
+    line-height: 1.5;
+    flex-shrink: 0;
+  }
+  .header-meta .dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--leaf);
+    margin-right: 5px;
+    vertical-align: middle;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .header-meta .settings-btn {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--ink-dim);
+    transition: all 0.3s var(--ease);
+    margin-top: 6px;
+    margin-left: auto;
+  }
+  .header-meta .settings-btn:hover, .header-meta .settings-btn:active {
+    background: var(--glass-active);
+    color: var(--shallow);
+    border-color: rgba(78, 192, 216, 0.3);
+    transform: rotate(45deg);
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(122, 199, 79, 0.6); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 6px rgba(122, 199, 79, 0); }
+  }
+
+  /* HERO */
+  .hero {
+    background:
+      radial-gradient(circle at 25% 15%, rgba(78, 192, 216, 0.28), transparent 55%),
+      linear-gradient(135deg, rgba(10, 127, 168, 0.35), rgba(6, 74, 110, 0.18));
+    border: 1px solid rgba(78, 192, 216, 0.22);
+    border-radius: 28px;
+    padding: 24px 22px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -25%;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(245, 217, 126, 0.18), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--shallow);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .hero-value {
+    font-family: var(--display);
+    font-size: 64px;
+    font-weight: 500;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .hero-value .unit {
+    font-size: 16px;
+    color: var(--ink-dim);
+    font-family: var(--body);
+    font-weight: 400;
+    margin-left: 4px;
+  }
+  .hero-status {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 13px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.08);
+    font-size: 12px;
+    font-weight: 500;
+    backdrop-filter: blur(8px);
+  }
+  .hero-status .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .status-good { color: var(--leaf); }
+  .status-good .dot { background: var(--leaf); box-shadow: 0 0 10px var(--leaf); }
+  .status-warn { color: var(--warn); }
+  .status-warn .dot { background: var(--warn); box-shadow: 0 0 10px var(--warn); }
+  .status-bad { color: var(--bad); }
+  .status-bad .dot { background: var(--bad); box-shadow: 0 0 10px var(--bad); }
+  .status-neutral { color: var(--ink-dim); }
+  .status-neutral .dot { background: var(--ink-dim); }
+
+  /* STATS GRID */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .stat {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+    position: relative;
+    transition: transform 0.2s var(--ease);
+  }
+  .stat:active { transform: scale(0.98); }
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .stat-value {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .stat-value .small {
+    font-size: 12px;
+    color: var(--ink-dim);
+    font-family: var(--body);
+    margin-left: 3px;
+    font-weight: 400;
+  }
+  .stat-range {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-top: 6px;
+  }
+  .stat-indicator {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ink-ghost);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 20px;
+    margin-bottom: 14px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+  .card-title {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .card-sub {
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  /* NAV */
+  .nav {
+    position: fixed;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    gap: 3px;
+    padding: 5px;
+    background: rgba(2, 24, 36, 0.88);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid var(--line-strong);
+    border-radius: 100px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .nav button {
+    background: transparent;
+    border: none;
+    color: var(--ink-dim);
+    padding: 9px 11px;
+    border-radius: 100px;
+    cursor: pointer;
+    font-family: var(--body);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: all 0.3s var(--ease);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-width: 52px;
+  }
+  .nav button svg { width: 18px; height: 18px; stroke-width: 1.8; transition: transform 0.3s var(--ease); }
+  .nav button.active {
+    background: linear-gradient(180deg, var(--mid), var(--deep));
+    color: var(--ink);
+    box-shadow: 0 4px 14px rgba(10, 127, 168, 0.45);
+  }
+  .nav button.active svg { transform: scale(1.1); }
+
+  /* FORM */
+  .field { margin-bottom: 14px; }
+  .field-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 7px;
+  }
+  .field-label .name { font-size: 13px; font-weight: 500; }
+  .field-label .target {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    letter-spacing: 0.04em;
+  }
+  .input {
+    width: 100%;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 16px;
+    transition: all 0.2s var(--ease);
+  }
+  .input::placeholder { color: var(--ink-faint); }
+  .input:focus {
+    border-color: var(--shallow);
+    background: rgba(0,0,0,0.4);
+    box-shadow: 0 0 0 3px rgba(78, 192, 216, 0.15);
+  }
+  .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* BUTTONS */
+  .btn {
+    width: 100%;
+    background: linear-gradient(180deg, var(--mid), var(--deep));
+    color: var(--ink);
+    border: 1px solid rgba(78, 192, 216, 0.3);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-family: var(--body);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(10, 127, 168, 0.3);
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn:hover { background: linear-gradient(180deg, #0a8db8, var(--mid)); }
+  .btn-ghost {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    box-shadow: none;
+  }
+  .btn-ghost:hover { background: var(--glass-strong); border-color: rgba(78, 192, 216, 0.3); }
+  .btn-secondary {
+    background: var(--glass-strong);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    box-shadow: none;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.15); border-color: rgba(78, 192, 216, 0.3); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+  .btn-row { display: flex; gap: 8px; }
+  .btn-row .btn { flex: 1; }
+
+  /* CHECKLIST */
+  .check {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .check:last-child { border-bottom: none; }
+  .check-box {
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--ink-dim);
+    border-radius: 7px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s var(--ease-bounce);
+  }
+  .check.done .check-box {
+    background: var(--leaf);
+    border-color: var(--leaf);
+    transform: scale(1.05);
+  }
+  .check.done .check-box::after {
+    content: '';
+    width: 5px;
+    height: 9px;
+    border-right: 2px solid #021824;
+    border-bottom: 2px solid #021824;
+    transform: rotate(45deg) translate(-1px, -1px);
+  }
+  .check-text {
+    font-size: 14px;
+    line-height: 1.4;
+    flex: 1;
+    transition: all 0.25s var(--ease);
+  }
+  .check.done .check-text {
+    text-decoration: line-through;
+    color: var(--ink-faint);
+  }
+
+  /* SEGMENTED */
+  .segment {
+    display: flex;
+    background: rgba(0,0,0,0.3);
+    border-radius: 14px;
+    padding: 4px;
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+    position: relative;
+  }
+  .segment button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--ink-dim);
+    padding: 10px 6px;
+    border-radius: 10px;
+    font-family: var(--body);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.25s var(--ease);
+    z-index: 1;
+    position: relative;
+  }
+  .segment button.active { color: var(--ink); }
+  .segment-indicator {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    background: var(--glass-strong);
+    border-radius: 10px;
+    transition: all 0.3s var(--ease);
+    z-index: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  /* HISTORY */
+  .history-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-dim);
+    line-height: 1.3;
+    min-width: 62px;
+  }
+  .history-date strong {
+    display: block;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--body);
+  }
+  .history-vals {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    font-family: var(--mono);
+  }
+  .history-vals span { display: inline-flex; gap: 4px; align-items: baseline; }
+  .history-vals span .k { color: var(--ink-faint); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .history-vals span .v { font-weight: 500; }
+  .history-vals span.s-good .v { color: var(--leaf); }
+  .history-vals span.s-warn .v { color: var(--warn); }
+  .history-vals span.s-bad .v { color: var(--bad); }
+  .del-btn {
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    cursor: pointer;
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .del-btn:hover { color: var(--bad); }
+
+  /* PROBLEM ACCORDION */
+  .problem {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.25s var(--ease);
+  }
+  .problem:hover { border-color: rgba(78, 192, 216, 0.25); }
+  .problem-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .problem-name { font-weight: 500; font-size: 14px; flex: 1; }
+  .problem-icon { font-size: 20px; line-height: 1; }
+  .problem-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s var(--ease), margin-top 0.3s var(--ease);
+  }
+  .problem.open .problem-body {
+    max-height: 500px;
+    margin-top: 14px;
+  }
+  .problem-body .lbl {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--shallow);
+    margin-bottom: 4px;
+    margin-top: 10px;
+    font-weight: 500;
+  }
+  .problem-body .lbl:first-child { margin-top: 0; }
+  .problem-body p { font-size: 13px; color: var(--ink-dim); line-height: 1.55; }
+  .problem .chevron { transition: transform 0.3s var(--ease); color: var(--ink-faint); }
+  .problem.open .chevron { transform: rotate(180deg); }
+
+  /* FILTRATION */
+  .filtration-display {
+    text-align: center;
+    padding: 18px 0 8px;
+  }
+  .filtration-display .big {
+    font-family: var(--display);
+    font-size: 80px;
+    line-height: 0.9;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    background: linear-gradient(180deg, var(--foam), var(--shallow));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+  }
+  .filtration-display .unit {
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--ink-dim);
+    margin-top: 2px;
+  }
+  .filtration-display .schedule {
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--shallow);
+    background: rgba(78, 192, 216, 0.08);
+    padding: 8px 14px;
+    border-radius: 100px;
+    display: inline-block;
+    letter-spacing: 0.04em;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, var(--shallow) 0%, var(--shallow) var(--val, 50%), var(--ink-ghost) var(--val, 50%));
+    border-radius: 100px;
+    outline: none;
+    padding: 0;
+    border: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4), 0 0 0 4px rgba(78, 192, 216, 0.2);
+    border: 3px solid var(--shallow);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #fff; cursor: pointer;
+    border: 3px solid var(--shallow);
+  }
+
+  /* TIP */
+  .tip {
+    background: linear-gradient(135deg, rgba(245, 217, 126, 0.1), rgba(245, 217, 126, 0.03));
+    border: 1px solid rgba(245, 217, 126, 0.22);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .tip-icon { font-size: 20px; flex-shrink: 0; }
+  .tip-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+  .tip-text strong { color: var(--sun); font-weight: 500; }
+
+  /* STEPS */
+  .step {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--shallow);
+    line-height: 1;
+    min-width: 32px;
+  }
+  .step-text { font-size: 14px; line-height: 1.55; padding-top: 5px; }
+  .step-text strong { color: var(--ink); font-weight: 500; }
+
+  /* SECTION TITLES */
+  .section-title {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 0 0 4px;
+    line-height: 1.1;
+  }
+  .section-title em { font-style: italic; color: var(--shallow); font-weight: 400; }
+  .section-sub {
+    font-size: 13px;
+    color: var(--ink-dim);
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+  .routine-pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    padding: 5px 11px;
+    border-radius: 100px;
+    background: rgba(78, 192, 216, 0.1);
+    color: var(--shallow);
+    margin-bottom: 14px;
+    border: 1px solid rgba(78, 192, 216, 0.2);
+  }
+
+  /* VIEWS */
+  .view { display: none; animation: viewIn 0.35s var(--ease); }
+  .view.active { display: block; }
+  @keyframes viewIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: calc(100px + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--leaf);
+    color: #021824;
+    padding: 11px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 100;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    opacity: 0;
+    transition: all 0.3s var(--ease-bounce);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* EMPTY */
+  .empty {
+    text-align: center;
+    padding: 36px 20px;
+    color: var(--ink-faint);
+    font-size: 13px;
+  }
+  .empty .empty-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.5; }
+
+  /* INFO LIST */
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    gap: 12px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .lbl { font-size: 13px; color: var(--ink-dim); }
+  .info-row .val { font-family: var(--mono); font-size: 13px; color: var(--ink); font-weight: 500; }
+  .info-row .val.good { color: var(--leaf); }
+  .info-row .val.warn { color: var(--warn); }
+  .info-row .val.bad { color: var(--bad); }
+
+  /* METEO */
+  .meteo-hero {
+    background:
+      radial-gradient(circle at 70% 30%, rgba(245, 217, 126, 0.18), transparent 50%),
+      linear-gradient(135deg, rgba(10, 127, 168, 0.3), rgba(6, 74, 110, 0.18));
+    border: 1px solid rgba(78, 192, 216, 0.2);
+    border-radius: 24px;
+    padding: 22px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .meteo-hero.alert {
+    background:
+      radial-gradient(circle at 70% 30%, rgba(233, 78, 78, 0.22), transparent 50%),
+      linear-gradient(135deg, rgba(245, 125, 111, 0.28), rgba(150, 50, 50, 0.18));
+    border-color: rgba(233, 78, 78, 0.35);
+  }
+  .meteo-temp-now {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .meteo-temp-now .big {
+    font-family: var(--display);
+    font-size: 68px;
+    font-weight: 500;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+  .meteo-temp-now .big .deg { font-size: 28px; color: var(--ink-dim); }
+  .meteo-icon-big { font-size: 60px; line-height: 1; }
+  .meteo-desc { font-size: 13px; color: var(--ink-dim); margin-top: 6px; }
+  .meteo-water-est {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 14px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 14px;
+    margin-top: 16px;
+  }
+  .meteo-water-est .ic { font-size: 22px; }
+  .meteo-water-est .txt { flex: 1; font-size: 13px; line-height: 1.4; }
+  .meteo-water-est .txt strong {
+    font-family: var(--mono);
+    font-size: 17px;
+    color: var(--shallow);
+    font-weight: 500;
+  }
+
+  .forecast-row {
+    display: grid;
+    grid-template-columns: 1.3fr auto 1fr 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .forecast-row:last-child { border-bottom: none; }
+  .forecast-day { font-weight: 500; }
+  .forecast-day small {
+    display: block;
+    color: var(--ink-faint);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .forecast-icon { font-size: 22px; }
+  .forecast-temps { font-family: var(--mono); font-size: 13px; }
+  .forecast-temps .max { color: var(--sun); font-weight: 500; }
+  .forecast-temps .min { color: var(--ink-faint); }
+  .forecast-water {
+    font-family: var(--mono);
+    font-size: 13px;
+    text-align: right;
+    color: var(--shallow);
+    font-weight: 500;
+  }
+  .forecast-water.hot { color: var(--coral); }
+  .forecast-water small {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    font-family: var(--body);
+  }
+
+  .alert-banner {
+    background: linear-gradient(135deg, rgba(233, 78, 78, 0.14), rgba(245, 125, 111, 0.06));
+    border: 1px solid rgba(233, 78, 78, 0.4);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 12px;
+    animation: alertPulse 2.5s ease-in-out infinite;
+  }
+  @keyframes alertPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(233, 78, 78, 0.3); }
+    50% { box-shadow: 0 0 0 10px rgba(233, 78, 78, 0); }
+  }
+  .alert-banner .alert-icon { font-size: 26px; flex-shrink: 0; }
+  .alert-banner .alert-text strong {
+    color: var(--bad);
+    font-weight: 500;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .alert-banner .alert-text { font-size: 13px; line-height: 1.55; }
+
+  /* ACTION GRID */
+  .action-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .action-btn {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px 14px;
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--body);
+    transition: all 0.25s var(--ease);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .action-btn:hover {
+    background: var(--glass-strong);
+    border-color: rgba(78, 192, 216, 0.3);
+    transform: translateY(-2px);
+  }
+  .action-btn:active { transform: translateY(0); }
+  .action-btn .ico {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: rgba(78, 192, 216, 0.15);
+    color: var(--shallow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .action-btn .ttl { font-size: 14px; font-weight: 500; line-height: 1.3; }
+  .action-btn .sub { font-size: 11px; color: var(--ink-dim); line-height: 1.4; }
+
+  /* SPINNER */
+  .spinner {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--line);
+    border-top-color: var(--shallow);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--ink-dim);
+    font-size: 13px;
+  }
+  .loading-state .spinner { margin-bottom: 12px; }
+
+  /* SWITCH */
+  .switch-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    gap: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .switch-row:last-child { border-bottom: none; }
+  .switch-row .lbl-grp { flex: 1; }
+  .switch-row .lbl { font-size: 14px; font-weight: 500; }
+  .switch-row .sub { font-size: 12px; color: var(--ink-dim); margin-top: 3px; line-height: 1.4; }
+  .switch {
+    position: relative;
+    width: 46px;
+    height: 28px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.25s var(--ease);
+    flex-shrink: 0;
+  }
+  .switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 22px;
+    height: 22px;
+    background: var(--ink);
+    border-radius: 50%;
+    transition: all 0.3s var(--ease-bounce);
+  }
+  .switch.on { background: var(--mid); border-color: var(--shallow); }
+  .switch.on::after { left: 21px; background: white; }
+
+  /* ADVICE */
+  .advice-wrap { margin-bottom: 14px; }
+  .advice-card {
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border: 1px solid;
+    position: relative;
+    animation: adviceIn 0.4s var(--ease) backwards;
+  }
+  .advice-card:nth-child(1) { animation-delay: 0.05s; }
+  .advice-card:nth-child(2) { animation-delay: 0.12s; }
+  .advice-card:nth-child(3) { animation-delay: 0.19s; }
+  .advice-card:nth-child(4) { animation-delay: 0.26s; }
+  .advice-card:nth-child(5) { animation-delay: 0.33s; }
+  .advice-card:nth-child(6) { animation-delay: 0.4s; }
+  @keyframes adviceIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .advice-card.good {
+    background: linear-gradient(135deg, rgba(122, 199, 79, 0.1), rgba(122, 199, 79, 0.03));
+    border-color: rgba(122, 199, 79, 0.28);
+  }
+  .advice-card.warn {
+    background: linear-gradient(135deg, rgba(255, 180, 84, 0.12), rgba(255, 180, 84, 0.03));
+    border-color: rgba(255, 180, 84, 0.32);
+  }
+  .advice-card.bad {
+    background: linear-gradient(135deg, rgba(233, 78, 78, 0.14), rgba(233, 78, 78, 0.03));
+    border-color: rgba(233, 78, 78, 0.4);
+  }
+  .advice-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .advice-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .advice-card.good .advice-icon { background: rgba(122, 199, 79, 0.2); color: var(--leaf); }
+  .advice-card.warn .advice-icon { background: rgba(255, 180, 84, 0.25); color: var(--warn); }
+  .advice-card.bad .advice-icon { background: rgba(233, 78, 78, 0.25); color: var(--bad); }
+  .advice-title { flex: 1; font-size: 14px; font-weight: 500; line-height: 1.3; }
+  .advice-title .param {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 400;
+    margin-bottom: 2px;
+  }
+  .advice-value {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 100px;
+    background: rgba(0,0,0,0.3);
+    flex-shrink: 0;
+  }
+  .advice-card.good .advice-value { color: var(--leaf); }
+  .advice-card.warn .advice-value { color: var(--warn); }
+  .advice-card.bad .advice-value { color: var(--bad); }
+  .advice-body { font-size: 13px; line-height: 1.55; color: var(--ink-dim); }
+  .advice-body strong { color: var(--ink); font-weight: 500; }
+  .advice-actions {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .advice-action {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 9px 11px;
+    background: rgba(0,0,0,0.22);
+    border-radius: 9px;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .advice-action .bullet {
+    color: var(--shallow);
+    flex-shrink: 0;
+    font-weight: 700;
+    font-family: var(--mono);
+  }
+  .advice-action code {
+    background: rgba(78, 192, 216, 0.15);
+    color: var(--shallow);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .advice-summary {
+    text-align: center;
+    padding: 10px 0 16px;
+    font-size: 13px;
+    color: var(--ink-dim);
+  }
+  .advice-summary strong { color: var(--ink); font-weight: 500; }
+
+  /* ONBOARDING */
+  .onboarding {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, #03263d 0%, #021824 100%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  }
+  .onboarding::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(78, 192, 216, 0.16), transparent 60%),
+      radial-gradient(ellipse 80% 50% at 80% 100%, rgba(245, 217, 126, 0.08), transparent 60%);
+    pointer-events: none;
+  }
+  .onb-content {
+    max-width: 460px;
+    width: 100%;
+    margin: auto;
+    padding: 30px 22px;
+    position: relative;
+    z-index: 1;
+  }
+  .onb-step { display: none; animation: onbIn 0.5s var(--ease); }
+  .onb-step.active { display: block; }
+  @keyframes onbIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .onb-progress {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 28px;
+  }
+  .onb-dot {
+    flex: 1;
+    height: 3px;
+    background: var(--ink-ghost);
+    border-radius: 100px;
+    transition: background 0.3s var(--ease);
+  }
+  .onb-dot.active { background: var(--shallow); }
+  .onb-dot.done { background: var(--leaf); }
+  .onb-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--shallow);
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .onb-title {
+    font-family: var(--display);
+    font-size: 36px;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    margin-bottom: 14px;
+  }
+  .onb-title em { font-style: italic; color: var(--shallow); font-weight: 400; }
+  .onb-desc {
+    font-size: 15px;
+    color: var(--ink-dim);
+    line-height: 1.55;
+    margin-bottom: 28px;
+  }
+  .onb-illustration { text-align: center; margin: 0 0 26px; line-height: 1; }
+  .onb-illustration .grad-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(78, 192, 216, 0.4), rgba(10, 127, 168, 0.15));
+    border: 1px solid rgba(78, 192, 216, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    backdrop-filter: blur(10px);
+    animation: floatIllu 4s ease-in-out infinite;
+    font-size: 56px;
+  }
+  @keyframes floatIllu {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .choice-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .choice-card {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .choice-card:hover { border-color: rgba(78, 192, 216, 0.3); }
+  .choice-card.selected {
+    background: var(--glass-active);
+    border-color: var(--shallow);
+    box-shadow: 0 0 0 3px rgba(78, 192, 216, 0.15);
+  }
+  .choice-card .choice-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: rgba(78, 192, 216, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .choice-card.selected .choice-icon { background: rgba(78, 192, 216, 0.25); }
+  .choice-card .choice-text { flex: 1; }
+  .choice-card .choice-name { font-weight: 500; font-size: 14px; }
+  .choice-card .choice-sub { font-size: 12px; color: var(--ink-dim); margin-top: 2px; line-height: 1.4; }
+  .choice-card .choice-check {
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--ink-dim);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s var(--ease-bounce);
+  }
+  .choice-card.selected .choice-check {
+    background: var(--shallow);
+    border-color: var(--shallow);
+  }
+  .choice-card.selected .choice-check::after {
+    content: '';
+    width: 5px;
+    height: 9px;
+    border-right: 2px solid var(--abyss);
+    border-bottom: 2px solid var(--abyss);
+    transform: rotate(45deg) translate(-1px, -1px);
+  }
+
+  /* City search */
+  .city-search-wrap { position: relative; }
+  .city-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 6px;
+    background: var(--abyss);
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+  .city-results.hidden { display: none; }
+  .city-result {
+    padding: 12px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.15s;
+  }
+  .city-result:last-child { border-bottom: none; }
+  .city-result:hover, .city-result.selected { background: var(--glass-active); }
+  .city-result .city-name { font-weight: 500; font-size: 14px; }
+  .city-result .city-region { font-size: 11px; color: var(--ink-dim); margin-top: 2px; }
+
+  /* Volume preview */
+  .volume-preview {
+    background: linear-gradient(135deg, rgba(78, 192, 216, 0.1), rgba(78, 192, 216, 0.03));
+    border: 1px solid rgba(78, 192, 216, 0.25);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 12px;
+    text-align: center;
+  }
+  .volume-preview .lbl {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--shallow);
+    margin-bottom: 4px;
+  }
+  .volume-preview .val {
+    font-family: var(--display);
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .volume-preview .val .unit {
+    font-size: 14px;
+    color: var(--ink-dim);
+    font-family: var(--body);
+    margin-left: 4px;
+  }
+
+  .onb-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .onb-actions .btn { flex: 1; }
+  .onb-skip {
+    background: transparent;
+    border: none;
+    color: var(--ink-dim);
+    font-family: var(--body);
+    font-size: 13px;
+    text-align: center;
+    padding: 12px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+    text-decoration: underline;
+    text-decoration-color: var(--ink-ghost);
+    text-underline-offset: 3px;
+  }
+  .onb-skip:hover { color: var(--ink); text-decoration-color: currentColor; }
+
+  /* INSTALL BANNER */
+  .install-banner {
+    position: fixed;
+    bottom: calc(96px + env(safe-area-inset-bottom));
+    left: 12px;
+    right: 12px;
+    max-width: 460px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(10, 127, 168, 0.96), rgba(6, 74, 110, 0.96));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(78, 192, 216, 0.4);
+    border-radius: 20px;
+    padding: 14px 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transform: translateY(140%);
+    transition: transform 0.4s var(--ease);
+    visibility: hidden;
+  }
+  .install-banner.show { transform: translateY(0); visibility: visible; }
+  .install-banner.dismissed { transform: translateY(140%) !important; visibility: hidden !important; }
+  .install-banner .install-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+  .install-banner .install-text { flex: 1; font-size: 12px; line-height: 1.4; }
+  .install-banner .install-text strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .install-banner .install-cta {
+    background: white;
+    color: var(--abyss);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 100px;
+    font-family: var(--body);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .install-banner .install-close {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: var(--ink-dim);
+    font-size: 18px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .install-banner .install-close:hover {
+    background: rgba(255,255,255,0.12);
+    color: var(--ink);
+  }
+
+  /* MODAL */
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 12px;
+    animation: fadeBg 0.3s var(--ease);
+  }
+  .modal-bg.show { display: flex; }
+  @keyframes fadeBg { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: linear-gradient(180deg, #074a6e 0%, #03263d 100%);
+    border: 1px solid var(--line-strong);
+    border-radius: 24px 24px 16px 16px;
+    padding: 24px 22px;
+    max-width: 460px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: slideUp 0.4s var(--ease);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .modal h3 {
+    font-family: var(--display);
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .modal .sub { color: var(--ink-dim); font-size: 13px; margin-bottom: 18px; line-height: 1.5; }
+  .modal .ios-step {
+    display: flex;
+    gap: 14px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+  }
+  .modal .ios-step:last-of-type { border-bottom: none; }
+  .modal .ios-step .num {
+    width: 28px;
+    height: 28px;
+    background: rgba(78, 192, 216, 0.15);
+    color: var(--shallow);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-family: var(--mono);
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .modal .ios-step .txt { font-size: 13px; line-height: 1.5; flex: 1; }
+  .modal .ios-step .txt .ic {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 5px;
+    margin: 0 3px;
+    vertical-align: middle;
+    color: var(--shallow);
+  }
+  .modal .close-modal {
+    width: 100%;
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--ink);
+    padding: 13px;
+    font-family: var(--body);
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 18px;
+  }
+  .modal .close-modal:hover { background: var(--glass-strong); }
+
+  /* DANGER ZONE */
+  .danger-zone {
+    margin-top: 30px;
+    padding: 14px;
+    border: 1px dashed rgba(233, 78, 78, 0.3);
+    border-radius: 14px;
+    background: rgba(233, 78, 78, 0.04);
+  }
+  .danger-zone .danger-title {
+    color: var(--bad);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .btn-danger {
+    background: rgba(233, 78, 78, 0.12);
+    border: 1px solid rgba(233, 78, 78, 0.35);
+    color: var(--bad);
+    box-shadow: none;
+  }
+  .btn-danger:hover {
+    background: rgba(233, 78, 78, 0.18);
+    color: #ff7575;
+  }
+
+  /* SHARED / ACTIONS / AI / PISCINIER */
+  .mini-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 10px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--ink-dim);
+    margin-bottom: 12px;
+  }
+  .mini-status .led { width: 7px; height: 7px; border-radius: 50%; background: var(--warn); }
+  .mini-status.on .led { background: var(--leaf); box-shadow: 0 0 10px var(--leaf); }
+  .member-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .member-chip {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px 12px; border-radius: 13px; background: rgba(0,0,0,0.22); border: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .member-chip small { color: var(--ink-faint); font-family: var(--mono); }
+  .textarea {
+    min-height: 92px; resize: vertical; line-height: 1.45; font-family: var(--body);
+  }
+  .action-log-item {
+    padding: 13px 0; border-bottom: 1px solid var(--line);
+    display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: start;
+  }
+  .action-log-item:last-child { border-bottom: none; }
+  .action-log-icon { width: 34px; height: 34px; border-radius: 10px; background: rgba(78,192,216,0.12); color: var(--shallow); display:flex; align-items:center; justify-content:center; }
+  .action-log-title { font-size: 14px; font-weight: 500; }
+  .action-log-meta { font-size: 11px; color: var(--ink-faint); margin-top: 3px; font-family: var(--mono); }
+  .need-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+  .need-tag { font-size: 11px; padding: 6px 9px; border-radius: 999px; background: rgba(245,217,126,0.12); color: var(--sun); border: 1px solid rgba(245,217,126,0.22); }
+  .photo-drop {
+    border: 1px dashed rgba(78,192,216,0.45); border-radius: 18px; padding: 20px;
+    background: rgba(78,192,216,0.06); text-align: center; cursor: pointer;
+  }
+  .photo-drop input { display: none; }
+  .photo-preview { width: 100%; max-height: 240px; object-fit: cover; border-radius: 16px; margin-top: 12px; display: none; border: 1px solid var(--line); }
+  .ia-disclaimer { font-size: 11px; color: var(--ink-faint); line-height: 1.45; margin-top: 10px; }
+  .store-card {
+    background: rgba(0,0,0,0.22); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 10px;
+  }
+  .store-card .store-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .store-card .store-sub { font-size: 12px; color: var(--ink-dim); line-height: 1.45; }
+  .store-card a { color: var(--shallow); text-decoration: none; font-size: 12px; display:inline-block; margin-top: 10px; }
+  .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .code-box {
+    background: rgba(0,0,0,0.35); border: 1px solid var(--line); border-radius: 12px; padding: 12px;
+    color: var(--ink-dim); font-family: var(--mono); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere;
+  }
+
+
+
+  /* FAMILY / JOURNAL UPGRADE */
+  .nav { max-width: calc(100vw - 14px); overflow-x: auto; scrollbar-width: none; }
+  .nav::-webkit-scrollbar { display: none; }
+  .family-hero {
+    background: linear-gradient(135deg, rgba(78,192,216,0.16), rgba(245,217,126,0.06));
+    border: 1px solid rgba(78,192,216,0.26);
+    border-radius: 24px;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .family-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+  .family-title { font-family: var(--display); font-size: 26px; line-height:1; letter-spacing:-0.02em; }
+  .family-sub { font-size: 12px; color: var(--ink-dim); margin-top:6px; }
+  .family-code { font-family: var(--mono); font-size: 10px; color: var(--shallow); background: rgba(78,192,216,0.12); border:1px solid rgba(78,192,216,0.24); padding:6px 9px; border-radius:999px; white-space:nowrap; }
+  .member-card { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
+  .member-card:last-child { border-bottom:none; }
+  .avatar { width:38px; height:38px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:rgba(78,192,216,0.14); color:var(--shallow); font-weight:600; flex-shrink:0; }
+  .member-main { flex:1; min-width:0; }
+  .member-name { font-size:14px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .member-meta { font-size:11px; color:var(--ink-faint); margin-top:2px; font-family:var(--mono); }
+  .role-badge { font-size:10px; padding:5px 8px; border-radius:999px; color:var(--ink); background:rgba(255,255,255,0.08); border:1px solid var(--line); white-space:nowrap; }
+  .role-badge.owner { background:rgba(245,217,126,0.14); color:var(--sun); border-color:rgba(245,217,126,0.26); }
+  .role-badge.pro { background:rgba(122,199,79,0.12); color:var(--leaf); border-color:rgba(122,199,79,0.24); }
+  .timeline-item { display:grid; grid-template-columns:auto 1fr; gap:12px; padding:13px 0; border-bottom:1px solid var(--line); }
+  .timeline-item:last-child { border-bottom:none; }
+  .timeline-dot { width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:rgba(78,192,216,0.12); color:var(--shallow); }
+  .timeline-title { font-size:14px; font-weight:500; line-height:1.35; }
+  .timeline-meta { font-size:11px; color:var(--ink-faint); font-family:var(--mono); margin-top:4px; }
+  .timeline-desc { font-size:12px; color:var(--ink-dim); line-height:1.45; margin-top:6px; }
+  .mini-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  .mini-card { background:rgba(0,0,0,0.22); border:1px solid var(--line); border-radius:16px; padding:13px; }
+  .mini-card .n { font-family:var(--display); font-size:28px; line-height:1; }
+  .mini-card .l { font-size:10px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.12em; margin-top:5px; }
+  .filter-row { display:flex; gap:7px; overflow:auto; margin-bottom:14px; padding-bottom:2px; scrollbar-width:none; }
+  .filter-row::-webkit-scrollbar { display:none; }
+  .filter-btn { border:1px solid var(--line); background:var(--glass); color:var(--ink-dim); border-radius:999px; padding:8px 11px; font-family:var(--body); font-size:12px; white-space:nowrap; cursor:pointer; }
+  .filter-btn.active { background:var(--glass-active); color:var(--ink); border-color:rgba(78,192,216,0.32); }
+  .copy-box { background:rgba(0,0,0,0.28); border:1px dashed rgba(78,192,216,0.35); border-radius:14px; padding:12px; font-size:12px; color:var(--ink-dim); line-height:1.5; overflow-wrap:anywhere; }
+  .brief-box { background:linear-gradient(135deg, rgba(245,217,126,0.1), rgba(245,217,126,0.03)); border:1px solid rgba(245,217,126,0.22); border-radius:16px; padding:14px; font-size:12px; line-height:1.55; color:var(--ink-dim); white-space:pre-line; }
+
+</style>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div class="onboarding" id="onboarding">
+  <div class="onb-content">
+    <div class="onb-progress">
+      <div class="onb-dot active" data-dot="0"></div>
+      <div class="onb-dot" data-dot="1"></div>
+      <div class="onb-dot" data-dot="2"></div>
+      <div class="onb-dot" data-dot="3"></div>
+    </div>
+
+    <div class="onb-step active" data-step="0">
+      <div class="onb-illustration"><div class="grad-circle">💧</div></div>
+      <div class="onb-eyebrow">Bienvenue</div>
+      <h1 class="onb-title">Ton bassin,<br><em>au quotidien.</em></h1>
+      <p class="onb-desc">
+        Configure ta piscine en 3 étapes pour obtenir des conseils précis,
+        une météo locale et des rappels adaptés à ton volume.
+      </p>
+      <div class="onb-actions">
+        <button class="btn" onclick="onbNext()">Commencer
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="onb-step" data-step="1">
+      <div class="onb-eyebrow">Étape 1 / 3</div>
+      <h1 class="onb-title">Comment <em>l'appeler ?</em></h1>
+      <p class="onb-desc">Un petit nom pour ta piscine. Optionnel mais ça fait plaisir.</p>
+      <div class="field">
+        <input class="input" type="text" id="onbName" placeholder="ex. La piscine de la maison" maxlength="40" autocomplete="off">
+      </div>
+      <div class="onb-actions">
+        <button class="btn btn-ghost" onclick="onbBack()">Retour</button>
+        <button class="btn" onclick="onbNext()">Suivant
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="onb-step" data-step="2">
+      <div class="onb-eyebrow">Étape 2 / 3</div>
+      <h1 class="onb-title">Quel <em>volume ?</em></h1>
+      <p class="onb-desc">Indispensable pour calculer les doses de produits, le temps de filtration et les vidanges.</p>
+
+      <div class="choice-cards">
+        <div class="choice-card selected" data-mode="m3" onclick="setVolumeMode('m3')">
+          <div class="choice-icon">💧</div>
+          <div class="choice-text">
+            <div class="choice-name">Je connais le volume</div>
+            <div class="choice-sub">Saisir directement en m³</div>
+          </div>
+          <div class="choice-check"></div>
+        </div>
+        <div class="choice-card" data-mode="dims" onclick="setVolumeMode('dims')">
+          <div class="choice-icon">📐</div>
+          <div class="choice-text">
+            <div class="choice-name">Calculer depuis les dimensions</div>
+            <div class="choice-sub">Longueur, largeur, profondeur moyenne</div>
+          </div>
+          <div class="choice-check"></div>
+        </div>
+      </div>
+
+      <div id="volumeM3Form">
+        <div class="field">
+          <div class="field-label"><span class="name">Volume du bassin</span><span class="target">en m³</span></div>
+          <input class="input" type="number" id="onbVolume" placeholder="ex. 11" step="0.5" min="1" max="500" inputmode="decimal">
+        </div>
+      </div>
+
+      <div id="volumeDimsForm" style="display:none;">
+        <div class="input-row">
+          <div class="field">
+            <div class="field-label"><span class="name">Longueur</span><span class="target">m</span></div>
+            <input class="input" type="number" id="onbLen" placeholder="6" step="0.1" min="0.5" inputmode="decimal" oninput="computeVolume()">
+          </div>
+          <div class="field">
+            <div class="field-label"><span class="name">Largeur</span><span class="target">m</span></div>
+            <input class="input" type="number" id="onbWid" placeholder="3" step="0.1" min="0.5" inputmode="decimal" oninput="computeVolume()">
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="name">Profondeur moyenne</span><span class="target">m</span></div>
+          <input class="input" type="number" id="onbDepth" placeholder="1.4" step="0.1" min="0.3" max="5" inputmode="decimal" oninput="computeVolume()">
+        </div>
+        <div class="volume-preview" id="volumePreview" style="display:none;">
+          <div class="lbl">Volume calculé</div>
+          <div class="val" id="volumePreviewVal">— <span class="unit">m³</span></div>
+        </div>
+      </div>
+
+      <div class="onb-actions" style="margin-top:18px;">
+        <button class="btn btn-ghost" onclick="onbBack()">Retour</button>
+        <button class="btn" id="onbVolumeNext" onclick="onbNext()" disabled>Suivant
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="onb-step" data-step="3">
+      <div class="onb-eyebrow">Étape 3 / 3</div>
+      <h1 class="onb-title">Tu es <em>où ?</em></h1>
+      <p class="onb-desc">On utilise ta ville pour la météo locale et l'estimation de la température de l'eau. Aucune donnée personnelle n'est envoyée ailleurs.</p>
+
+      <div class="field">
+        <div class="field-label"><span class="name">Ville</span><span class="target">recherche libre</span></div>
+        <div class="city-search-wrap">
+          <input class="input" type="text" id="onbCity" placeholder="ex. Marseille, Bordeaux…" autocomplete="off" oninput="searchCity()">
+          <div class="city-results hidden" id="cityResults"></div>
+        </div>
+      </div>
+
+      <div id="cityChosen" style="display:none; margin-top: 12px;">
+        <div class="volume-preview" style="background: linear-gradient(135deg, rgba(122, 199, 79, 0.1), rgba(122, 199, 79, 0.03)); border-color: rgba(122, 199, 79, 0.25);">
+          <div class="lbl" style="color: var(--leaf);">Ville sélectionnée</div>
+          <div class="val" style="font-size: 22px;" id="cityChosenName">—</div>
+        </div>
+      </div>
+
+      <button class="onb-skip" onclick="finishOnboarding(true)">Ignorer la météo</button>
+
+      <div class="onb-actions">
+        <button class="btn btn-ghost" onclick="onbBack()">Retour</button>
+        <button class="btn" id="onbFinish" onclick="finishOnboarding(false)">Terminer
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="header-title">
+      <div class="header-eyebrow" id="hdrEyebrow">Ma piscine</div>
+      <h1>Carnet<br><em>de bord</em></h1>
+    </div>
+    <div class="header-meta">
+      <div><span class="dot"></span><span id="hdrLocation">—</span></div>
+      <div id="hdrVolume">— m³</div>
+      <button class="settings-btn" onclick="switchTab('settings')" aria-label="Réglages">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- DASH -->
+  <div class="view active" id="view-dash">
+    <div id="dashAlert"></div>
+    <div class="hero">
+      <div class="hero-eyebrow">État général</div>
+      <div class="hero-value" id="overallStatus">—</div>
+      <div class="hero-status" id="overallBadge">
+        <span class="dot"></span>
+        <span id="overallText">Aucune mesure</span>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat">
+        <span class="stat-indicator" id="ind-ph"></span>
+        <div class="stat-label">pH</div>
+        <div class="stat-value" id="val-ph">—</div>
+        <div class="stat-range">cible 7,2 – 7,4</div>
+      </div>
+      <div class="stat">
+        <span class="stat-indicator" id="ind-cl"></span>
+        <div class="stat-label">Chlore</div>
+        <div class="stat-value" id="val-cl">—<span class="small">mg/L</span></div>
+        <div class="stat-range">cible 1 – 3</div>
+      </div>
+      <div class="stat">
+        <span class="stat-indicator" id="ind-tac"></span>
+        <div class="stat-label">Alcalinité</div>
+        <div class="stat-value" id="val-tac">—<span class="small">ppm</span></div>
+        <div class="stat-range">TAC cible 80 – 120 ppm</div>
+      </div>
+      <div class="stat">
+        <span class="stat-indicator" id="ind-cya"></span>
+        <div class="stat-label">Stabilisant</div>
+        <div class="stat-value" id="val-cya">—<span class="small">mg/L</span></div>
+        <div class="stat-range">cible 30 – 50</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Filtration du jour</div>
+      <div class="card-sub">Selon la température de l'eau</div>
+      <div class="field">
+        <div class="field-label">
+          <span class="name">Température de l'eau</span>
+          <span class="target" id="tempEcho">— °C</span>
+        </div>
+        <input type="range" id="tempSlider" min="15" max="34" step="0.5" value="26">
+      </div>
+      <div class="filtration-display">
+        <div class="big" id="filtHours">—</div>
+        <div class="unit">heures de filtration</div>
+        <div class="schedule" id="filtSchedule">—</div>
+      </div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">☀</div>
+      <div class="tip-text"><strong>Le trio gagnant :</strong> pH juste, chlore suffisant, filtration longue en journée. Ça évite 80 % des problèmes.</div>
+    </div>
+
+    <div class="card" id="familySnapshotCard">
+      <div class="card-title">Vie du bassin</div>
+      <div class="card-sub">famille & dernières actions</div>
+      <div id="familySnapshot"></div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="btn btn-secondary" onclick="switchTab('family')">Gérer la famille</button>
+        <button class="btn" onclick="switchTab('journal')">Voir le journal</button>
+      </div>
+    </div>
+    <div class="action-grid">
+      <button class="action-btn" onclick="exportPDF()">
+        <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+        <div class="ttl">Rapport PDF</div>
+        <div class="sub">Tout l'état du bassin</div>
+      </button>
+      <button class="action-btn" onclick="exportICS()">
+        <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+        <div class="ttl">Rappels routine</div>
+        <div class="sub">Ajouter au calendrier</div>
+      </button>
+      <button class="action-btn" onclick="switchTab('ia')">
+        <div class="ico">✨</div>
+        <div class="ttl">Analyse IA</div>
+        <div class="sub">Photo de l'eau + conseils</div>
+      </button>
+      <button class="action-btn" onclick="switchTab('piscinier')">
+        <div class="ico">🛟</div>
+        <div class="ttl">Mon piscinier</div>
+        <div class="sub">Magasins selon besoins</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- MESURES -->
+  <div class="view" id="view-mes">
+    <h2 class="section-title">Nouvelle <em>mesure</em></h2>
+    <p class="section-sub">Saisis tes valeurs, analyse ou enregistre. Les conseils s'affichent en bas.</p>
+    <div class="card">
+      <div class="field">
+        <div class="field-label"><span class="name">pH</span><span class="target">7,2 – 7,4</span></div>
+        <input class="input" type="number" step="0.1" id="in-ph" placeholder="ex. 7,3" inputmode="decimal">
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="name">Chlore libre (mg/L)</span><span class="target">1 – 3</span></div>
+        <input class="input" type="number" step="0.1" id="in-cl" placeholder="ex. 1,5" inputmode="decimal">
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="name">Alcalinité / TAC (ppm)</span><span class="target">80 – 120 · mensuel</span></div>
+        <input class="input" type="number" step="1" id="in-tac" placeholder="ex. 100" inputmode="decimal">
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="name">Stabilisant CYA (mg/L)</span><span class="target">30 – 50 · mensuel</span></div>
+        <input class="input" type="number" step="1" id="in-cya" placeholder="optionnel" inputmode="decimal">
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="name">TH / Dureté (°f)</span><span class="target">15 – 25</span></div>
+        <input class="input" type="number" step="1" id="in-th" placeholder="optionnel" inputmode="decimal">
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="name">Température (°C)</span><span class="target">à noter en été</span></div>
+        <input class="input" type="number" step="0.5" id="in-temp" placeholder="ex. 26" inputmode="decimal">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="analyzeMeasure()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          Analyser
+        </button>
+        <button class="btn" onclick="saveMeasure()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>
+          Enregistrer
+        </button>
+      </div>
+    </div>
+    <div id="adviceContainer" class="advice-wrap"></div>
+    <div class="card">
+      <div class="card-title">Historique</div>
+      <div class="card-sub" id="historyCount">aucune mesure</div>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <!-- METEO -->
+  <div class="view" id="view-meteo">
+    <h2 class="section-title">Météo & <em>filtration</em></h2>
+    <p class="section-sub" id="meteoSub">Prévisions sur 7 jours, avec estimation de la température de l'eau et alertes canicule.</p>
+    <div id="meteoContent">
+      <div class="loading-state"><div class="spinner"></div><div>Récupération des données météo…</div></div>
+    </div>
+  </div>
+
+  <!-- ROUTINES -->
+  <div class="view" id="view-rout">
+    <h2 class="section-title">Mes <em>routines</em></h2>
+    <p class="section-sub">Coche au fur et à mesure. La liste se réinitialise automatiquement selon la fréquence.</p>
+    <div class="segment">
+      <div class="segment-indicator" id="segIndicator"></div>
+      <button class="active" data-period="daily" onclick="switchRoutine('daily', this)">Tous les 2 j</button>
+      <button data-period="weekly" onclick="switchRoutine('weekly', this)">Semaine</button>
+      <button data-period="monthly" onclick="switchRoutine('monthly', this)">Mois</button>
+    </div>
+    <div class="card">
+      <div class="routine-pill" id="routinePill">Tous les 2 jours · été</div>
+      <div id="routineList"></div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">↻</div>
+      <div class="tip-text">Les cases se décocheront automatiquement à la fin de chaque période.</div>
+    </div>
+    <h2 class="section-title" style="margin-top: 28px;">Rappels <em>auto</em></h2>
+    <p class="section-sub">Deux options complémentaires.</p>
+    <div class="card">
+      <div class="switch-row">
+        <div class="lbl-grp">
+          <div class="lbl">Notifications navigateur</div>
+          <div class="sub">Rappel hebdo samedi 9h, si l'app est ouverte ou récente</div>
+        </div>
+        <div class="switch" id="notifSwitch" onclick="toggleNotifications()"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom: 6px;">Calendrier (.ics)</div>
+      <div class="card-sub">iPhone, Android, Outlook, Google Calendar. Rappels actifs même app fermée.</div>
+      <button class="btn" onclick="exportICS()" style="margin-top: 10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Télécharger les rappels
+      </button>
+      <div style="font-size: 11px; color: var(--ink-faint); margin-top: 10px; line-height: 1.45;">
+        Inclus : routine hebdo (sam 9h), contrôle pH/chlore (mar & ven 19h), tests mensuels. 6 mois de rappels.
+      </div>
+    </div>
+  </div>
+
+  <!-- AIDE -->
+  <div class="view" id="view-aide">
+    <h2 class="section-title">Diagnostic <em>express</em></h2>
+    <p class="section-sub">Un souci ? Tape sur le symptôme pour voir la marche à suivre.</p>
+    <div id="problemsList"></div>
+
+    <h2 class="section-title" style="margin-top: 32px;">Backwash <em>filtre à sable</em></h2>
+    <p class="section-sub">Quand la pression monte de 0,3 – 0,5 bar.</p>
+    <div class="card">
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Éteindre</strong> la pompe</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Vanne sur <strong>Backwash / Lavage</strong></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Pompe <strong>2 – 3 min</strong>, jusqu'à eau claire</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Éteindre</strong> la pompe</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text">Vanne sur <strong>Rinse / Rinçage</strong></div></div>
+      <div class="step"><div class="step-num">6</div><div class="step-text">Pompe <strong>30 s à 1 min</strong></div></div>
+      <div class="step"><div class="step-num">7</div><div class="step-text"><strong>Éteindre</strong>, vanne sur <strong>Filtration</strong>, relancer</div></div>
+      <div class="step"><div class="step-num">8</div><div class="step-text">Compléter le <strong>niveau d'eau</strong> si besoin</div></div>
+      <div class="tip" style="margin-top: 14px; margin-bottom: 0;">
+        <div class="tip-icon">⚠</div>
+        <div class="tip-text"><strong>Ne jamais</strong> changer la position de la vanne pendant que la pompe tourne.</div>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top: 32px;">Repères <em>volume</em></h2>
+    <div class="card">
+      <div class="info-row"><span class="lbl">Volume bassin</span><span class="val" id="aideVolume">—</span></div>
+      <div class="info-row"><span class="lbl">Renouvellement 1/3</span><span class="val" id="aideThird">—</span></div>
+      <div class="info-row"><span class="lbl">Renouvellement 1/2</span><span class="val" id="aideHalf">—</span></div>
+      <div class="info-row"><span class="lbl">Niveau d'eau idéal</span><span class="val">milieu du skimmer</span></div>
+    </div>
+
+    <h2 class="section-title" style="margin-top: 32px;">Stabilisant <em>(CYA)</em></h2>
+    <div class="card">
+      <div class="info-row"><span class="lbl">0 – 20 mg/L</span><span class="val warn">trop bas</span></div>
+      <div class="info-row"><span class="lbl">30 – 50 mg/L</span><span class="val good">idéal</span></div>
+      <div class="info-row"><span class="lbl">60 – 75 mg/L</span><span class="val warn">limite haute</span></div>
+      <div class="info-row"><span class="lbl">75 mg/L et +</span><span class="val bad">vidange partielle</span></div>
+    </div>
+
+    <div class="tip" style="margin-bottom: 30px;">
+      <div class="tip-icon">💡</div>
+      <div class="tip-text"><strong>Eau verte malgré du chlore ?</strong> Pense au stabilisant. S'il est saturé : vidange partielle (1/3 à 1/2).</div>
+    </div>
+  </div>
+
+
+  <!-- ACTIONS BASSIN -->
+  <div class="view" id="view-actions">
+    <h2 class="section-title">Actions <em>bassin</em></h2>
+    <p class="section-sub">Journal partagé des actions réalisées : traitement, nettoyage, filtration, backwash, appoint d'eau...</p>
+    <div class="card">
+      <div class="field">
+        <div class="field-label"><span class="name">Type d'action</span><span class="target">journal</span></div>
+        <select class="input" id="actType">
+          <option value="Traitement">Traitement</option>
+          <option value="Nettoyage">Nettoyage</option>
+          <option value="Filtration">Filtration</option>
+          <option value="Backwash">Backwash filtre</option>
+          <option value="Analyse eau">Analyse eau</option>
+          <option value="Achat produit">Achat produit</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="name">Action réalisée</span><span class="target">visible par les membres</span></div>
+        <textarea class="input textarea" id="actText" placeholder="ex. Chlore choc 220 g + filtration continue jusqu'à demain matin"></textarea>
+      </div>
+      <div class="input-row">
+        <div class="field">
+          <div class="field-label"><span class="name">Auteur</span></div>
+          <input class="input" id="actAuthor" placeholder="ex. Marin">
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="name">Priorité</span></div>
+          <select class="input" id="actPriority">
+            <option value="info">Info</option>
+            <option value="important">Important</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" onclick="savePoolAction()">Ajouter au journal partagé</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Actions récentes</div>
+      <div class="card-sub" id="actionsCount">aucune action</div>
+      <div id="actionsList"></div>
+    </div>
+  </div>
+
+
+  <!-- JOURNAL GLOBAL -->
+  <div class="view" id="view-journal">
+    <h2 class="section-title">Journal <em>partagé</em></h2>
+    <p class="section-sub">Toutes les actions, relevés et analyses IA au même endroit, avec l'auteur et l'heure.</p>
+    <div class="filter-row" id="journalFilters">
+      <button class="filter-btn active" data-filter="all" onclick="setJournalFilter('all')">Tout</button>
+      <button class="filter-btn" data-filter="measure" onclick="setJournalFilter('measure')">Relevés</button>
+      <button class="filter-btn" data-filter="action" onclick="setJournalFilter('action')">Actions</button>
+      <button class="filter-btn" data-filter="ai" onclick="setJournalFilter('ai')">IA</button>
+      <button class="filter-btn" data-filter="need" onclick="setJournalFilter('need')">Besoins</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Timeline</div>
+      <div class="card-sub" id="journalCount">—</div>
+      <div id="journalList"></div>
+    </div>
+  </div>
+
+  <!-- FAMILLE -->
+  <div class="view" id="view-family">
+    <h2 class="section-title">Ma <em>famille</em></h2>
+    <p class="section-sub">Crée un espace partagé, invite les membres et vois qui a fait quoi sur la piscine.</p>
+    <div class="family-hero">
+      <div class="family-top">
+        <div>
+          <div class="family-title" id="familyNameLabel">Maison piscine</div>
+          <div class="family-sub" id="familySubLabel">— membre actif</div>
+        </div>
+        <div class="family-code" id="familyCodeLabel">—</div>
+      </div>
+      <div class="mini-grid">
+        <div class="mini-card"><div class="n" id="familyMembersCount">0</div><div class="l">membres</div></div>
+        <div class="mini-card"><div class="n" id="familyTodayCount">0</div><div class="l">actions aujourd’hui</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Créer / modifier l’espace</div>
+      <div class="card-sub">l’utilisateur ne voit plus d’ID technique</div>
+      <div class="field">
+        <div class="field-label"><span class="name">Nom de la famille</span></div>
+        <input class="input" id="familyNameInput" placeholder="ex. Maison Pourrières">
+      </div>
+      <div class="input-row">
+        <div class="field">
+          <div class="field-label"><span class="name">Ton prénom</span></div>
+          <input class="input" id="familySelfName" placeholder="ex. Marin">
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="name">Ton rôle</span></div>
+          <select class="input" id="familySelfRole"><option value="owner">Propriétaire</option><option value="member">Membre</option><option value="pro">Piscinier</option><option value="readonly">Lecture seule</option></select>
+        </div>
+      </div>
+      <button class="btn" onclick="saveFamilySpace()">Enregistrer l’espace famille</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Inviter un membre</div>
+      <div class="card-sub">lien à envoyer par SMS / WhatsApp</div>
+      <div class="input-row">
+        <div class="field">
+          <div class="field-label"><span class="name">Prénom invité</span></div>
+          <input class="input" id="inviteName" placeholder="ex. Sarah">
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="name">Rôle</span></div>
+          <select class="input" id="inviteRole"><option value="member">Membre</option><option value="readonly">Lecture seule</option><option value="pro">Piscinier</option></select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="addFamilyMember()">Ajouter localement</button>
+        <button class="btn" onclick="createFamilyInvite()">Créer le lien</button>
+      </div>
+      <div class="copy-box" id="inviteLinkBox" style="display:none; margin-top:12px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Membres</div>
+      <div class="card-sub">rôles & dernières activités</div>
+      <div id="familyMembersList"></div>
+    </div>
+  </div>
+
+  <!-- ANALYSE IA -->
+  <div class="view" id="view-ia">
+    <h2 class="section-title">Analyse <em>IA</em></h2>
+    <p class="section-sub">Prends une photo de l'eau. Le prototype prépare un diagnostic visuel + croise avec les dernières mesures.</p>
+    <div class="card">
+      <label class="photo-drop" for="waterPhoto">
+        <div style="font-size:34px; margin-bottom:8px;">📷</div>
+        <div style="font-weight:500;">Ajouter une photo de l'eau</div>
+        <div style="font-size:12px; color:var(--ink-dim); margin-top:4px;">Vue du bassin, ligne d'eau ou fond</div>
+        <input type="file" id="waterPhoto" accept="image/*" capture="environment" onchange="previewWaterPhoto(event)">
+      </label>
+      <img id="waterPhotoPreview" class="photo-preview" alt="Photo de l'eau">
+      <div class="ia-disclaimer">Prototype : le vrai diagnostic IA fiable doit passer par une API Vision sécurisée côté serveur. Ici, l'app génère une analyse préparatoire à partir de la photo et des mesures déjà saisies.</div>
+      <button class="btn" onclick="runPhotoAIAnalysis()" style="margin-top:14px;">Lancer l'analyse IA</button>
+    </div>
+    <div id="iaResult" class="advice-wrap"></div>
+  </div>
+
+  <!-- MON PISCINIER -->
+  <div class="view" id="view-piscinier">
+    <h2 class="section-title">Mon <em>piscinier</em></h2>
+    <p class="section-sub">L'app détecte les besoins probables puis propose une recherche de magasins de fournitures piscine autour de toi.</p>
+    <div class="card">
+      <div class="card-title">Besoins détectés</div>
+      <div class="card-sub">Selon les dernières mesures et conseils</div>
+      <div id="poolNeeds"></div>
+      <button class="btn" onclick="renderPiscinier()" style="margin-top:14px;">Mettre à jour les besoins</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Brief prêt à envoyer</div>
+      <div class="card-sub">pour expliquer la situation au piscinier</div>
+      <div class="brief-box" id="piscinierBrief">—</div>
+      <button class="btn btn-secondary" onclick="copyPiscinierBrief()" style="margin-top:14px;">Copier le message</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Magasins à proximité</div>
+      <div class="card-sub">Recherche Google Maps adaptée</div>
+      <div id="storeSuggestions"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="view" id="view-settings">
+    <h2 class="section-title">Réglages</h2>
+    <p class="section-sub">Modifie les infos de ta piscine et de ta localisation.</p>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom: 14px;">Ma piscine</div>
+      <div class="field">
+        <div class="field-label"><span class="name">Nom</span></div>
+        <input class="input" type="text" id="setName" placeholder="ex. Piscine maison" maxlength="40">
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="name">Volume</span><span class="target">m³</span></div>
+        <input class="input" type="number" step="0.5" min="1" id="setVolume" inputmode="decimal">
+      </div>
+      <button class="btn btn-secondary" onclick="saveSettings('pool')" style="margin-top: 6px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>
+        Enregistrer
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom: 14px;">Localisation météo</div>
+      <div class="field">
+        <div class="field-label"><span class="name">Ville</span><span class="target" id="setCurrentCity">—</span></div>
+        <div class="city-search-wrap">
+          <input class="input" type="text" id="setCity" placeholder="Changer la ville…" autocomplete="off" oninput="searchCitySettings()">
+          <div class="city-results hidden" id="setCityResults"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom: 14px;">Données</div>
+      <div class="switch-row">
+        <div class="lbl-grp">
+          <div class="lbl">Mesures enregistrées</div>
+          <div class="sub" id="settingsMeasureCount">0 entrée</div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom: 6px;">Connexion Supabase</div>
+      <div class="card-sub">Option technique : active la synchronisation temps réel entre les comptes famille.</div>
+      <div class="mini-status" id="syncStatus"><span class="led"></span><span>Synchronisation inactive</span></div>
+      <div class="field">
+        <div class="field-label"><span class="name">Nom du membre</span><span class="target">affiché dans le journal</span></div>
+        <input class="input" id="memberName" placeholder="ex. Marin">
+      </div>
+      <div class="input-row">
+        <div class="field">
+          <div class="field-label"><span class="name">ID espace famille</span></div>
+          <input class="input" id="syncPoolId" placeholder="maison-pourrieres">
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="name">Rôle</span></div>
+          <select class="input" id="memberRole"><option>Propriétaire</option><option>Membre</option><option>Piscinier</option></select>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="name">Supabase URL</span><span class="target">optionnel</span></div>
+        <input class="input" id="syncUrl" placeholder="https://xxxxx.supabase.co">
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="name">Supabase anon key</span><span class="target">clé publique uniquement</span></div>
+        <input class="input" id="syncKey" placeholder="eyJ...">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="saveSyncSettings()">Enregistrer</button>
+        <button class="btn" onclick="sharePoolInvite()">Inviter par SMS</button>
+      </div>
+      <div class="code-box" id="syncHelp" style="margin-top:12px;">Table simple acceptée : pool_states(id text primary key, data jsonb, updated_at timestamptz). L'app synchronise la famille, les membres, les relevés, actions et diagnostics toutes les 5 secondes.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom: 6px;">Rappels notifications</div>
+      <div class="card-sub">Choisis la fréquence, le jour et l'heure. Les notifications navigateur fonctionnent surtout si l'app est installée ou ouverte récemment.</div>
+      <div class="settings-grid">
+        <div class="field">
+          <div class="field-label"><span class="name">Fréquence</span></div>
+          <select class="input" id="remFreq">
+            <option value="2days">Tous les 2 jours</option>
+            <option value="weekly">Hebdomadaire</option>
+            <option value="monthly">Mensuel</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="name">Jour</span></div>
+          <select class="input" id="remDay">
+            <option value="1">Lundi</option><option value="2">Mardi</option><option value="3">Mercredi</option><option value="4">Jeudi</option><option value="5">Vendredi</option><option value="6">Samedi</option><option value="0">Dimanche</option>
+          </select>
+        </div>
+      </div>
+      <div class="settings-grid">
+        <div class="field">
+          <div class="field-label"><span class="name">Heure</span></div>
+          <input class="input" type="time" id="remTime" value="09:00">
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="name">Notification</span></div>
+          <select class="input" id="remEnabled"><option value="true">Activée</option><option value="false">Désactivée</option></select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="saveReminderSettings()">Enregistrer</button>
+        <button class="btn" onclick="exportICS()">Exporter calendrier</button>
+      </div>
+    </div>
+
+    <div class="danger-zone">
+      <div class="danger-title">Zone sensible</div>
+      <button class="btn btn-danger" onclick="confirmReset()">Réinitialiser l'application</button>
+      <div style="font-size: 11px; color: var(--ink-dim); margin-top: 10px; line-height: 1.45;">
+        Supprime toutes les données et relance l'assistant. Action irréversible.
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav" id="appNav" style="display:none;">
+  <button class="active" data-tab="dash" onclick="switchTab('dash')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    Accueil
+  </button>
+  <button data-tab="mes" onclick="switchTab('mes')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+    Mesures
+  </button>
+  <button data-tab="meteo" onclick="switchTab('meteo')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+    Météo
+  </button>
+  <button data-tab="rout" onclick="switchTab('rout')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+    Routines
+  </button>
+  <button data-tab="actions" onclick="switchTab('actions')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    Actions
+  </button>
+
+  <button data-tab="family" onclick="switchTab('family')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    Famille
+  </button>
+  <button data-tab="journal" onclick="switchTab('journal')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+    Journal
+  </button>
+  <button data-tab="piscinier" onclick="switchTab('piscinier')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+    Pro
+  </button>
+  <button data-tab="ia" onclick="switchTab('ia')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l1.8 5.5L19 9.3l-5.2 1.8L12 17l-1.8-5.9L5 9.3l5.2-1.8L12 2z"/><path d="M19 15l.9 2.7L22 18.6l-2.1.7L19 22l-.9-2.7-2.1-.7 2.1-.9L19 15z"/></svg>
+    IA
+  </button>
+  <button data-tab="aide" onclick="switchTab('aide')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    Aide
+  </button>
+</nav>
+
+<div class="toast" id="toast">Enregistré</div>
+
+<div class="install-banner" id="installBanner">
+  <button class="install-close" onclick="dismissInstall()" aria-label="Fermer">✕</button>
+  <div class="install-icon">📲</div>
+  <div class="install-text">
+    <strong>Installer l'application</strong>
+    Accès rapide, hors-ligne, plein écran.
+  </div>
+  <button class="install-cta" onclick="triggerInstall()">Installer</button>
+</div>
+
+<div class="modal-bg" id="iosModal">
+  <div class="modal">
+    <h3>Installer sur iPhone</h3>
+    <div class="sub">Ajoute l'app à ton écran d'accueil en 3 étapes (Safari uniquement).</div>
+    <div class="ios-step">
+      <div class="num">1</div>
+      <div class="txt">Appuie sur le bouton <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg></span> Partager en bas de Safari.</div>
+    </div>
+    <div class="ios-step">
+      <div class="num">2</div>
+      <div class="txt">Fais défiler et choisis <strong>« Sur l'écran d'accueil »</strong>.</div>
+    </div>
+    <div class="ios-step">
+      <div class="num">3</div>
+      <div class="txt">Appuie sur <strong>« Ajouter »</strong> en haut à droite.</div>
+    </div>
+    <button class="close-modal" onclick="closeIosModal()">Compris</button>
+  </div>
+</div>
+
+<script>
+// STORAGE
+const KEYS = {
+  config: 'piscine:config',
+  measures: 'piscine:measures',
+  routines: 'piscine:routines',
+  lastTemp: 'piscine:lastTemp',
+  notifEnabled: 'piscine:notifEnabled',
+  meteoCache: 'piscine:meteoCache',
+  installDismissed: 'piscine:installDismissed',
+  actions: 'piscine:actions',
+  sync: 'piscine:sync',
+  reminders: 'piscine:reminders',
+  aiAnalyses: 'piscine:aiAnalyses',
+  family: 'piscine:family'
+};
+
+function loadKey(key, fallback) {
+  try {
+    const v = localStorage.getItem(key);
+    if (v === null) return fallback;
+    return JSON.parse(v);
+  } catch(e) { return fallback; }
+}
+function saveKey(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch(e) {
+    try {
+      localStorage.removeItem(KEYS.meteoCache);
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch(e2) { return false; }
+  }
+}
+
+// STATE
+let state = {
+  config: null,
+  measures: [],
+  routines: { daily: {}, weekly: {}, monthly: {} },
+  routinesReset: { daily: 0, weekly: 0, monthly: 0 },
+  actions: [],
+  aiAnalyses: [],
+  sync: null,
+  reminders: { enabled: false, frequency: '2days', day: 6, time: '09:00' }
+};
+
+// ONBOARDING
+let onbStep = 0;
+let onbData = { name: '', volume: null, volumeMode: 'm3', location: null };
+
+function onbNext() {
+  if (onbStep === 1) onbData.name = document.getElementById('onbName').value.trim();
+  if (onbStep === 2) {
+    if (onbData.volumeMode === 'm3') {
+      const v = parseFloat(document.getElementById('onbVolume').value.replace(',', '.'));
+      if (!v || v < 1) { showToast('Saisis un volume valide', true); return; }
+      onbData.volume = v;
+    } else {
+      const l = parseFloat(document.getElementById('onbLen').value.replace(',', '.'));
+      const w = parseFloat(document.getElementById('onbWid').value.replace(',', '.'));
+      const d = parseFloat(document.getElementById('onbDepth').value.replace(',', '.'));
+      if (!l || !w || !d) { showToast('Remplis toutes les dimensions', true); return; }
+      onbData.volume = Math.round(l * w * d * 10) / 10;
+    }
+  }
+  if (onbStep < 3) setOnbStep(onbStep + 1);
+}
+
+function onbBack() { if (onbStep > 0) setOnbStep(onbStep - 1); }
+
+function setOnbStep(n) {
+  onbStep = n;
+  document.querySelectorAll('.onb-step').forEach(el => el.classList.remove('active'));
+  document.querySelector('.onb-step[data-step="' + n + '"]').classList.add('active');
+  document.querySelectorAll('.onb-dot').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  });
+  document.getElementById('onboarding').scrollTop = 0;
+  updateOnbValidation();
+}
+
+function setVolumeMode(mode) {
+  onbData.volumeMode = mode;
+  document.querySelectorAll('.choice-card[data-mode]').forEach(c => {
+    c.classList.toggle('selected', c.dataset.mode === mode);
+  });
+  document.getElementById('volumeM3Form').style.display = mode === 'm3' ? 'block' : 'none';
+  document.getElementById('volumeDimsForm').style.display = mode === 'dims' ? 'block' : 'none';
+  updateOnbValidation();
+}
+
+function computeVolume() {
+  const l = parseFloat(document.getElementById('onbLen').value.replace(',', '.'));
+  const w = parseFloat(document.getElementById('onbWid').value.replace(',', '.'));
+  const d = parseFloat(document.getElementById('onbDepth').value.replace(',', '.'));
+  const preview = document.getElementById('volumePreview');
+  if (l && w && d) {
+    const vol = Math.round(l * w * d * 10) / 10;
+    document.getElementById('volumePreviewVal').innerHTML = vol.toLocaleString('fr-FR') + ' <span class="unit">m³</span>';
+    preview.style.display = 'block';
+  } else {
+    preview.style.display = 'none';
+  }
+  updateOnbValidation();
+}
+
+function setupOnbListeners() {
+  document.getElementById('onbVolume').addEventListener('input', updateOnbValidation);
+  document.getElementById('onbName').addEventListener('input', updateOnbValidation);
+}
+
+function updateOnbValidation() {
+  const nextBtn = document.getElementById('onbVolumeNext');
+  if (nextBtn) {
+    let ok = false;
+    if (onbData.volumeMode === 'm3') {
+      const v = parseFloat(document.getElementById('onbVolume').value.replace(',', '.'));
+      ok = v && v >= 1;
+    } else {
+      const l = parseFloat(document.getElementById('onbLen').value.replace(',', '.'));
+      const w = parseFloat(document.getElementById('onbWid').value.replace(',', '.'));
+      const d = parseFloat(document.getElementById('onbDepth').value.replace(',', '.'));
+      ok = l && w && d && l*w*d >= 0.5;
+    }
+    nextBtn.disabled = !ok;
+  }
+  const finishBtn = document.getElementById('onbFinish');
+  if (finishBtn) finishBtn.disabled = false;
+}
+
+// CITY SEARCH
+let searchTimer = null;
+let lastQuery = '';
+
+function searchCity() {
+  const input = document.getElementById('onbCity');
+  doCitySearch(input.value, document.getElementById('cityResults'), (city) => {
+    onbData.location = city;
+    input.value = city.name + (city.admin1 ? ', ' + city.admin1 : '');
+    document.getElementById('cityResults').classList.add('hidden');
+    document.getElementById('cityChosen').style.display = 'block';
+    document.getElementById('cityChosenName').textContent = city.name + (city.country ? ' · ' + city.country : '');
+    updateOnbValidation();
+  });
+}
+
+function searchCitySettings() {
+  const input = document.getElementById('setCity');
+  doCitySearch(input.value, document.getElementById('setCityResults'), (city) => {
+    state.config.location = city;
+    saveKey(KEYS.config, state.config);
+    input.value = '';
+    document.getElementById('setCityResults').classList.add('hidden');
+    document.getElementById('setCurrentCity').textContent = city.name;
+    document.getElementById('hdrLocation').textContent = city.name.toUpperCase();
+    showToast('Ville mise à jour ✓');
+    localStorage.removeItem(KEYS.meteoCache);
+    refreshMeteo();
+  });
+}
+
+function doCitySearch(query, resultsEl, onPick) {
+  clearTimeout(searchTimer);
+  query = query.trim();
+  if (query.length < 2) {
+    resultsEl.classList.add('hidden');
+    return;
+  }
+  searchTimer = setTimeout(async () => {
+    if (query === lastQuery && !resultsEl.classList.contains('hidden')) return;
+    lastQuery = query;
+    try {
+      const r = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(query) + '&count=8&language=fr&format=json');
+      const data = await r.json();
+      const results = data.results || [];
+      if (results.length === 0) {
+        resultsEl.innerHTML = '<div class="city-result"><div class="city-name" style="color: var(--ink-faint);">Aucun résultat</div></div>';
+        resultsEl.classList.remove('hidden');
+        return;
+      }
+      resultsEl.innerHTML = results.map((c, i) => `
+        <div class="city-result" data-idx="${i}">
+          <div class="city-name">${c.name}</div>
+          <div class="city-region">${[c.admin1, c.country].filter(Boolean).join(' · ')}</div>
+        </div>`).join('');
+      resultsEl.classList.remove('hidden');
+      resultsEl.querySelectorAll('.city-result[data-idx]').forEach(el => {
+        el.addEventListener('click', () => {
+          const c = results[parseInt(el.dataset.idx)];
+          onPick({
+            name: c.name, lat: c.latitude, lon: c.longitude,
+            admin1: c.admin1, country: c.country, timezone: c.timezone
+          });
+        });
+      });
+    } catch(e) {
+      console.warn('city search failed', e);
+      resultsEl.innerHTML = '<div class="city-result"><div class="city-name" style="color: var(--bad);">Erreur réseau — réessaie</div></div>';
+      resultsEl.classList.remove('hidden');
+    }
+  }, 300);
+}
+
+function finishOnboarding(skipMeteo) {
+  if (onbStep === 1) onbData.name = document.getElementById('onbName').value.trim();
+  if (onbStep === 2 || !onbData.volume) {
+    if (onbData.volumeMode === 'm3') {
+      const v = parseFloat((document.getElementById('onbVolume').value || '').replace(',', '.'));
+      if (v && v >= 1) onbData.volume = v;
+    }
+  }
+  const typedCity = document.getElementById('onbCity') ? document.getElementById('onbCity').value.trim() : '';
+  if (!onbData.location && typedCity && !skipMeteo) onbData.location = { name: typedCity };
+  if (!onbData.volume) { showToast('Le volume est nécessaire', true); setOnbStep(2); return; }
+  if (!onbData.name) onbData.name = 'Ma piscine';
+
+  state.config = {
+    name: onbData.name,
+    volume: onbData.volume,
+    location: skipMeteo ? null : onbData.location,
+    created: Date.now()
+  };
+  saveKey(KEYS.config, state.config);
+
+  document.getElementById('onboarding').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('appNav').style.display = 'flex';
+
+  initAppUI();
+  showToast('Bienvenue ' + state.config.name);
+}
+
+// APP INIT
+function initAppUI() {
+  document.getElementById('hdrEyebrow').textContent = state.config.name.toUpperCase();
+  document.getElementById('hdrLocation').textContent = state.config.location ? state.config.location.name.toUpperCase() : 'SANS LOCALISATION';
+  document.getElementById('hdrVolume').textContent = state.config.volume.toLocaleString('fr-FR') + ' m³';
+
+  document.getElementById('aideVolume').textContent = state.config.volume.toLocaleString('fr-FR') + ' m³';
+  document.getElementById('aideThird').textContent = '≈ ' + (state.config.volume / 3).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' m³';
+  document.getElementById('aideHalf').textContent = '≈ ' + (state.config.volume / 2).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' m³';
+
+  document.getElementById('setName').value = state.config.name;
+  document.getElementById('setVolume').value = state.config.volume;
+  document.getElementById('setCurrentCity').textContent = state.config.location ? state.config.location.name : 'aucune';
+  document.getElementById('settingsMeasureCount').textContent = state.measures.length + (state.measures.length > 1 ? ' entrées' : ' entrée');
+  hydrateAdvancedSettings();
+
+  const slider = document.getElementById('tempSlider');
+  slider.addEventListener('input', (e) => {
+    updateFiltration();
+    saveKey(KEYS.lastTemp, parseFloat(e.target.value));
+  });
+  const lastTemp = loadKey(KEYS.lastTemp, null);
+  if (lastTemp != null) slider.value = lastTemp;
+
+  setTimeout(positionSegmentIndicator, 100);
+
+  updateFiltration();
+  renderDashboard();
+  renderHistory();
+  renderRoutines();
+  renderProblems();
+  renderActions();
+  renderPiscinier();
+  updateSyncStatus();
+  startRealtimeSync();
+
+  const notifEnabled = loadKey(KEYS.notifEnabled, false);
+  if (notifEnabled && 'Notification' in window && Notification.permission === 'granted') {
+    document.getElementById('notifSwitch').classList.add('on');
+    scheduleNotifications();
+  }
+
+  if (state.config.location) {
+    refreshMeteo();
+  } else {
+    document.getElementById('meteoContent').innerHTML = `
+      <div class="card">
+        <div class="card-title">Pas de localisation configurée</div>
+        <p style="font-size: 13px; color: var(--ink-dim); margin-top: 8px;">
+          Configure une ville dans les Réglages pour voir la météo et les estimations de température de l'eau.
+        </p>
+        <button class="btn" onclick="switchTab('settings')" style="margin-top: 14px;">Aller aux réglages</button>
+      </div>`;
+  }
+
+  maybeShowInstallBanner();
+}
+
+function saveSettings(section) {
+  if (section === 'pool') {
+    const name = document.getElementById('setName').value.trim() || 'Ma piscine';
+    const vol = parseFloat(document.getElementById('setVolume').value.toString().replace(',', '.'));
+    if (!vol || vol < 1) { showToast('Volume invalide', true); return; }
+    state.config.name = name;
+    state.config.volume = vol;
+    saveKey(KEYS.config, state.config);
+    initAppUI();
+    showToast('Réglages enregistrés ✓');
+  }
+}
+
+function confirmReset() {
+  if (!confirm('Supprimer toutes les données et recommencer la configuration ?\n\nCette action est irréversible.')) return;
+  Object.values(KEYS).forEach(k => localStorage.removeItem(k));
+  location.reload();
+}
+
+// TABS
+function switchTab(tab) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + tab).classList.add('active');
+  document.querySelectorAll('.nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// STATUS
+function phStatus(v) {
+  if (v == null || isNaN(v)) return 'neutral';
+  if (v < 6.8 || v > 7.8) return 'bad';
+  if (v < 7.2 || v > 7.4) return 'warn';
+  return 'good';
+}
+function clStatus(v) {
+  if (v == null || isNaN(v)) return 'neutral';
+  if (v < 0.5 || v > 5) return 'bad';
+  if (v < 1 || v > 3) return 'warn';
+  return 'good';
+}
+function tacStatus(v) {
+  if (v == null || isNaN(v)) return 'neutral';
+  if (v < 60 || v > 150) return 'bad';
+  if (v < 80 || v > 120) return 'warn';
+  return 'good';
+}
+function cyaStatus(v) {
+  if (v == null || isNaN(v)) return 'neutral';
+  if (v >= 75) return 'bad';
+  if (v < 20 || v > 60) return 'warn';
+  return 'good';
+}
+
+const statusColors = { good: '#7ac74f', warn: '#ffb454', bad: '#e94e4e', neutral: 'rgba(241, 248, 251, 0.18)' };
+const statusLabel = { good: 'Équilibre parfait', warn: 'À ajuster', bad: 'Intervention nécessaire', neutral: 'Aucune mesure récente' };
+
+function renderDashboard() {
+  const last = state.measures[0];
+  const setInd = (id, status) => { const el = document.getElementById(id); if (el) el.style.background = statusColors[status]; };
+
+  if (!last) {
+    document.getElementById('val-ph').textContent = '—';
+    document.getElementById('val-cl').innerHTML = '—<span class="small">mg/L</span>';
+    document.getElementById('val-tac').innerHTML = '—<span class="small">ppm</span>';
+    document.getElementById('val-cya').innerHTML = '—<span class="small">mg/L</span>';
+    setInd('ind-ph','neutral'); setInd('ind-cl','neutral'); setInd('ind-tac','neutral'); setInd('ind-cya','neutral');
+    document.getElementById('overallStatus').textContent = '—';
+    document.getElementById('overallBadge').className = 'hero-status status-neutral';
+    document.getElementById('overallText').textContent = 'Aucune mesure enregistrée';
+    return;
+  }
+
+  const fmt = (v, dec) => v != null && !isNaN(v) ? Number(v).toLocaleString('fr-FR', { minimumFractionDigits: dec === 0 ? 0 : 1, maximumFractionDigits: dec }) : '—';
+
+  document.getElementById('val-ph').textContent = fmt(last.ph, 2);
+  document.getElementById('val-cl').innerHTML = fmt(last.cl, 1) + '<span class="small">mg/L</span>';
+  document.getElementById('val-tac').innerHTML = fmt(last.tac, 0) + '<span class="small">ppm</span>';
+  document.getElementById('val-cya').innerHTML = fmt(last.cya, 0) + '<span class="small">mg/L</span>';
+
+  const s = { ph: phStatus(last.ph), cl: clStatus(last.cl), tac: tacStatus(last.tac), cya: cyaStatus(last.cya) };
+  setInd('ind-ph', s.ph); setInd('ind-cl', s.cl); setInd('ind-tac', s.tac); setInd('ind-cya', s.cya);
+
+  const order = { good: 0, warn: 1, bad: 2, neutral: -1 };
+  let worst = 'good';
+  ['ph','cl','tac','cya'].forEach(k => { if (order[s[k]] > order[worst]) worst = s[k]; });
+
+  let pct = '—';
+  let count = 0, score = 0;
+  Object.values(s).forEach(st => {
+    if (st === 'neutral') return;
+    count++;
+    score += st === 'good' ? 100 : st === 'warn' ? 60 : 20;
+  });
+  if (count > 0) pct = Math.round(score / count);
+
+  document.getElementById('overallStatus').innerHTML = pct === '—' ? '—' : pct + '<span class="unit">/100</span>';
+  document.getElementById('overallBadge').className = 'hero-status status-' + worst;
+  document.getElementById('overallText').textContent = statusLabel[worst];
+}
+
+function getNumberInputs() {
+  const num = (id) => {
+    const v = document.getElementById(id).value.replace(',', '.');
+    return v === '' ? null : parseFloat(v);
+  };
+  return { ph: num('in-ph'), cl: num('in-cl'), tac: num('in-tac'), cya: num('in-cya'), th: num('in-th'), temp: num('in-temp') };
+}
+
+function saveMeasure() {
+  const m_inputs = getNumberInputs();
+  const m = Object.assign({ ts: Date.now() }, m_inputs);
+
+  if (m.ph == null && m.cl == null && m.tac == null && m.cya == null && m.th == null && m.temp == null) {
+    showToast('Saisis au moins une valeur', true);
+    return;
+  }
+
+  state.measures.unshift(m);
+  if (state.measures.length > 100) state.measures = state.measures.slice(0, 100);
+  const ok = saveKey(KEYS.measures, state.measures);
+  if (!ok) { showToast('Échec sauvegarde', true); return; }
+
+  if (m.temp != null) {
+    document.getElementById('tempSlider').value = m.temp;
+    saveKey(KEYS.lastTemp, m.temp);
+    updateFiltration();
+  }
+
+  const advice = buildDiagnostic(m_inputs);
+  ['in-ph','in-cl','in-tac','in-cya','in-th','in-temp'].forEach(id => document.getElementById(id).value = '');
+
+  renderDashboard();
+  renderHistory();
+  renderDiagnostic(advice, true);
+  document.getElementById('settingsMeasureCount').textContent = state.measures.length + (state.measures.length > 1 ? ' entrées' : ' entrée');
+  hydrateAdvancedSettings();
+  pushRealtimeState();
+  showToast('Mesure enregistrée ✓');
+}
+
+function analyzeMeasure() {
+  const m = getNumberInputs();
+  if (m.ph == null && m.cl == null && m.tac == null && m.cya == null && m.th == null && m.temp == null) {
+    showToast('Saisis au moins une valeur', true);
+    return;
+  }
+  const advice = buildDiagnostic(m);
+  renderDiagnostic(advice, false);
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  const count = document.getElementById('historyCount');
+  if (state.measures.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">🧪</div>Aucune mesure enregistrée<br>pour le moment.</div>';
+    count.textContent = 'aucune mesure';
+    return;
+  }
+  count.textContent = state.measures.length + (state.measures.length > 1 ? ' entrées' : ' entrée');
+
+  const days = ['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'];
+  const months = ['janv','févr','mars','avr','mai','juin','juil','août','sept','oct','nov','déc'];
+  const fmt = (v) => v != null ? Number(v).toLocaleString('fr-FR') : null;
+  const sCls = (s) => 's-' + s;
+
+  list.innerHTML = state.measures.slice(0, 20).map((m, i) => {
+    const d = new Date(m.ts);
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const vals = [];
+    if (m.ph != null) vals.push('<span class="' + sCls(phStatus(m.ph)) + '"><span class="k">pH</span><span class="v">' + fmt(m.ph) + '</span></span>');
+    if (m.cl != null) vals.push('<span class="' + sCls(clStatus(m.cl)) + '"><span class="k">Cl</span><span class="v">' + fmt(m.cl) + '</span></span>');
+    if (m.tac != null) vals.push('<span class="' + sCls(tacStatus(m.tac)) + '"><span class="k">ALK</span><span class="v">' + fmt(m.tac) + '</span></span>');
+    if (m.cya != null) vals.push('<span class="' + sCls(cyaStatus(m.cya)) + '"><span class="k">CYA</span><span class="v">' + fmt(m.cya) + '</span></span>');
+    if (m.th != null) vals.push('<span><span class="k">TH</span><span class="v">' + fmt(m.th) + '</span></span>');
+    if (m.temp != null) vals.push('<span><span class="k">T°</span><span class="v">' + fmt(m.temp) + '°</span></span>');
+
+    return '<div class="history-item">' +
+      '<div class="history-date"><strong>' + d.getDate() + ' ' + months[d.getMonth()] + '</strong>' +
+      days[d.getDay()] + ' · ' + hh + ':' + mm + '</div>' +
+      '<div class="history-vals">' + vals.join('') + '</div>' +
+      '<button class="del-btn" onclick="deleteMeasure(' + i + ')">✕</button>' +
+      '</div>';
+  }).join('');
+}
+
+function deleteMeasure(idx) {
+  state.measures.splice(idx, 1);
+  saveKey(KEYS.measures, state.measures);
+  renderHistory();
+  renderDashboard();
+  document.getElementById('settingsMeasureCount').textContent = state.measures.length + (state.measures.length > 1 ? ' entrées' : ' entrée');
+  hydrateAdvancedSettings();
+  pushRealtimeState();
+  showToast('Mesure supprimée');
+}
+
+// DIAGNOSTIC ENGINE
+function buildDiagnostic(m) {
+  const advice = [];
+  const V = state.config.volume;
+
+  if (m.ph != null && !isNaN(m.ph)) {
+    if (m.ph >= 7.2 && m.ph <= 7.4) {
+      advice.push({ param: 'pH', status: 'good', value: m.ph.toFixed(1), icon: '✓', title: 'pH parfaitement équilibré', body: 'Le chlore agit à pleine efficacité. Rien à faire, continue comme ça.' });
+    } else if (m.ph < 7.2) {
+      const isVeryLow = m.ph < 6.8;
+      const actions = [];
+      if (isVeryLow) actions.push({ b: '!', t: '<strong>Eau corrosive</strong> pour les équipements et inconfortable à la baignade.' });
+      const gap = (7.3 - m.ph) * 10;
+      const grams = Math.round(gap * 12 * V / 10);
+      actions.push({ b: '→', t: 'Ajouter du <strong>pH+</strong> : environ <code>' + grams + ' g</code> (dilué dans un seau, versé devant les buses).' });
+      actions.push({ b: '→', t: 'Filtration <strong>au moins 4 h</strong> après ajout.' });
+      actions.push({ b: '→', t: 'Re-tester <strong>après 6 h</strong>, ajuster par petites doses.' });
+      advice.push({ param: 'pH', status: isVeryLow ? 'bad' : 'warn', value: m.ph.toFixed(1), icon: '↓', title: 'pH trop bas (acide)', body: 'Si le TAC est aussi bas, traite-le d\'abord : il stabilise le pH naturellement.', actions });
+    } else {
+      const isVeryHigh = m.ph > 7.8;
+      const actions = [];
+      if (isVeryHigh) actions.push({ b: '!', t: '<strong>Chlore peu efficace</strong> au-dessus de 7.8 : à 8.0 il ne désinfecte plus qu\'à ~20 %.' });
+      const gap = (m.ph - 7.3) * 10;
+      const grams = Math.round(gap * 15 * V / 10);
+      actions.push({ b: '→', t: 'Ajouter du <strong>pH−</strong> : environ <code>' + grams + ' g</code> (dilué, versé devant les buses).' });
+      actions.push({ b: '→', t: 'Filtration <strong>4 h minimum</strong> après ajout.' });
+      actions.push({ b: '→', t: 'Re-tester après 6 h, ajuster par petites doses.' });
+      if (m.th != null && m.th > 25) actions.push({ b: '→', t: 'Eau dure : surveille les dépôts blancs, un <strong>anti-calcaire</strong> peut aider.' });
+      advice.push({ param: 'pH', status: isVeryHigh ? 'bad' : 'warn', value: m.ph.toFixed(1), icon: '↑', title: 'pH trop haut (basique)', body: 'Vérifie aussi le TAC : trop élevé, il maintient le pH haut.', actions });
+    }
+  }
+
+  if (m.cl != null && !isNaN(m.cl)) {
+    if (m.cl >= 1 && m.cl <= 3) {
+      advice.push({ param: 'Chlore libre', status: 'good', value: m.cl.toFixed(1) + ' ppm', icon: '✓', title: 'Chlore au bon niveau', body: 'La désinfection se fait correctement. Continue à surveiller 2-3 fois/semaine en été.' });
+    } else if (m.cl < 1) {
+      const isZero = m.cl < 0.3;
+      const actions = [];
+      if (isZero) actions.push({ b: '!', t: '<strong>Risque d\'algues et bactéries imminent.</strong> Pas de baignade.' });
+      if (m.cl < 0.5) {
+        const chocGrams = Math.round(20 * V);
+        actions.push({ b: '→', t: '<strong>Chlore choc</strong> : ~<code>' + chocGrams + ' g</code> (suivre dosage produit). Filtration <strong>24 h en continu</strong> après.' });
+      }
+      actions.push({ b: '→', t: 'Vérifier le diffuseur : <strong>ajouter un galet</strong> ou ouvrir davantage le doseur.' });
+      if (m.cya != null && m.cya < 20) actions.push({ b: '!', t: 'Stabilisant à <code>' + m.cya + ' mg/L</code> trop bas → le chlore est <strong>détruit par les UV en quelques heures</strong>.' });
+      actions.push({ b: '→', t: 'Re-tester <strong>après 12 h</strong> de filtration.' });
+
+      const causes = [];
+      if (m.ph != null && m.ph > 7.5) causes.push('pH élevé (chlore inefficace)');
+      if (m.cya != null && m.cya > 75) causes.push('stabilisant saturé');
+      if (m.cya != null && m.cya < 20) causes.push('stabilisant insuffisant');
+      if (m.temp != null && m.temp >= 28) causes.push('eau chaude');
+
+      advice.push({ param: 'Chlore libre', status: isZero ? 'bad' : 'warn', value: m.cl.toFixed(1) + ' ppm', icon: '↓', title: isZero ? 'Chlore quasiment nul' : 'Chlore trop bas', body: causes.length ? '<strong>Cause probable :</strong> ' + causes.join(', ') + '.' : 'Augmente le dosage avant que des algues n\'apparaissent.', actions });
+    } else {
+      const actions = [
+        { b: '→', t: '<strong>Retirer les galets</strong> du diffuseur pendant 24-48 h.' },
+        { b: '→', t: 'Laisser baisser naturellement (soleil + filtration).' },
+        { b: '→', t: '<strong>Pas de baignade</strong> tant que > 3 mg/L (irrite yeux/peau).' },
+        { b: '→', t: 'Re-tester chaque jour.' }
+      ];
+      advice.push({ param: 'Chlore libre', status: m.cl > 5 ? 'bad' : 'warn', value: m.cl.toFixed(1) + ' ppm', icon: '↑', title: 'Chlore trop élevé', body: 'Surdosage : irritant et inutile.', actions });
+    }
+  }
+
+  if (m.tac != null && !isNaN(m.tac)) {
+    if (m.tac >= 80 && m.tac <= 120) {
+      advice.push({ param: 'Alcalinité', status: 'good', value: Math.round(m.tac) + ' ppm', icon: '✓', title: 'Alcalinité idéale', body: 'Le pH va rester stable. Bonne base pour tout le reste.' });
+    } else if (m.tac < 80) {
+      const grams = Math.round((100 - m.tac) * 1.7 * V);
+      advice.push({ param: 'Alcalinité', status: 'warn', value: Math.round(m.tac) + ' ppm', icon: '↓', title: 'Alcalinité trop basse', body: 'Sans tampon, le pH peut faire le yo-yo. À corriger en premier.', actions: [
+        { b: '!', t: 'TAC bas → <strong>pH instable</strong>.' },
+        { b: '→', t: 'Ajouter du <strong>TAC+ / alcalinité+</strong> : ~<code>' + grams + ' g</code> à diluer.' },
+        { b: '→', t: 'Traiter le TAC <strong>avant</strong> le pH.' },
+        { b: '→', t: 'Filtration 4-6 h, re-tester après 24 h.' }
+      ]});
+    } else {
+      advice.push({ param: 'Alcalinité', status: 'warn', value: Math.round(m.tac) + ' ppm', icon: '↑', title: 'Alcalinité trop élevée', body: 'Cela "bloque" le pH en haut.', actions: [
+        { b: '→', t: 'Baisser le pH à 7.0 avec du <strong>pH−</strong>, le TAC suit.' },
+        { b: '→', t: 'Aérer (jets, fontaine) accélère la baisse.' },
+        { b: '→', t: 'Re-tester TAC + pH <strong>après 48 h</strong>.' }
+      ]});
+    }
+  }
+
+  if (m.cya != null && !isNaN(m.cya)) {
+    if (m.cya >= 30 && m.cya <= 50) {
+      advice.push({ param: 'Stabilisant', status: 'good', value: Math.round(m.cya) + ' ppm', icon: '✓', title: 'Stabilisant idéal', body: 'Le chlore est protégé des UV juste ce qu\'il faut.' });
+    } else if (m.cya < 30) {
+      const actions = [];
+      if (m.cya < 20) actions.push({ b: '!', t: '<strong>Le chlore est détruit en quelques heures par le soleil.</strong>' });
+      const grams = Math.round((40 - m.cya) * V);
+      actions.push({ b: '→', t: 'Ajouter du <strong>stabilisant</strong> : ~<code>' + grams + ' g</code>. Verser dans le skimmer pompe en marche.' });
+      actions.push({ b: '→', t: 'Se dissout <strong>lentement</strong> (jusqu\'à 1 semaine). Re-tester dans 7 jours.' });
+      advice.push({ param: 'Stabilisant', status: m.cya < 20 ? 'bad' : 'warn', value: Math.round(m.cya) + ' ppm', icon: '↓', title: 'Stabilisant insuffisant', body: 'Sans assez de stabilisant, le chlore ne tient pas face aux UV.', actions });
+    } else if (m.cya <= 75) {
+      advice.push({ param: 'Stabilisant', status: 'warn', value: Math.round(m.cya) + ' ppm', icon: '↑', title: 'Stabilisant à la limite haute', body: 'Encore acceptable, mais surveille.', actions: [
+        { b: '→', t: 'Limiter le <strong>chlore stabilisé</strong> (galets classiques).' },
+        { b: '→', t: 'Pour le choc, prendre une version <strong>non stabilisée</strong> (hypochlorite de calcium).' }
+      ]});
+    } else {
+      const t = (m.cya - 40) / m.cya;
+      const m3 = Math.round(t * V * 10) / 10;
+      const litres = Math.round(t * V * 1000);
+      advice.push({ param: 'Stabilisant', status: 'bad', value: Math.round(m.cya) + ' ppm', icon: '!', title: 'Stabilisant saturé : action requise', body: 'Au-delà de 75 mg/L, le chlore est "bloqué". Vidange partielle obligatoire.', actions: [
+        { b: '!', t: '<strong>Le chlore devient inefficace</strong> : risque d\'eau verte.' },
+        { b: '→', t: '<strong>Vidange partielle</strong> : remplacer ~<code>' + m3 + ' m³</code> (' + litres + ' L) pour viser 40 mg/L.' },
+        { b: '→', t: 'Vidanger via vanne <strong>"Égout / Waste"</strong>. Compléter pendant le pompage.' },
+        { b: '→', t: 'Re-tester pH, TAC et chlore <strong>après remplissage</strong>.' }
+      ]});
+    }
+  }
+
+  if (m.th != null && !isNaN(m.th)) {
+    if (m.th >= 15 && m.th <= 25) {
+      advice.push({ param: 'TH / Dureté', status: 'good', value: Math.round(m.th) + ' °f', icon: '✓', title: 'Dureté de l\'eau idéale', body: 'Équilibre minéral correct.' });
+    } else if (m.th < 15) {
+      advice.push({ param: 'TH / Dureté', status: 'warn', value: Math.round(m.th) + ' °f', icon: '↓', title: 'Eau trop douce', body: 'Légèrement agressive pour le liner et joints.', actions: [{ b: '→', t: 'Pas urgent. Un <strong>correcteur de dureté</strong> peut aider si persistant.' }]});
+    } else {
+      advice.push({ param: 'TH / Dureté', status: 'warn', value: Math.round(m.th) + ' °f', icon: '↑', title: 'Eau dure (calcaire)', body: 'Risque de dépôts sur ligne d\'eau et échelle.', actions: [
+        { b: '→', t: 'Maintenir pH à <strong>7.2</strong>.' },
+        { b: '→', t: 'Ajouter un <strong>anti-calcaire</strong> séquestrant.' },
+        { b: '→', t: 'Nettoyer la ligne d\'eau chaque semaine.' }
+      ]});
+    }
+  }
+
+  if (m.temp != null && !isNaN(m.temp)) {
+    if (m.temp >= 28) {
+      const hours = '24/24';
+      advice.push({ param: 'Température eau', status: 'warn', value: m.temp.toFixed(1) + '°C', icon: '☀', title: 'Eau chaude : filtration 24/24', body: 'Le chlore se consomme vite et les algues prolifèrent.', actions: [
+        { b: '→', t: 'Filtration : <strong>' + hours + '</strong> par jour, en journée.' },
+        { b: '→', t: 'Contrôler le chlore <strong>tous les jours</strong>.' },
+        { b: '→', t: 'Vérifier le stabilisant : 40-50 mg/L pour tenir.' }
+      ]});
+    } else if (m.temp >= 20) {
+      const hours = Math.round(m.temp / 2);
+      advice.push({ param: 'Température eau', status: 'good', value: m.temp.toFixed(1) + '°C', icon: '💧', title: 'Température d\'été normale', body: 'Règle : filtration ≈ T° ÷ 2. Soit <strong>' + hours + ' h/jour</strong> à cette température.' });
+    }
+  }
+
+  return advice;
+}
+
+function renderDiagnostic(advice, persisted) {
+  const c = document.getElementById('adviceContainer');
+  if (advice.length === 0) { c.innerHTML = ''; return; }
+
+  const counts = { good: 0, warn: 0, bad: 0 };
+  advice.forEach(a => counts[a.status]++);
+
+  let summaryText;
+  if (counts.bad > 0) {
+    summaryText = '<strong>' + counts.bad + '</strong> action urgente' + (counts.bad > 1 ? 's' : '') + ' à mener';
+    if (counts.warn) summaryText += ', ' + counts.warn + ' ajustement' + (counts.warn > 1 ? 's' : '');
+  } else if (counts.warn > 0) {
+    summaryText = '<strong>' + counts.warn + '</strong> paramètre' + (counts.warn > 1 ? 's' : '') + ' à ajuster';
+    if (counts.good) summaryText += ', ' + counts.good + ' OK';
+  } else {
+    summaryText = '<strong>Tout est au vert</strong> — ' + counts.good + ' paramètre' + (counts.good > 1 ? 's' : '') + ' dans la cible';
+  }
+
+  const persistedNote = persisted ? '<div style="text-align:center; color: var(--leaf); font-size: 12px; margin-top: 10px;">✓ Mesure enregistrée dans l\'historique</div>' : '';
+
+  const cardsHTML = advice.map(a => {
+    const actionsHTML = a.actions ? '<div class="advice-actions">' + a.actions.map(act => '<div class="advice-action"><span class="bullet">' + act.b + '</span><span>' + act.t + '</span></div>').join('') + '</div>' : '';
+    return '<div class="advice-card ' + a.status + '">' +
+      '<div class="advice-head">' +
+        '<div class="advice-icon">' + a.icon + '</div>' +
+        '<div class="advice-title"><span class="param">' + a.param + '</span>' + a.title + '</div>' +
+        '<div class="advice-value">' + a.value + '</div>' +
+      '</div>' +
+      '<div class="advice-body">' + a.body + '</div>' +
+      actionsHTML +
+    '</div>';
+  }).join('');
+
+  c.innerHTML = '<div class="card">' +
+    '<div class="card-title">Diagnostic</div>' +
+    '<div class="card-sub">' + advice.length + ' paramètre' + (advice.length > 1 ? 's' : '') + ' analysé' + (advice.length > 1 ? 's' : '') + '</div>' +
+    '<div class="advice-summary">' + summaryText + '</div>' +
+    cardsHTML +
+    persistedNote +
+  '</div>';
+
+  setTimeout(() => c.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+}
+
+// FILTRATION CALC
+function updateFiltration() {
+  const slider = document.getElementById('tempSlider');
+  const t = parseFloat(slider.value);
+  const pct = ((t - 15) / (34 - 15)) * 100;
+  slider.style.setProperty('--val', pct + '%');
+
+  document.getElementById('tempEcho').textContent = t.toLocaleString('fr-FR') + ' °C';
+
+  let hours = Math.round(t / 2);
+  if (t >= 28) hours = 24;
+  hours = Math.max(4, Math.min(24, hours));
+
+  document.getElementById('filtHours').textContent = hours === 24 ? '24 h' : hours + ' h';
+
+  const startH = Math.max(6, Math.round(12 - hours / 2));
+  const endH = Math.min(24, startH + hours);
+  const fmt = (h) => h === 24 ? '00h' : (h + 'h');
+  document.getElementById('filtSchedule').textContent = hours === 24 ? 'filtration 24/24 recommandée (> 28°C)' : 'idéal : ' + fmt(startH) + ' → ' + fmt(endH);
+}
+
+// ROUTINES
+const routineDefs = {
+  daily: { pill: 'Tous les 2 jours · été', items: [
+    'Vérifier visuellement l\'eau',
+    'Vérifier le niveau d\'eau (milieu skimmer)',
+    'Contrôler pH + chlore',
+    'Ajuster le diffuseur de chlore si besoin'
+  ]},
+  weekly: { pill: 'Une fois par semaine', items: [
+    'Brosser parois + ligne d\'eau',
+    'Passer l\'épuisette',
+    'Aspirer le fond du bassin',
+    'Nettoyer panier skimmer',
+    'Nettoyer panier pompe',
+    'Vérifier la pression du filtre',
+    'Backwash si la pression est haute',
+    'Ajouter chlore lent si besoin'
+  ]},
+  monthly: { pill: 'Une fois par mois', items: [
+    "Tester l'alcalinité / TAC",
+    'Tester le stabilisant (CYA)',
+    'Vérifier le TH / calcaire',
+    'Nettoyage profond de la ligne d\'eau',
+    'Contrôle complet de l\'eau'
+  ]}
+};
+const routinePeriodMs = {
+  daily: 2 * 24 * 3600 * 1000,
+  weekly: 7 * 24 * 3600 * 1000,
+  monthly: 30 * 24 * 3600 * 1000
+};
+let currentPeriod = 'daily';
+
+function positionSegmentIndicator() {
+  const seg = document.querySelector('.segment');
+  const active = seg ? seg.querySelector('button.active') : null;
+  const indicator = document.getElementById('segIndicator');
+  if (!active || !indicator) return;
+  indicator.style.left = active.offsetLeft + 'px';
+  indicator.style.width = active.offsetWidth + 'px';
+}
+
+function switchRoutine(p, btn) {
+  currentPeriod = p;
+  document.querySelectorAll('.segment button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  positionSegmentIndicator();
+  renderRoutines();
+}
+
+function renderRoutines() {
+  const now = Date.now();
+  const lastReset = state.routinesReset[currentPeriod] || 0;
+  if (now - lastReset > routinePeriodMs[currentPeriod]) {
+    state.routines[currentPeriod] = {};
+    state.routinesReset[currentPeriod] = now;
+    saveKey(KEYS.routines, { routines: state.routines, resets: state.routinesReset });
+  }
+
+  const def = routineDefs[currentPeriod];
+  document.getElementById('routinePill').textContent = def.pill;
+  document.getElementById('routineList').innerHTML = def.items.map((txt, i) => {
+    const done = state.routines[currentPeriod][i];
+    return '<div class="check ' + (done ? 'done' : '') + '" onclick="toggleRoutine(' + i + ')">' +
+      '<div class="check-box"></div>' +
+      '<div class="check-text">' + txt + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function toggleRoutine(idx) {
+  state.routines[currentPeriod][idx] = !state.routines[currentPeriod][idx];
+  saveKey(KEYS.routines, { routines: state.routines, resets: state.routinesReset });
+  pushRealtimeState();
+  renderRoutines();
+}
+
+// PROBLEMS
+const problems = [
+  { icon: '🟢', name: 'Eau verte', cause: 'Manque de chlore, filtration insuffisante, pH trop haut — ou stabilisant trop élevé.', fix: '1) pH à 7,2 — 2) chlore choc — 3) filtration 24 à 48 h en continu. Si chlore présent mais eau verte → contrôler stabilisant (vidange partielle si > 75 mg/L).' },
+  { icon: '💨', name: 'Eau trouble', cause: 'Filtre encrassé, pH déséquilibré, manque de chlore.', fix: 'Backwash du filtre + contrôle pH/chlore. Si persistant : floculant compatible filtre à sable.' },
+  { icon: '🪨', name: 'Parois glissantes', cause: 'Début d\'algues.', fix: 'Brossage énergique + chlore choc + filtration continue 24 h.' },
+  { icon: '⚪', name: 'Chlore à 0', cause: 'Trop de soleil, baignade intensive, dosage insuffisant.', fix: 'Augmenter le dosage, contrôler le stabilisant (s\'il est très bas, le chlore est détruit par les UV).' },
+  { icon: '🟢', name: 'Chlore présent mais eau verte', cause: 'Stabilisant (CYA) trop élevé : le chlore est "bloqué".', fix: 'Vidange partielle : renouveler 1/3 à 1/2 du bassin. Puis réajuster pH et chlore.' },
+  { icon: '🤍', name: 'Dépôt blanc / calcaire', cause: 'pH trop haut + eau calcaire.', fix: 'Baisser le pH à 7,2 – 7,4. Anti-calcaire si les dépôts persistent.' },
+  { icon: '👃', name: 'Forte odeur de chlore', cause: 'Chloramines — signe de chlore INSUFFISANT.', fix: 'Chlore choc + filtration continue 24 h.' },
+  { icon: '📉', name: 'Pression filtre élevée', cause: 'Sable encrassé.', fix: 'Procédure backwash → rinçage → filtration.' },
+  { icon: '💧', name: 'Niveau d\'eau bas', cause: 'Évaporation, fuite, baignade intense.', fix: 'Compléter jusqu\'au milieu du skimmer. Si baisse rapide anormale → suspecter une fuite.' }
+];
+
+function renderProblems() {
+  document.getElementById('problemsList').innerHTML = problems.map(p => 
+    '<div class="problem" onclick="this.classList.toggle(\'open\')">' +
+      '<div class="problem-head">' +
+        '<div class="problem-icon">' + p.icon + '</div>' +
+        '<div class="problem-name">' + p.name + '</div>' +
+        '<svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>' +
+      '</div>' +
+      '<div class="problem-body">' +
+        '<div class="lbl">Cause probable</div><p>' + p.cause + '</p>' +
+        '<div class="lbl">Solution</div><p>' + p.fix + '</p>' +
+      '</div>' +
+    '</div>'
+  ).join('');
+}
+
+// METEO
+function estimateWaterTemp(dailyTemps, dayIndex, sunshineHours) {
+  const start = Math.max(0, dayIndex - 2);
+  const end = Math.min(dailyTemps.length, dayIndex + 1);
+  let sum = 0, count = 0;
+  for (let i = start; i < end; i++) { sum += dailyTemps[i]; count++; }
+  const airAvg = sum / count;
+  const sunBonus = Math.min(3, (sunshineHours || 0) / 10 * 3);
+  return Math.round((0.82 * airAvg + sunBonus) * 10) / 10;
+}
+
+function wmoIcon(code) {
+  if (code === 0) return '☀';
+  if (code <= 2) return '⛅';
+  if (code === 3) return '☁';
+  if (code <= 48) return '🌫';
+  if (code <= 57) return '🌦';
+  if (code <= 67) return '🌧';
+  if (code <= 77) return '❄';
+  if (code <= 82) return '🌧';
+  if (code <= 86) return '🌨';
+  return '⛈';
+}
+function wmoDesc(code) {
+  if (code === 0) return 'Ciel dégagé';
+  if (code === 1) return 'Plutôt ensoleillé';
+  if (code === 2) return 'Partiellement nuageux';
+  if (code === 3) return 'Couvert';
+  if (code <= 48) return 'Brouillard';
+  if (code <= 57) return 'Bruine';
+  if (code <= 67) return 'Pluie';
+  if (code <= 77) return 'Neige';
+  if (code <= 82) return 'Averses';
+  if (code <= 86) return 'Averses de neige';
+  return 'Orage';
+}
+
+async function fetchMeteo() {
+  if (!state.config.location) return null;
+  const loc = state.config.location;
+  const tz = loc.timezone || 'auto';
+  const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + loc.lat + '&longitude=' + loc.lon + '&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunshine_duration&timezone=' + encodeURIComponent(tz) + '&forecast_days=7';
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    const daily = data.daily;
+    const tmaxs = daily.temperature_2m_max;
+    const sunHours = (daily.sunshine_duration || []).map(s => s / 3600);
+    const forecast = daily.time.map((date, i) => ({
+      date, tmax: tmaxs[i], tmin: daily.temperature_2m_min[i],
+      code: daily.weather_code[i],
+      sunHours: sunHours[i] || 0,
+      waterTemp: estimateWaterTemp(tmaxs, i, sunHours[i] || 0)
+    }));
+    const result = {
+      ts: Date.now(),
+      city: loc.name,
+      current: { temp: data.current.temperature_2m, code: data.current.weather_code },
+      forecast
+    };
+    saveKey(KEYS.meteoCache, result);
+    return result;
+  } catch (e) {
+    console.error('Meteo fetch failed:', e);
+    return null;
+  }
+}
+
+async function refreshMeteo() {
+  if (!state.config.location) return;
+  const cached = loadKey(KEYS.meteoCache, null);
+  if (cached && cached.city === state.config.location.name && Date.now() - cached.ts < 3600 * 1000) {
+    renderMeteo(cached);
+    return;
+  }
+  document.getElementById('meteoContent').innerHTML = '<div class="loading-state"><div class="spinner"></div><div>Actualisation…</div></div>';
+  const data = await fetchMeteo();
+  renderMeteo(data);
+}
+
+function renderMeteo(data) {
+  const c = document.getElementById('meteoContent');
+  const meteoSub = document.getElementById('meteoSub');
+  if (state.config.location) {
+    meteoSub.textContent = 'Prévisions sur 7 jours à ' + state.config.location.name + ', avec estimation de la température de l\'eau et alertes canicule.';
+  }
+
+  if (!data) {
+    c.innerHTML = '<div class="card">' +
+      '<div class="card-title">Météo indisponible</div>' +
+      '<p style="font-size: 13px; color: var(--ink-dim); margin-top: 8px;">Impossible de récupérer la météo. Vérifie ta connexion.</p>' +
+      '<button class="btn btn-ghost" onclick="refreshMeteo()" style="margin-top: 14px;">Réessayer</button>' +
+      '</div>';
+    return;
+  }
+
+  const today = data.forecast[0];
+  const isHot = today.waterTemp >= 28;
+  let alertHTML = '';
+  if (isHot) {
+    const hotDays = data.forecast.filter(d => d.waterTemp >= 28).length;
+    alertHTML = '<div class="alert-banner">' +
+      '<div class="alert-icon">🔥</div>' +
+      '<div class="alert-text">' +
+      '<strong>Filtration 24/24 recommandée</strong>' +
+      'Eau estimée à <strong style="color: var(--bad)">' + today.waterTemp + '°C</strong>' +
+      (hotDays > 1 ? ' · ' + hotDays + ' jours chauds prévus' : '') + '.' +
+      ' Au-delà de 28°C, le chlore se consomme vite. Allonge la filtration au max.' +
+      '</div></div>';
+  }
+
+  const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const months = ['janv','févr','mars','avr','mai','juin','juil','août','sept','oct','nov','déc'];
+  const forecastHTML = data.forecast.map((d, i) => {
+    const dt = new Date(d.date);
+    const dayName = i === 0 ? "Aujourd'hui" : (i === 1 ? 'Demain' : days[dt.getDay()]);
+    const dateLbl = dt.getDate() + ' ' + months[dt.getMonth()];
+    const hotClass = d.waterTemp >= 28 ? 'hot' : '';
+    return '<div class="forecast-row">' +
+      '<div class="forecast-day">' + dayName + '<small>' + dateLbl + '</small></div>' +
+      '<div class="forecast-icon">' + wmoIcon(d.code) + '</div>' +
+      '<div class="forecast-temps"><span class="max">' + Math.round(d.tmax) + '°</span> <span class="min">' + Math.round(d.tmin) + '°</span></div>' +
+      '<div class="forecast-water ' + hotClass + '">~' + d.waterTemp + '°<small>eau</small></div>' +
+    '</div>';
+  }).join('');
+
+  c.innerHTML = alertHTML +
+    '<div class="meteo-hero ' + (isHot ? 'alert' : '') + '">' +
+      '<div style="font-size: 11px; letter-spacing: 0.2em; color: var(--shallow); text-transform: uppercase; margin-bottom: 10px; font-weight: 500;">' + data.city + ' · Maintenant</div>' +
+      '<div class="meteo-temp-now">' +
+        '<div>' +
+          '<div class="big">' + Math.round(data.current.temp) + '<span class="deg">°C</span></div>' +
+          '<div class="meteo-desc">' + wmoDesc(data.current.code) + '</div>' +
+        '</div>' +
+        '<div class="meteo-icon-big">' + wmoIcon(data.current.code) + '</div>' +
+      '</div>' +
+      '<div class="meteo-water-est">' +
+        '<div class="ic">💧</div>' +
+        '<div class="txt">Température eau estimée<br>' +
+          '<strong>~' + today.waterTemp + '°C</strong>' +
+          '<span style="font-size: 11px; color: var(--ink-faint); margin-left: 6px;">→ ' + getFiltrationRecommendation(today.waterTemp) + '</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="card-title">Prévisions 7 jours</div>' +
+      '<div class="card-sub">Estimation eau basée sur air + ensoleillement</div>' +
+      forecastHTML +
+    '</div>' +
+    '<div class="tip">' +
+      '<div class="tip-icon">ℹ</div>' +
+      '<div class="tip-text">L\'estimation de l\'eau est une approximation (≈ 82 % de la moyenne d\'air 3j + bonus soleil). Pour précision, mesure et enregistre dans Mesures.</div>' +
+    '</div>' +
+    '<div class="info-row" style="border:none; padding-top: 8px;">' +
+      '<span class="lbl" style="font-size: 11px; color: var(--ink-faint);">Données : Open-Meteo</span>' +
+      '<button class="del-btn" onclick="refreshMeteo()">Actualiser ↻</button>' +
+    '</div>';
+
+  renderDashAlert(data);
+}
+
+function getFiltrationRecommendation(t) {
+  if (t >= 28) return 'filtration 24/24';
+  if (t >= 26) return 'filtration 14 h';
+  if (t >= 24) return 'filtration 12 h';
+  if (t >= 20) return 'filtration 10 h';
+  return 'filtration 6-8 h';
+}
+
+function renderDashAlert(meteoData) {
+  const div = document.getElementById('dashAlert');
+  if (!div || !meteoData) { if (div) div.innerHTML = ''; return; }
+  const today = meteoData.forecast[0];
+  if (today.waterTemp >= 28) {
+    div.innerHTML = '<div class="alert-banner" style="margin-bottom: 16px;">' +
+      '<div class="alert-icon">🔥</div>' +
+      '<div class="alert-text"><strong>Filtration 24/24 aujourd\'hui</strong>Eau estimée à ' + today.waterTemp + '°C. Allonge la filtration au max.</div>' +
+      '</div>';
+  } else {
+    div.innerHTML = '';
+  }
+}
+
+// NOTIFICATIONS
+function toggleNotifications() {
+  const sw = document.getElementById('notifSwitch');
+  const isOn = sw.classList.contains('on');
+  if (isOn) {
+    sw.classList.remove('on');
+    saveKey(KEYS.notifEnabled, false);
+    showToast('Notifications désactivées');
+    return;
+  }
+  if (!('Notification' in window)) { showToast('Non supporté ici', true); return; }
+  if (Notification.permission === 'denied') {
+    showToast('Permission refusée, change dans les réglages du navigateur', true);
+    return;
+  }
+  Notification.requestPermission().then(perm => {
+    if (perm !== 'granted') { showToast('Permission refusée', true); return; }
+    sw.classList.add('on');
+    saveKey(KEYS.notifEnabled, true);
+    showToast('Notifications activées ✓');
+    new Notification('Rappels activés', {
+      body: 'Tu recevras un rappel hebdo le samedi matin.',
+      icon: 'icon-192.png'
+    });
+    scheduleNotifications();
+  });
+}
+
+let lastNotifKey = null;
+function scheduleNotifications() {
+  if (window._notifInterval) clearInterval(window._notifInterval);
+  window._notifInterval = setInterval(checkAndNotify, 60 * 60 * 1000);
+  checkAndNotify();
+}
+
+function checkAndNotify() {
+  if (Notification.permission !== 'granted') return;
+  if (!loadKey(KEYS.notifEnabled, false)) return;
+  const now = new Date();
+  const day = now.getDay();
+  const hour = now.getHours();
+  const month = now.getMonth();
+  const isSummer = month >= 4 && month <= 8;
+  if (!isSummer) return;
+
+  const key = now.toDateString() + '-weekly';
+  if (day === 6 && hour === 9 && lastNotifKey !== key) {
+    lastNotifKey = key;
+    new Notification('🏊 Routine piscine hebdo', {
+      body: 'Brossage, aspiration, contrôle pH/chlore.',
+      tag: 'piscine-weekly', icon: 'icon-192.png'
+    });
+  }
+  const meteo = loadKey(KEYS.meteoCache, null);
+  if (meteo && meteo.forecast && meteo.forecast[0]) {
+    const t = meteo.forecast[0].waterTemp;
+    const hotKey = now.toDateString() + '-hot';
+    if (t >= 28 && hour === 8 && lastNotifKey !== hotKey) {
+      lastNotifKey = hotKey;
+      new Notification('🔥 Filtration 24/24 aujourd\'hui', {
+        body: 'Eau ~' + t + '°C. Allonge la filtration au max.',
+        tag: 'piscine-hot', icon: 'icon-192.png'
+      });
+    }
+  }
+}
+
+// ICS
+function pad(n) { return String(n).padStart(2, '0'); }
+function icsDate(d) { return d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + 'T' + pad(d.getHours()) + pad(d.getMinutes()) + '00'; }
+function uid() { return Math.random().toString(36).slice(2) + '@piscine.local'; }
+
+function buildICS() {
+  const events = [];
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const rem = Object.assign({ enabled:true, frequency:'2days', day:6, time:'09:00' }, loadKey(KEYS.reminders, {}));
+  const remTime = (rem.time || '09:00').split(':').map(Number);
+
+  for (let w = 0; w < 26; w++) {
+    const weekStart = new Date(start);
+    weekStart.setDate(start.getDate() + w * 7);
+    for (let d = 0; d < 7; d++) {
+      const day = new Date(weekStart);
+      day.setDate(weekStart.getDate() + d);
+      const month = day.getMonth();
+      const dow = day.getDay();
+      const isSummer = month >= 4 && month <= 8;
+      const daysSinceEpoch = Math.floor(day.getTime() / 86400000);
+      const customMatch = rem.frequency === '2days' ? daysSinceEpoch % 2 === 0 : rem.frequency === 'monthly' ? day.getDate() <= 7 && dow === Number(rem.day) : dow === Number(rem.day);
+      if (rem.enabled !== false && customMatch && isSummer) {
+        const dt = new Date(day); dt.setHours(remTime[0] || 9, remTime[1] || 0, 0, 0);
+        const dtEnd = new Date(dt); dtEnd.setMinutes(dtEnd.getMinutes() + 20);
+        events.push({ start: dt, end: dtEnd, title: '🏊 Rappel entretien piscine', desc: 'Contrôle eau, filtration, ligne d\'eau et journal des actions.' });
+      }
+
+      if (dow === 6 && isSummer) {
+        const dt = new Date(day); dt.setHours(9, 0, 0, 0);
+        const dtEnd = new Date(dt); dtEnd.setMinutes(30);
+        events.push({ start: dt, end: dtEnd, title: '🏊 Routine piscine hebdo', desc: 'Brossage parois + ligne d\\\'eau\\nÉpuisette\\nAspiration fond\\nPaniers skimmer + pompe\\nVérifier pression filtre\\nBackwash si pression haute\\nChlore lent si besoin' });
+      }
+      if ((dow === 2 || dow === 5) && isSummer) {
+        const dt = new Date(day); dt.setHours(19, 0, 0, 0);
+        const dtEnd = new Date(dt); dtEnd.setMinutes(15);
+        events.push({ start: dt, end: dtEnd, title: '💧 Contrôle pH + chlore', desc: 'pH cible 7,2-7,4 · chlore libre 1-3 mg/L.' });
+      }
+    }
+  }
+  for (let m = 0; m < 6; m++) {
+    const monthStart = new Date(now.getFullYear(), now.getMonth() + m, 1);
+    while (monthStart.getDay() !== 6) monthStart.setDate(monthStart.getDate() + 1);
+    monthStart.setHours(10, 0, 0, 0);
+    const end = new Date(monthStart); end.setMinutes(30);
+    events.push({ start: monthStart, end, title: '🧪 Tests mensuels piscine', desc: 'Tester alcalinité/TAC, CYA, TH. Nettoyage profond.' });
+  }
+
+  const dtstamp = icsDate(new Date());
+  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//MaPiscine//FR\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n';
+  ics += 'X-WR-CALNAME:' + state.config.name + '\r\nX-WR-TIMEZONE:Europe/Paris\r\n';
+  events.forEach(e => {
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += 'UID:' + uid() + '\r\nDTSTAMP:' + dtstamp + '\r\n';
+    ics += 'DTSTART;TZID=Europe/Paris:' + icsDate(e.start) + '\r\nDTEND;TZID=Europe/Paris:' + icsDate(e.end) + '\r\n';
+    ics += 'SUMMARY:' + e.title + '\r\nDESCRIPTION:' + e.desc + '\r\n';
+    ics += 'BEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:' + e.title + '\r\nTRIGGER:-PT15M\r\nEND:VALARM\r\n';
+    ics += 'END:VEVENT\r\n';
+  });
+  ics += 'END:VCALENDAR\r\n';
+  return ics;
+}
+
+function exportICS() {
+  const ics = buildICS();
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'piscine-rappels.ics';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+  showToast('Calendrier téléchargé ✓');
+}
+
+// PDF
+function exportPDF() {
+  if (!window.jspdf) { showToast('PDF non chargé', true); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const C_INK = [3, 38, 61], C_DEEP = [10, 127, 168], C_SHALLOW = [78, 192, 216];
+  const C_DIM = [100, 116, 130], C_GOOD = [122, 199, 79], C_WARN = [255, 180, 84];
+  const C_BAD = [233, 78, 78], C_LINE = [220, 230, 235];
+  const M = 18; let y = M; const W = 210 - 2*M;
+
+  doc.setFillColor.apply(doc, C_INK); doc.rect(0, 0, 210, 36, 'F');
+  doc.setFillColor.apply(doc, C_DEEP); doc.rect(0, 32, 210, 4, 'F');
+  doc.setTextColor.apply(doc, C_SHALLOW); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+  doc.text((state.config.name + ' · ' + (state.config.location ? state.config.location.name : 'Carnet de bord')).toUpperCase(), M, 14);
+  doc.setTextColor(255, 255, 255); doc.setFontSize(22); doc.setFont('helvetica', 'bold');
+  doc.text('Ma piscine', M, 24);
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(180, 200, 215);
+  doc.text(dateStr, 210 - M, 24, { align: 'right' });
+  doc.text('Bassin ' + state.config.volume + ' m³', 210 - M, 30, { align: 'right' });
+  y = 50;
+
+  doc.setTextColor.apply(doc, C_INK); doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+  doc.text('État actuel', M, y); y += 7;
+
+  const last = state.measures[0];
+  if (last) {
+    const lastDate = new Date(last.ts).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor.apply(doc, C_DIM);
+    doc.text('Dernière mesure : ' + lastDate, M, y); y += 8;
+
+    const stats = [
+      { lbl: 'pH', val: last.ph != null ? last.ph.toFixed(1) : '—', unit: '', range: '7,2 - 7,4', status: phStatus(last.ph) },
+      { lbl: 'Chlore libre', val: last.cl != null ? last.cl.toFixed(1) : '—', unit: 'mg/L', range: '1 - 3 mg/L', status: clStatus(last.cl) },
+      { lbl: 'Alcalinité', val: last.tac != null ? Math.round(last.tac) : '—', unit: 'ppm', range: '80 - 120 ppm', status: tacStatus(last.tac) },
+      { lbl: 'Stabilisant', val: last.cya != null ? Math.round(last.cya) : '—', unit: 'mg/L', range: '30 - 50 mg/L', status: cyaStatus(last.cya) }
+    ];
+    const colW = W / 2 - 3;
+    stats.forEach((s, i) => {
+      const col = i % 2, row = Math.floor(i / 2);
+      const x = M + col * (colW + 6), yy = y + row * 26;
+      doc.setDrawColor.apply(doc, C_LINE); doc.setLineWidth(0.3);
+      doc.roundedRect(x, yy, colW, 22, 2, 2, 'S');
+      const dotColor = s.status === 'good' ? C_GOOD : s.status === 'warn' ? C_WARN : s.status === 'bad' ? C_BAD : C_LINE;
+      doc.setFillColor.apply(doc, dotColor); doc.circle(x + colW - 4, yy + 4, 1.2, 'F');
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor.apply(doc, C_DIM);
+      doc.text(s.lbl.toUpperCase(), x + 3, yy + 5);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor.apply(doc, C_INK);
+      doc.text(String(s.val), x + 3, yy + 13);
+      if (s.unit) {
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor.apply(doc, C_DIM);
+        const w = doc.getTextWidth(String(s.val));
+        doc.text(s.unit, x + 3 + w + 1.5, yy + 13);
+      }
+      doc.setFontSize(7);
+      doc.text('cible ' + s.range, x + 3, yy + 19);
+    });
+    y += 26 * 2 + 4;
+  } else {
+    doc.setFontSize(10); doc.setFont('helvetica', 'italic'); doc.setTextColor.apply(doc, C_DIM);
+    doc.text('Aucune mesure enregistrée.', M, y); y += 10;
+  }
+  y += 4;
+
+  const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+  const todayMeasures = state.measures.filter(m => m.ts >= todayStart.getTime());
+  const todayActions = state.actions.filter(a => a.ts >= todayStart.getTime());
+  const dayAdvice = last ? buildDiagnostic(last).filter(a => a.status !== 'good') : [];
+  if (y > 220) { doc.addPage(); y = M; }
+  doc.setTextColor.apply(doc, C_INK); doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+  doc.text('Récap du jour', M, y); y += 7;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor.apply(doc, C_DIM);
+  doc.text(todayMeasures.length + ' mesure(s) aujourd\'hui · ' + todayActions.length + ' action(s) réalisée(s)', M, y); y += 7;
+  doc.setFontSize(9); doc.setTextColor.apply(doc, C_INK);
+  if (todayActions.length) {
+    todayActions.slice(0, 8).forEach(a => { if (y > 275) { doc.addPage(); y = M; } const lines = doc.splitTextToSize('• ' + a.type + ' — ' + a.text + ' (' + a.author + ')', W); doc.text(lines, M, y); y += lines.length * 4.5; });
+  } else { doc.text('• Aucune action consignée aujourd\'hui.', M, y); y += 5; }
+  if (dayAdvice.length) {
+    y += 3; doc.setFont('helvetica', 'bold'); doc.text('Actions et conseils à réaliser', M, y); y += 5; doc.setFont('helvetica', 'normal');
+    dayAdvice.slice(0, 6).forEach(a => { if (y > 275) { doc.addPage(); y = M; } const lines = doc.splitTextToSize('• ' + a.title + ' : ' + a.body.replace(/<[^>]+>/g, ''), W); doc.text(lines, M, y); y += lines.length * 4.5; });
+  } else { doc.text('• Pas de conseil urgent détecté.', M, y); y += 5; }
+  y += 6;
+
+  if (state.measures.length > 0) {
+    if (y > 220) { doc.addPage(); y = M; }
+    doc.setTextColor.apply(doc, C_INK); doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+    doc.text('Historique des mesures', M, y); y += 7;
+    doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor.apply(doc, C_DIM);
+    doc.text(state.measures.length + (state.measures.length > 1 ? ' entrées' : ' entrée'), M, y); y += 6;
+
+    const colsX = [M, M+30, M+50, M+72, M+92, M+114, M+136];
+    const headers = ['Date', 'pH', 'Cl', 'Alk.', 'CYA', 'TH', 'T° eau'];
+    doc.setDrawColor.apply(doc, C_LINE); doc.setLineWidth(0.3);
+    doc.line(M, y, M + W, y); y += 4;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor.apply(doc, C_DEEP);
+    headers.forEach((h, i) => doc.text(h, colsX[i], y));
+    y += 3; doc.line(M, y, M + W, y); y += 5;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor.apply(doc, C_INK);
+
+    state.measures.slice(0, 40).forEach((m, idx) => {
+      if (y > 275) { doc.addPage(); y = M; }
+      const d = new Date(m.ts);
+      const ds = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+      const hs = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      if (idx % 2 === 0) { doc.setFillColor(248, 250, 252); doc.rect(M - 1, y - 4, W + 2, 6, 'F'); }
+      doc.setTextColor.apply(doc, C_INK);
+      doc.text(ds + ' ' + hs, colsX[0], y);
+      doc.text(m.ph != null ? m.ph.toFixed(1) : '—', colsX[1], y);
+      doc.text(m.cl != null ? m.cl.toFixed(1) : '—', colsX[2], y);
+      doc.text(m.tac != null ? String(Math.round(m.tac)) : '—', colsX[3], y);
+      doc.text(m.cya != null ? String(Math.round(m.cya)) : '—', colsX[4], y);
+      doc.text(m.th != null ? String(Math.round(m.th)) : '—', colsX[5], y);
+      doc.text(m.temp != null ? m.temp.toFixed(1) + '°' : '—', colsX[6], y);
+      y += 6;
+    });
+    y += 4;
+  }
+
+  doc.addPage(); y = M;
+  doc.setTextColor.apply(doc, C_INK); doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+  doc.text('Routines d\'entretien', M, y); y += 4;
+  doc.setDrawColor.apply(doc, C_SHALLOW); doc.setLineWidth(0.8);
+  doc.line(M, y, M + 15, y); y += 8;
+
+  const routineSections = [
+    { title: 'Tous les 2 jours (été)', items: routineDefs.daily.items },
+    { title: 'Une fois par semaine', items: routineDefs.weekly.items },
+    { title: 'Une fois par mois', items: routineDefs.monthly.items }
+  ];
+  routineSections.forEach(sec => {
+    if (y > 250) { doc.addPage(); y = M; }
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor.apply(doc, C_DEEP);
+    doc.text(sec.title.toUpperCase(), M, y); y += 5;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor.apply(doc, C_INK);
+    sec.items.forEach(it => {
+      if (y > 280) { doc.addPage(); y = M; }
+      doc.setDrawColor.apply(doc, C_DIM); doc.setLineWidth(0.3);
+      doc.rect(M, y - 3, 3, 3, 'S');
+      doc.text(it, M + 5, y); y += 5;
+    });
+    y += 4;
+  });
+
+  doc.addPage(); y = M;
+  doc.setTextColor.apply(doc, C_INK); doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+  doc.text('Diagnostic & conseils', M, y); y += 4;
+  doc.setDrawColor.apply(doc, C_SHALLOW); doc.setLineWidth(0.8);
+  doc.line(M, y, M + 15, y); y += 9;
+
+  problems.forEach((p, i) => {
+    if (y > 260) { doc.addPage(); y = M; }
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor.apply(doc, C_INK);
+    doc.text((i+1) + '. ' + p.name, M, y); y += 5;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor.apply(doc, C_DEEP);
+    doc.text('CAUSE', M, y); y += 3.5;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor.apply(doc, C_INK);
+    const cl = doc.splitTextToSize(p.cause, W);
+    doc.text(cl, M, y); y += cl.length * 4 + 1;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor.apply(doc, C_DEEP);
+    doc.text('SOLUTION', M, y); y += 3.5;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor.apply(doc, C_INK);
+    const fl = doc.splitTextToSize(p.fix, W);
+    doc.text(fl, M, y); y += fl.length * 4 + 8;
+  });
+
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setDrawColor.apply(doc, C_LINE); doc.setLineWidth(0.2);
+    doc.line(M, 285, 210 - M, 285);
+    doc.setFontSize(7); doc.setTextColor.apply(doc, C_DIM); doc.setFont('helvetica', 'normal');
+    doc.text(state.config.name + ' · ' + dateStr, M, 290);
+    doc.text(i + ' / ' + pageCount, 210 - M, 290, { align: 'right' });
+  }
+
+  doc.save('piscine-rapport-' + today.toISOString().slice(0, 10) + '.pdf');
+  showToast('PDF généré ✓');
+}
+
+
+// ADVANCED FEATURES: actions, AI prototype, piscinier, reminders, realtime sync
+function getMemberName() {
+  return (state.sync && state.sync.memberName) || localStorage.getItem('piscine:memberName') || 'Membre';
+}
+function savePoolAction() {
+  const type = document.getElementById('actType').value;
+  const text = document.getElementById('actText').value.trim();
+  const author = document.getElementById('actAuthor').value.trim() || getMemberName();
+  const priority = document.getElementById('actPriority').value;
+  if (!text) { showToast('Décris l\'action réalisée', true); return; }
+  const action = { id: 'act_' + Date.now(), ts: Date.now(), type, text, author, priority };
+  state.actions.unshift(action);
+  state.actions = state.actions.slice(0, 150);
+  saveKey(KEYS.actions, state.actions);
+  document.getElementById('actText').value = '';
+  renderActions();
+  pushRealtimeState();
+  showToast('Action ajoutée ✓');
+}
+function renderActions() {
+  const count = document.getElementById('actionsCount');
+  const list = document.getElementById('actionsList');
+  if (!count || !list) return;
+  count.textContent = state.actions.length ? state.actions.length + (state.actions.length > 1 ? ' actions' : ' action') : 'aucune action';
+  if (!state.actions.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📝</div>Aucune action enregistrée.</div>';
+    return;
+  }
+  const icon = { Traitement:'🧪', Nettoyage:'🧽', Filtration:'↻', Backwash:'💨', 'Analyse eau':'🔬', 'Achat produit':'🛒', Autre:'•' };
+  list.innerHTML = state.actions.slice(0, 40).map(a => {
+    const d = new Date(a.ts);
+    return '<div class="action-log-item">' +
+      '<div class="action-log-icon">' + (icon[a.type] || '•') + '</div>' +
+      '<div><div class="action-log-title">' + a.text + '</div><div class="action-log-meta">' + a.type + ' · ' + a.author + ' · ' + d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}) + '</div></div>' +
+      '<button class="del-btn" onclick="deletePoolAction(\'' + a.id + '\')">✕</button>' +
+    '</div>';
+  }).join('');
+}
+function deletePoolAction(id) {
+  state.actions = state.actions.filter(a => a.id !== id);
+  saveKey(KEYS.actions, state.actions);
+  renderActions();
+  pushRealtimeState();
+}
+function previewWaterPhoto(e) {
+  const file = e.target.files && e.target.files[0];
+  const img = document.getElementById('waterPhotoPreview');
+  if (!file || !img) return;
+  img.src = URL.createObjectURL(file);
+  img.style.display = 'block';
+}
+function runPhotoAIAnalysis() {
+  const fileInput = document.getElementById('waterPhoto');
+  if (!fileInput.files || !fileInput.files[0]) { showToast('Ajoute une photo', true); return; }
+  const last = state.measures[0] || {};
+  const advice = buildDiagnostic(last);
+  const needs = detectNeeds().slice(0, 4);
+  const blocks = [];
+  blocks.push({ param:'Analyse photo', status:'warn', value:'prototype', icon:'✨', title:'Diagnostic visuel à confirmer', body:'La photo a été prise en compte. Pour une analyse IA réelle, il faudra envoyer cette image à un modèle Vision via un backend sécurisé.', actions:[
+    { b:'→', t:'Comparer la couleur observée avec les mesures pH / chlore / alcalinité.' },
+    { b:'→', t:'Ajouter une mesure manuelle juste après la photo pour fiabiliser le diagnostic.' }
+  ]});
+  if (advice.length) blocks.push(...advice.slice(0, 3));
+  if (needs.length) blocks.push({ param:'Produits probables', status:'warn', value: String(needs.length), icon:'🛒', title:'Besoins d\'achat possibles', body:'L\'app a détecté des produits ou actions à prévoir.', actions: needs.map(n => ({ b:'→', t:n })) });
+  renderDiagnosticInto('iaResult', blocks, false);
+  const analysis = { id:'ia_' + Date.now(), ts: Date.now(), author:getMemberName(), title:'Analyse photo', needs, adviceCount: blocks.length };
+  state.aiAnalyses.unshift(analysis);
+  state.aiAnalyses = state.aiAnalyses.slice(0, 50);
+  saveKey(KEYS.aiAnalyses, state.aiAnalyses);
+  pushRealtimeState();
+}
+function renderDiagnosticInto(containerId, advice, persisted) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  if (!advice || advice.length === 0) { c.innerHTML = ''; return; }
+  const counts = { good: 0, warn: 0, bad: 0 };
+  advice.forEach(a => counts[a.status]++);
+  let summaryText;
+  if (counts.bad > 0) summaryText = '<strong>' + counts.bad + '</strong> action urgente' + (counts.bad > 1 ? 's' : '') + ' à mener';
+  else if (counts.warn > 0) summaryText = '<strong>' + counts.warn + '</strong> point' + (counts.warn > 1 ? 's' : '') + ' à surveiller';
+  else summaryText = '<strong>Lecture rassurante</strong> — aucun signal critique.';
+  const persistedNote = persisted ? '<div style="text-align:center; color: var(--leaf); font-size: 12px; margin-top: 10px;">✓ Analyse enregistrée</div>' : '';
+  const cardsHTML = advice.map(a => {
+    const actionsHTML = a.actions ? '<div class="advice-actions">' + a.actions.map(act => '<div class="advice-action"><span class="bullet">' + act.b + '</span><span>' + act.t + '</span></div>').join('') + '</div>' : '';
+    return '<div class="advice-card ' + a.status + '">' +
+      '<div class="advice-head">' +
+        '<div class="advice-icon">' + a.icon + '</div>' +
+        '<div class="advice-title"><span class="param">' + a.param + '</span>' + a.title + '</div>' +
+        '<div class="advice-value">' + a.value + '</div>' +
+      '</div>' +
+      '<div class="advice-body">' + a.body + '</div>' + actionsHTML +
+    '</div>';
+  }).join('');
+  c.innerHTML = '<div class="card"><div class="card-title">Diagnostic IA</div><div class="card-sub">photo + dernières mesures</div><div class="advice-summary">' + summaryText + '</div>' + cardsHTML + persistedNote + '</div>';
+  setTimeout(() => c.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+}
+function detectNeeds() {
+  const last = state.measures[0] || {};
+  const needs = [];
+  if (last.ph != null && last.ph < 7.2) needs.push('pH+ / correcteur pH plus');
+  if (last.ph != null && last.ph > 7.4) needs.push('pH- / correcteur pH moins');
+  if (last.cl != null && last.cl < 1) needs.push('Chlore lent ou chlore choc');
+  if (last.cl != null && last.cl > 3) needs.push('Bandelettes / test chlore pour suivi rapproché');
+  if (last.tac != null && last.tac < 80) needs.push('TAC+ / rehausseur d\'alcalinité');
+  if (last.tac != null && last.tac > 120) needs.push('Conseil piscinier pour baisse alcalinité');
+  if (last.cya != null && last.cya > 60) needs.push('Conseil renouvellement d\'eau / stabilisant élevé');
+  if (last.th != null && last.th > 25) needs.push('Anti-calcaire piscine');
+  if (last.temp != null && last.temp >= 28) needs.push('Contrôle chlore renforcé + filtration 24/24');
+  if (!needs.length) needs.push('Bandelettes d\'analyse piscine', 'Chlore lent', 'Nettoyant ligne d\'eau');
+  return needs;
+}
+function renderPiscinier() {
+  const needsEl = document.getElementById('poolNeeds');
+  const storesEl = document.getElementById('storeSuggestions');
+  if (!needsEl || !storesEl) return;
+  const needs = detectNeeds();
+  needsEl.innerHTML = '<div class="need-tags">' + needs.map(n => '<span class="need-tag">' + n + '</span>').join('') + '</div>';
+  const city = state.config && state.config.location ? state.config.location.name : 'près de moi';
+  const mainNeed = needs[0] || 'produits piscine';
+  const searches = [
+    { title:'Fournitures piscine autour de ' + city, q:'magasin piscine fournitures ' + city + ' ' + mainNeed },
+    { title:'Pisciniste conseil traitement eau', q:'pisciniste traitement eau piscine ' + city },
+    { title:'Produits à acheter : ' + mainNeed, q:mainNeed + ' piscine ' + city }
+  ];
+  storesEl.innerHTML = searches.map(s => {
+    const url = 'https://www.google.com/maps/search/' + encodeURIComponent(s.q);
+    return '<div class="store-card"><div class="store-title">' + s.title + '</div><div class="store-sub">Recherche adaptée aux besoins détectés : ' + needs.slice(0,3).join(', ') + '.</div><a href="' + url + '" target="_blank" rel="noopener">Ouvrir dans Google Maps →</a></div>';
+  }).join('');
+}
+function hydrateAdvancedSettings() {
+  state.sync = loadKey(KEYS.sync, state.sync || {});
+  state.reminders = Object.assign({ enabled:false, frequency:'2days', day:6, time:'09:00' }, loadKey(KEYS.reminders, {}));
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
+  set('memberName', state.sync && state.sync.memberName);
+  set('syncPoolId', state.sync && state.sync.poolId);
+  set('memberRole', state.sync && state.sync.role);
+  set('syncUrl', state.sync && state.sync.url);
+  set('syncKey', state.sync && state.sync.key);
+  set('remFreq', state.reminders.frequency);
+  set('remDay', String(state.reminders.day));
+  set('remTime', state.reminders.time);
+  set('remEnabled', String(!!state.reminders.enabled));
+  set('actAuthor', getMemberName());
+}
+function saveReminderSettings() {
+  state.reminders = {
+    enabled: document.getElementById('remEnabled').value === 'true',
+    frequency: document.getElementById('remFreq').value,
+    day: parseInt(document.getElementById('remDay').value, 10),
+    time: document.getElementById('remTime').value || '09:00'
+  };
+  saveKey(KEYS.reminders, state.reminders);
+  saveKey(KEYS.notifEnabled, state.reminders.enabled);
+  if (state.reminders.enabled && 'Notification' in window && Notification.permission !== 'granted') {
+    Notification.requestPermission().then(() => scheduleNotifications());
+  } else scheduleNotifications();
+  showToast('Rappels enregistrés ✓');
+}
+function saveSyncSettings() {
+  state.sync = {
+    memberName: document.getElementById('memberName').value.trim() || 'Membre',
+    poolId: document.getElementById('syncPoolId').value.trim() || slugify(state.config.name),
+    role: document.getElementById('memberRole').value,
+    url: document.getElementById('syncUrl').value.trim(),
+    key: document.getElementById('syncKey').value.trim(),
+    enabled: true
+  };
+  saveKey(KEYS.sync, state.sync);
+  localStorage.setItem('piscine:memberName', state.sync.memberName);
+  hydrateAdvancedSettings();
+  updateSyncStatus();
+  startRealtimeSync(true);
+  pushRealtimeState();
+  showToast('Accès partagé enregistré ✓');
+}
+function slugify(str) { return (str || 'piscine').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40) || 'piscine'; }
+function getFullStatePayload() {
+  return { config: state.config, measures: state.measures, routines: state.routines, routinesReset: state.routinesReset, actions: state.actions, aiAnalyses: state.aiAnalyses, reminders: state.reminders, updatedAt: Date.now() };
+}
+function applySharedPayload(data) {
+  if (!data) return;
+  if (data.config) { state.config = data.config; saveKey(KEYS.config, state.config); }
+  if (Array.isArray(data.measures)) { state.measures = data.measures; saveKey(KEYS.measures, state.measures); }
+  if (data.routines) { state.routines = data.routines; state.routinesReset = data.routinesReset || state.routinesReset; saveKey(KEYS.routines, { routines: state.routines, resets: state.routinesReset }); }
+  if (Array.isArray(data.actions)) { state.actions = data.actions; saveKey(KEYS.actions, state.actions); }
+  if (Array.isArray(data.aiAnalyses)) { state.aiAnalyses = data.aiAnalyses; saveKey(KEYS.aiAnalyses, state.aiAnalyses); }
+  if (data.reminders) { state.reminders = data.reminders; saveKey(KEYS.reminders, state.reminders); }
+  if (state.config) initAppUI();
+}
+function importSharedStateFromUrl() {
+  try {
+    const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+    const poolId = hash.get('pool');
+    const url = hash.get('syncUrl');
+    const key = hash.get('syncKey');
+    if (poolId) {
+      const existing = loadKey(KEYS.sync, {});
+      saveKey(KEYS.sync, Object.assign(existing || {}, { poolId, url: url || existing.url, key: key || existing.key, enabled:true }));
+    }
+    const data = hash.get('data');
+    if (data) {
+      const payload = JSON.parse(decodeURIComponent(atob(data)));
+      applySharedPayload(payload);
+      history.replaceState(null, '', location.pathname + location.search);
+    }
+  } catch(e) { console.warn('import shared failed', e); }
+}
+function sharePoolInvite() {
+  const sync = state.sync || loadKey(KEYS.sync, {});
+  const poolId = (sync && sync.poolId) || slugify(state.config.name);
+  const params = new URLSearchParams();
+  params.set('pool', poolId);
+  if (sync && sync.url) params.set('syncUrl', sync.url);
+  if (sync && sync.key) params.set('syncKey', sync.key);
+  let link = location.origin + location.pathname + '#' + params.toString();
+  if (!sync || !sync.url || !sync.key) {
+    const encoded = btoa(encodeURIComponent(JSON.stringify(getFullStatePayload())));
+    link = location.origin + location.pathname + '#data=' + encoded;
+  }
+  const msg = 'Je te partage la gestion de la piscine "' + state.config.name + '". Ouvre ce lien dans l’app : ' + link;
+  if (navigator.share) navigator.share({ title:'Partager ma piscine', text:msg, url:link }).catch(()=>{});
+  else location.href = 'sms:?&body=' + encodeURIComponent(msg);
+  navigator.clipboard && navigator.clipboard.writeText(link).catch(()=>{});
+  showToast('Lien d\'invitation prêt ✓');
+}
+let syncTimer = null;
+function updateSyncStatus(text, on) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  const sync = state.sync || loadKey(KEYS.sync, {});
+  const active = !!(sync && sync.enabled && sync.poolId && sync.url && sync.key);
+  el.classList.toggle('on', on == null ? active : on);
+  el.querySelector('span:last-child').textContent = text || (active ? 'Synchronisation temps réel active' : 'Synchronisation inactive');
+}
+async function startRealtimeSync(force) {
+  if (syncTimer) clearInterval(syncTimer);
+  const sync = state.sync || loadKey(KEYS.sync, {});
+  if (!sync || !sync.poolId || !sync.url || !sync.key) { updateSyncStatus(); return; }
+  if (force) await pullRealtimeState();
+  syncTimer = setInterval(pullRealtimeState, 5000);
+  updateSyncStatus('Synchronisation temps réel active', true);
+}
+async function supabaseFetch(method, body) {
+  const sync = state.sync || loadKey(KEYS.sync, {});
+  if (!sync || !sync.url || !sync.key || !sync.poolId) throw new Error('Sync non configurée');
+  const base = sync.url.replace(/\/$/, '') + '/rest/v1/pool_states';
+  const url = method === 'GET' ? base + '?id=eq.' + encodeURIComponent(sync.poolId) + '&select=id,data,updated_at' : base;
+  return fetch(url, {
+    method,
+    headers: { 'apikey': sync.key, 'Authorization':'Bearer ' + sync.key, 'Content-Type':'application/json', 'Prefer':'resolution=merge-duplicates,return=minimal' },
+    body: body ? JSON.stringify(body) : undefined
+  });
+}
+async function pushRealtimeState() {
+  const sync = state.sync || loadKey(KEYS.sync, {});
+  if (!sync || !sync.poolId || !sync.url || !sync.key) return;
+  try {
+    await supabaseFetch('POST', { id: sync.poolId, data: getFullStatePayload(), updated_at: new Date().toISOString() });
+    updateSyncStatus('Dernière synchro : ' + new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}), true);
+  } catch(e) { updateSyncStatus('Erreur sync : vérifie Supabase', false); }
+}
+async function pullRealtimeState() {
+  const sync = state.sync || loadKey(KEYS.sync, {});
+  if (!sync || !sync.poolId || !sync.url || !sync.key) return;
+  try {
+    const res = await supabaseFetch('GET');
+    const rows = await res.json();
+    if (rows && rows[0] && rows[0].data && (!state._lastRemote || rows[0].data.updatedAt > state._lastRemote)) {
+      state._lastRemote = rows[0].data.updatedAt;
+      applySharedPayload(rows[0].data);
+      updateSyncStatus('Données partagées à jour', true);
+    }
+  } catch(e) { updateSyncStatus('Erreur lecture temps réel', false); }
+}
+
+// TOAST
+let toastTimer;
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = isError ? 'var(--coral)' : 'var(--leaf)';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+
+
+// FAMILY / JOURNAL UPGRADE
+const FAMILY_KEY = 'piscine:family';
+let journalFilter = 'all';
+function uid(prefix) { return prefix + '_' + Math.random().toString(36).slice(2, 8) + '_' + Date.now().toString(36); }
+function roleLabel(role) { return { owner:'Propriétaire', member:'Membre', pro:'Piscinier', readonly:'Lecture seule' }[role] || role || 'Membre'; }
+function roleClass(role) { return role === 'owner' ? 'owner' : role === 'pro' ? 'pro' : ''; }
+function todayStart() { const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); }
+function ensureFamily() {
+  state.family = loadKey(FAMILY_KEY, state.family || null);
+  if (!state.family) {
+    const poolName = state.config && state.config.name ? state.config.name : 'Ma piscine';
+    const self = (state.sync && state.sync.memberName) || localStorage.getItem('piscine:memberName') || 'Moi';
+    state.family = {
+      id: 'fam_' + slugify(poolName) + '_' + Math.random().toString(36).slice(2,6),
+      name: 'Maison ' + poolName.replace(/^ma /i, '').replace(/^piscine /i, ''),
+      poolId: (state.sync && state.sync.poolId) || slugify(poolName),
+      members: [{ id:'me', name:self, role:'owner', joinedAt:Date.now(), lastSeen:Date.now(), status:'active' }],
+      invites: [], createdAt: Date.now(), updatedAt: Date.now()
+    };
+    saveKey(FAMILY_KEY, state.family);
+  }
+  if (!Array.isArray(state.family.members)) state.family.members = [];
+  if (!state.family.members.length) state.family.members.push({ id:'me', name:getMemberName(), role:'owner', joinedAt:Date.now(), lastSeen:Date.now(), status:'active' });
+  return state.family;
+}
+function persistFamily() { if (state.family) { state.family.updatedAt = Date.now(); saveKey(FAMILY_KEY, state.family); } }
+function currentMember() {
+  const fam = ensureFamily();
+  const name = getMemberName();
+  let m = fam.members.find(x => x.id === 'me') || fam.members.find(x => (x.name || '').toLowerCase() === name.toLowerCase());
+  if (!m) { m = { id:'me', name, role:'owner', joinedAt:Date.now(), lastSeen:Date.now(), status:'active' }; fam.members.unshift(m); persistFamily(); }
+  m.name = name || m.name; m.lastSeen = Date.now();
+  return m;
+}
+function hydrateFamilyInputs() {
+  const fam = ensureFamily();
+  const me = currentMember();
+  const set = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.value = v; };
+  set('familyNameInput', fam.name);
+  set('familySelfName', me.name);
+  set('familySelfRole', me.role || 'owner');
+  set('memberName', me.name);
+  set('syncPoolId', fam.poolId || (state.sync && state.sync.poolId));
+}
+function renderFamily() {
+  const fam = ensureFamily();
+  currentMember();
+  hydrateFamilyInputs();
+  const today = todayStart();
+  const todayCount = (state.actions || []).filter(a => a.ts >= today).length + (state.measures || []).filter(m => m.ts >= today).length + (state.aiAnalyses || []).filter(a => a.ts >= today).length;
+  const setText = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+  setText('familyNameLabel', fam.name || 'Maison piscine');
+  setText('familySubLabel', fam.members.length + (fam.members.length > 1 ? ' membres actifs' : ' membre actif') + ' · ' + (state.config ? state.config.name : 'Piscine'));
+  setText('familyCodeLabel', (fam.poolId || fam.id || 'famille').toUpperCase());
+  setText('familyMembersCount', fam.members.length);
+  setText('familyTodayCount', todayCount);
+  const list = document.getElementById('familyMembersList');
+  if (list) {
+    list.innerHTML = fam.members.map(m => {
+      const initial = (m.name || '?').trim().charAt(0).toUpperCase();
+      const last = m.lastSeen ? new Date(m.lastSeen).toLocaleDateString('fr-FR') + ' ' + new Date(m.lastSeen).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}) : 'jamais connecté';
+      return '<div class="member-card"><div class="avatar">' + initial + '</div><div class="member-main"><div class="member-name">' + escapeHTML(m.name || 'Membre') + '</div><div class="member-meta">Dernière activité · ' + last + '</div></div><span class="role-badge ' + roleClass(m.role) + '">' + roleLabel(m.role) + '</span></div>';
+    }).join('') || '<div class="empty"><div class="empty-icon">👥</div>Aucun membre.</div>';
+  }
+  renderFamilySnapshot();
+}
+function saveFamilySpace() {
+  const fam = ensureFamily();
+  const name = document.getElementById('familyNameInput').value.trim() || fam.name || 'Maison piscine';
+  const selfName = document.getElementById('familySelfName').value.trim() || 'Moi';
+  const selfRole = document.getElementById('familySelfRole').value || 'owner';
+  fam.name = name;
+  fam.poolId = fam.poolId || (state.sync && state.sync.poolId) || slugify(state.config && state.config.name || name);
+  let me = fam.members.find(m => m.id === 'me');
+  if (!me) { me = { id:'me', joinedAt:Date.now(), status:'active' }; fam.members.unshift(me); }
+  me.name = selfName; me.role = selfRole; me.lastSeen = Date.now();
+  persistFamily();
+  localStorage.setItem('piscine:memberName', selfName);
+  state.sync = Object.assign({}, state.sync || {}, { memberName:selfName, poolId:fam.poolId, role:roleLabel(selfRole), enabled: !!((state.sync||{}).url && (state.sync||{}).key) });
+  saveKey(KEYS.sync, state.sync);
+  hydrateAdvancedSettings(); renderFamily(); pushRealtimeState();
+  showToast('Espace famille enregistré ✓');
+}
+function addFamilyMember() {
+  const fam = ensureFamily();
+  const name = document.getElementById('inviteName').value.trim();
+  const role = document.getElementById('inviteRole').value || 'member';
+  if (!name) { showToast('Ajoute un prénom', true); return; }
+  const existing = fam.members.find(m => (m.name || '').toLowerCase() === name.toLowerCase());
+  if (existing) { existing.role = role; existing.status = 'active'; }
+  else fam.members.push({ id:uid('mem'), name, role, joinedAt:Date.now(), lastSeen:null, status:'invited' });
+  document.getElementById('inviteName').value = '';
+  persistFamily(); renderFamily(); pushRealtimeState();
+  showToast('Membre ajouté ✓');
+}
+function createFamilyInvite() {
+  const fam = ensureFamily();
+  const name = document.getElementById('inviteName').value.trim() || 'Membre invité';
+  const role = document.getElementById('inviteRole').value || 'member';
+  const token = uid('invite');
+  fam.invites = fam.invites || [];
+  fam.invites.push({ token, name, role, createdAt:Date.now(), used:false });
+  persistFamily();
+  const sync = state.sync || loadKey(KEYS.sync, {});
+  const params = new URLSearchParams();
+  params.set('invite', token); params.set('family', fam.id); params.set('pool', fam.poolId || sync.poolId || slugify(state.config.name)); params.set('name', name); params.set('role', role);
+  if (sync && sync.url) params.set('syncUrl', sync.url);
+  if (sync && sync.key) params.set('syncKey', sync.key);
+  const link = location.origin + location.pathname + '#' + params.toString();
+  const box = document.getElementById('inviteLinkBox');
+  if (box) { box.style.display = 'block'; box.textContent = link; }
+  navigator.clipboard && navigator.clipboard.writeText(link).catch(()=>{});
+  const msg = 'Tu es invité à rejoindre l’espace piscine "' + fam.name + '". Ouvre ce lien : ' + link;
+  if (navigator.share) navigator.share({ title:'Invitation piscine', text:msg, url:link }).catch(()=>{});
+  pushRealtimeState(); showToast('Lien copié ✓');
+}
+function acceptInviteFromUrl() {
+  try {
+    const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+    const token = hash.get('invite');
+    if (!token) return;
+    const fam = ensureFamily();
+    fam.id = hash.get('family') || fam.id;
+    fam.poolId = hash.get('pool') || fam.poolId;
+    const name = hash.get('name') || prompt('Ton prénom pour rejoindre la piscine ?') || 'Membre';
+    const role = hash.get('role') || 'member';
+    const existing = fam.members.find(m => (m.name || '').toLowerCase() === name.toLowerCase());
+    if (existing) { existing.id = existing.id || uid('mem'); existing.role = role; existing.status='active'; existing.lastSeen=Date.now(); }
+    else fam.members.push({ id:'me', name, role, joinedAt:Date.now(), lastSeen:Date.now(), status:'active' });
+    localStorage.setItem('piscine:memberName', name);
+    state.sync = Object.assign(loadKey(KEYS.sync, {}) || {}, { memberName:name, role:roleLabel(role), poolId:fam.poolId, url:hash.get('syncUrl') || (state.sync||{}).url, key:hash.get('syncKey') || (state.sync||{}).key, enabled:true });
+    saveKey(KEYS.sync, state.sync); persistFamily();
+    history.replaceState(null, '', location.pathname + location.search);
+    showToast('Invitation acceptée ✓');
+  } catch(e) { console.warn('invite failed', e); }
+}
+function escapeHTML(str) { return String(str == null ? '' : str).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function relativeTime(ts) {
+  if (!ts) return '—';
+  const diff = Date.now() - ts;
+  if (diff < 60000) return 'à l’instant';
+  if (diff < 3600000) return 'il y a ' + Math.round(diff/60000) + ' min';
+  if (diff < 86400000) return 'il y a ' + Math.round(diff/3600000) + ' h';
+  return new Date(ts).toLocaleDateString('fr-FR');
+}
+function buildJournalItems() {
+  const items = [];
+  (state.measures || []).forEach(m => {
+    const bits = [];
+    if (m.ph != null) bits.push('pH ' + m.ph);
+    if (m.cl != null) bits.push('Chlore ' + m.cl);
+    if (m.tac != null) bits.push('TAC ' + m.tac + ' ppm');
+    if (m.cya != null) bits.push('CYA ' + m.cya);
+    items.push({ kind:'measure', ts:m.ts, icon:'🧪', title:'Relevé d’eau enregistré', author:m.author || 'Membre', desc:bits.join(' · ') || 'Mesure partielle' });
+  });
+  (state.actions || []).forEach(a => items.push({ kind:'action', ts:a.ts, icon:'✓', title:a.type + ' · ' + a.text, author:a.author || 'Membre', desc:'Priorité : ' + (a.priority || 'info') }));
+  (state.aiAnalyses || []).forEach(a => items.push({ kind:'ai', ts:a.ts, icon:'✨', title:a.title || 'Diagnostic IA', author:a.author || 'IA', desc:(a.waterColor ? 'Couleur : ' + a.waterColor + ' · ' : '') + ((a.needs || []).slice(0,3).join(', ') || 'Analyse photo') }));
+  detectNeeds().forEach((n, i) => items.push({ kind:'need', ts:Date.now()-i, icon:'🛒', title:'Besoin détecté', author:'Assistant piscine', desc:n }));
+  return items.sort((a,b) => b.ts - a.ts);
+}
+function setJournalFilter(f) { journalFilter = f; document.querySelectorAll('#journalFilters .filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f)); renderJournal(); }
+function renderJournal() {
+  let items = buildJournalItems();
+  if (journalFilter !== 'all') items = items.filter(i => i.kind === journalFilter);
+  const count = document.getElementById('journalCount');
+  const list = document.getElementById('journalList');
+  if (!list || !count) return;
+  count.textContent = items.length + (items.length > 1 ? ' événements' : ' événement');
+  if (!items.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">📒</div>Aucun élément dans ce filtre.</div>'; return; }
+  list.innerHTML = items.slice(0,80).map(i => '<div class="timeline-item"><div class="timeline-dot">' + i.icon + '</div><div><div class="timeline-title">' + escapeHTML(i.title) + '</div><div class="timeline-meta">' + escapeHTML(i.author) + ' · ' + relativeTime(i.ts) + ' · ' + new Date(i.ts).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}) + '</div>' + (i.desc ? '<div class="timeline-desc">' + escapeHTML(i.desc) + '</div>' : '') + '</div></div>').join('');
+}
+function renderFamilySnapshot() {
+  const el = document.getElementById('familySnapshot');
+  if (!el) return;
+  const fam = ensureFamily();
+  const items = buildJournalItems().filter(i => i.kind !== 'need').slice(0,3);
+  el.innerHTML = '<div class="mini-grid"><div class="mini-card"><div class="n">' + fam.members.length + '</div><div class="l">membres</div></div><div class="mini-card"><div class="n">' + (state.actions || []).filter(a => a.ts >= todayStart()).length + '</div><div class="l">actions jour</div></div></div>' + (items.length ? '<div style="margin-top:12px;">' + items.map(i => '<div class="timeline-item"><div class="timeline-dot">' + i.icon + '</div><div><div class="timeline-title">' + escapeHTML(i.title) + '</div><div class="timeline-meta">' + escapeHTML(i.author) + ' · ' + relativeTime(i.ts) + '</div></div></div>').join('') + '</div>' : '<div class="empty"><div class="empty-icon">👋</div>Aucune activité partagée.</div>');
+}
+const baseInitAppUI = initAppUI;
+initAppUI = function() {
+  baseInitAppUI();
+  ensureFamily(); hydrateFamilyInputs(); renderFamily(); renderJournal(); renderFamilySnapshot(); renderPiscinier();
+};
+const baseSwitchTab = switchTab;
+switchTab = function(tab) {
+  baseSwitchTab(tab);
+  if (tab === 'family') renderFamily();
+  if (tab === 'journal') renderJournal();
+  if (tab === 'piscinier') renderPiscinier();
+};
+const baseSaveMeasure = saveMeasure;
+saveMeasure = function() {
+  const before = state.measures.length;
+  baseSaveMeasure();
+  if (state.measures.length > before) {
+    state.measures[0].author = getMemberName();
+    saveKey(KEYS.measures, state.measures);
+    renderJournal(); renderFamilySnapshot(); pushRealtimeState();
+  }
+};
+const baseRenderHistory = renderHistory;
+renderHistory = function() {
+  baseRenderHistory();
+  document.querySelectorAll('#historyList .history-item').forEach((el, idx) => {
+    const m = state.measures[idx];
+    if (m && m.author && !el.innerHTML.includes('Par ')) {
+      const meta = document.createElement('div');
+      meta.className = 'timeline-meta';
+      meta.style.gridColumn = '2 / 3';
+      meta.textContent = 'Par ' + m.author;
+      el.appendChild(meta);
+    }
+  });
+};
+const baseSavePoolAction = savePoolAction;
+savePoolAction = function() { baseSavePoolAction(); renderJournal(); renderFamilySnapshot(); renderFamily(); };
+const baseDeletePoolAction = deletePoolAction;
+deletePoolAction = function(id) { baseDeletePoolAction(id); renderJournal(); renderFamilySnapshot(); renderFamily(); };
+const baseHydrateAdvancedSettings = hydrateAdvancedSettings;
+hydrateAdvancedSettings = function() { baseHydrateAdvancedSettings(); hydrateFamilyInputs(); };
+const baseGetFullStatePayload = getFullStatePayload;
+getFullStatePayload = function() { const payload = baseGetFullStatePayload(); payload.family = state.family || loadKey(FAMILY_KEY, null); payload.updatedAt = Date.now(); return payload; };
+const baseApplySharedPayload = applySharedPayload;
+applySharedPayload = function(data) { baseApplySharedPayload(data); if (data && data.family) { state.family = data.family; saveKey(FAMILY_KEY, state.family); } renderFamily(); renderJournal(); renderFamilySnapshot(); };
+const baseImportSharedStateFromUrl = importSharedStateFromUrl;
+importSharedStateFromUrl = function() { baseImportSharedStateFromUrl(); acceptInviteFromUrl(); };
+const baseSaveSyncSettings = saveSyncSettings;
+saveSyncSettings = function() { baseSaveSyncSettings(); ensureFamily(); state.family.poolId = state.sync.poolId; persistFamily(); renderFamily(); };
+function analyseWaterImageFromCanvas(img) {
+  const canvas = document.createElement('canvas');
+  const w = 80, h = Math.max(40, Math.round((img.naturalHeight || img.height) / (img.naturalWidth || img.width) * w));
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, w, h);
+  const data = ctx.getImageData(0,0,w,h).data;
+  let r=0,g=0,b=0, bright=0, sat=0, n=0;
+  for (let i=0;i<data.length;i+=16) {
+    const rr=data[i], gg=data[i+1], bb=data[i+2];
+    const max=Math.max(rr,gg,bb), min=Math.min(rr,gg,bb);
+    r+=rr; g+=gg; b+=bb; bright+=(rr+gg+bb)/3; sat+=max-min; n++;
+  }
+  r/=n; g/=n; b/=n; bright/=n; sat/=n;
+  let color='bleu clair', supposition='L’eau paraît visuellement correcte, à confirmer par les mesures.';
+  let confidence = sat < 18 ? 'faible' : 'moyenne';
+  if (g > b + 12 && g > r + 8) { color='vert / verdâtre'; supposition='Suspicion d’algues ou de chlore insuffisant. Vérifier chlore libre, pH et durée de filtration.'; confidence='moyenne'; }
+  else if (r > b + 18 && g > b + 5) { color='jaune / brun'; supposition='Suspicion de particules, métaux, pollen ou eau chargée. Vérifier filtration, pH et nettoyage du filtre.'; }
+  else if (bright > 185 && sat < 30) { color='laiteux / trouble'; supposition='Suspicion d’eau trouble : filtration insuffisante, pH haut ou manque de désinfectant.'; }
+  else if (b > g && b > r && bright < 95) { color='bleu foncé'; supposition='Eau sombre sur la photo : analyse visuelle limitée. Reprendre une photo en plein jour et faire un relevé.'; confidence='faible'; }
+  else if (b >= g && g >= r) { color='bleu clair'; supposition='Aspect plutôt sain, mais le diagnostic dépend des relevés pH / chlore / TAC.'; }
+  return { r:Math.round(r), g:Math.round(g), b:Math.round(b), bright:Math.round(bright), sat:Math.round(sat), color, supposition, confidence };
+}
+runPhotoAIAnalysis = function() {
+  const fileInput = document.getElementById('waterPhoto');
+  if (!fileInput.files || !fileInput.files[0]) { showToast('Ajoute une photo', true); return; }
+  const img = document.getElementById('waterPhotoPreview');
+  const visual = img && img.complete && img.naturalWidth ? analyseWaterImageFromCanvas(img) : { color:'non analysée', supposition:'Photo chargée, mais couleur non lisible.', confidence:'faible' };
+  const last = state.measures[0] || {};
+  const advice = buildDiagnostic(last);
+  const needs = detectNeeds().slice(0, 5);
+  const blocks = [];
+  blocks.push({ param:'Couleur eau', status: visual.color.includes('vert') || visual.color.includes('trouble') || visual.color.includes('brun') ? 'warn' : 'good', value: visual.confidence, icon:'🎨', title:'Eau ' + visual.color, body: visual.supposition, actions:[
+    { b:'→', t:'Comparer cette supposition avec un relevé pH / chlore / TAC.' },
+    { b:'→', t:'Reprendre une photo en plein jour si le fond du bassin n’est pas visible.' }
+  ]});
+  if (advice.length) blocks.push(...advice.slice(0,3));
+  blocks.push({ param:'Limite IA', status:'warn', value:'à confirmer', icon:'⚠', title:'Diagnostic visuel non suffisant seul', body:'La couleur de l’eau donne une orientation, mais ne remplace pas une bandelette, un photomètre ou l’avis d’un piscinier.', actions: needs.slice(0,3).map(n => ({ b:'→', t:n })) });
+  renderDiagnosticInto('iaResult', blocks, false);
+  const analysis = { id:'ia_' + Date.now(), ts: Date.now(), author:getMemberName(), title:'Analyse photo IA', waterColor:visual.color, confidence:visual.confidence, rgb:{r:visual.r,g:visual.g,b:visual.b}, needs, adviceCount:blocks.length };
+  state.aiAnalyses.unshift(analysis); state.aiAnalyses = state.aiAnalyses.slice(0, 50); saveKey(KEYS.aiAnalyses, state.aiAnalyses);
+  renderJournal(); renderFamilySnapshot(); pushRealtimeState(); showToast('Analyse IA ajoutée au journal ✓');
+};
+function buildPiscinierBrief(needs) {
+  const last = state.measures[0] || {};
+  const city = state.config && state.config.location ? state.config.location.name : 'non précisée';
+  const parts = [];
+  parts.push('Bonjour, j’ai besoin d’un conseil pour ma piscine.');
+  parts.push('Piscine : ' + (state.config ? state.config.name : 'Piscine') + ' · ' + (state.config ? state.config.volume : '—') + ' m³ · Localisation : ' + city + '.');
+  parts.push('Traitement : chlore · Filtration : filtre à sable.');
+  parts.push('Derniers relevés : pH ' + (last.ph ?? '—') + ' · Chlore ' + (last.cl ?? '—') + ' mg/L · TAC ' + (last.tac ?? '—') + ' ppm · CYA ' + (last.cya ?? '—') + ' · Température ' + (last.temp ?? '—') + '°C.');
+  parts.push('Besoins détectés : ' + (needs || detectNeeds()).slice(0,5).join(', ') + '.');
+  parts.push('Pouvez-vous me dire quels produits ou actions vous recommandez ?');
+  return parts.join('\n');
+}
+const baseRenderPiscinier = renderPiscinier;
+renderPiscinier = function() {
+  baseRenderPiscinier();
+  const needs = detectNeeds();
+  const brief = document.getElementById('piscinierBrief');
+  if (brief) brief.textContent = buildPiscinierBrief(needs);
+};
+function copyPiscinierBrief() {
+  const txt = document.getElementById('piscinierBrief') ? document.getElementById('piscinierBrief').textContent : buildPiscinierBrief();
+  navigator.clipboard && navigator.clipboard.writeText(txt).then(() => showToast('Brief copié ✓')).catch(() => showToast('Copie impossible', true));
+}
+
+// PWA
+let deferredInstallPrompt = null;
+let installBannerDismissedThisSession = false;
+let installBannerShown = false;
+
+function isStandalone() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
+function isIOS() { return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  maybeShowInstallBanner();
+});
+window.addEventListener('appinstalled', () => {
+  hideInstallBanner();
+  deferredInstallPrompt = null;
+  installBannerDismissedThisSession = true;
+  showToast('App installée ✓');
+});
+
+function maybeShowInstallBanner() {
+  if (isStandalone() || installBannerDismissedThisSession || installBannerShown) return;
+  const dismissed = loadKey(KEYS.installDismissed, null);
+  if (dismissed && Date.now() - dismissed < 7 * 24 * 3600 * 1000) return;
+  if (deferredInstallPrompt || isIOS()) {
+    installBannerShown = true;
+    setTimeout(() => {
+      if (installBannerDismissedThisSession) return;
+      document.getElementById('installBanner').classList.add('show');
+    }, 4000);
+  }
+}
+
+async function triggerInstall() {
+  if (deferredInstallPrompt) {
+    hideInstallBanner();
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+    if (choice.outcome === 'dismissed') installBannerDismissedThisSession = true;
+    deferredInstallPrompt = null;
+  } else if (isIOS()) {
+    hideInstallBanner();
+    document.getElementById('iosModal').classList.add('show');
+  } else {
+    showToast('Ouvre dans Chrome ou Safari', true);
+  }
+}
+
+function dismissInstall() {
+  installBannerDismissedThisSession = true;
+  hideInstallBanner();
+  saveKey(KEYS.installDismissed, Date.now());
+}
+function hideInstallBanner() {
+  const b = document.getElementById('installBanner');
+  if (b) { b.classList.remove('show'); b.classList.add('dismissed'); }
+}
+function closeIosModal() { document.getElementById('iosModal').classList.remove('show'); }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('iosModal');
+  if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeIosModal(); });
+});
+
+// SW
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW failed:', err));
+  });
+}
+
+window.addEventListener('resize', positionSegmentIndicator);
+
+// BOOT
+function boot() {
+  importSharedStateFromUrl();
+  state.measures = loadKey(KEYS.measures, []);
+  const r = loadKey(KEYS.routines, null);
+  if (r) { state.routines = r.routines || state.routines; state.routinesReset = r.resets || state.routinesReset; }
+  state.config = loadKey(KEYS.config, null);
+  state.actions = loadKey(KEYS.actions, []);
+  state.aiAnalyses = loadKey(KEYS.aiAnalyses, []);
+  state.sync = loadKey(KEYS.sync, null);
+  state.family = loadKey(FAMILY_KEY, null);
+  state.reminders = Object.assign(state.reminders || {}, loadKey(KEYS.reminders, {}));
+
+  if (!state.config) {
+    setupOnbListeners();
+    setOnbStep(0);
+  } else {
+    document.getElementById('onboarding').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('appNav').style.display = 'flex';
+    initAppUI();
+  }
+}
+
+boot();
+</script>
+
+</body>
+</html>
