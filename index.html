@@ -26,6 +26,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
 <style>
   :root {
@@ -1961,6 +1962,75 @@
     </div>
   </div>
 
+  <!-- TENDANCES -->
+  <div class="view" id="view-trends">
+    <h2 class="section-title">Tendances <em>sur 30 jours</em></h2>
+    <p class="section-sub">Évolution de tes mesures dans le temps. La zone verte indique la plage idéale pour chaque paramètre.</p>
+
+    <div class="filter-row" style="display:flex; gap:8px; margin:14px 0 18px; flex-wrap:wrap;">
+      <button class="filter-btn active" data-range="30" onclick="setTrendsRange(30)">30 jours</button>
+      <button class="filter-btn" data-range="14" onclick="setTrendsRange(14)">14 jours</button>
+      <button class="filter-btn" data-range="7" onclick="setTrendsRange(7)">7 jours</button>
+      <button class="filter-btn" data-range="90" onclick="setTrendsRange(90)">3 mois</button>
+    </div>
+
+    <div id="trendsEmpty" style="display:none; text-align:center; padding:40px 20px; color:var(--ink-dim);">
+      <div style="font-size:48px; margin-bottom:12px;">📊</div>
+      <div style="font-family:var(--display); font-size:18px; margin-bottom:8px;">Pas encore de tendance à afficher</div>
+      <div style="font-size:14px;">Ajoute quelques mesures pour voir tes courbes évoluer.</div>
+    </div>
+
+    <div id="trendsContent">
+      <div class="card" style="margin-bottom:16px; padding:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; gap:10px;">
+          <div style="min-width:0;">
+            <div style="font-family:var(--display); font-size:18px; font-weight:500;">pH</div>
+            <div style="font-size:11px; color:var(--ink-dim); font-family:var(--mono);">zone idéale : 7.2 – 7.4</div>
+          </div>
+          <div id="trendsPhStat" style="font-family:var(--mono); font-size:11px; text-align:right; color:var(--ink-dim); line-height:1.5;"></div>
+        </div>
+        <div style="position:relative; height:180px;"><canvas id="trendChartPh"></canvas></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px; padding:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; gap:10px;">
+          <div style="min-width:0;">
+            <div style="font-family:var(--display); font-size:18px; font-weight:500;">Chlore libre</div>
+            <div style="font-size:11px; color:var(--ink-dim); font-family:var(--mono);">zone idéale : 1 – 3 mg/L</div>
+          </div>
+          <div id="trendsClStat" style="font-family:var(--mono); font-size:11px; text-align:right; color:var(--ink-dim); line-height:1.5;"></div>
+        </div>
+        <div style="position:relative; height:180px;"><canvas id="trendChartCl"></canvas></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px; padding:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; gap:10px;">
+          <div style="min-width:0;">
+            <div style="font-family:var(--display); font-size:18px; font-weight:500;">Température</div>
+            <div style="font-size:11px; color:var(--ink-dim); font-family:var(--mono);">confort baignade : 24 – 30 °C</div>
+          </div>
+          <div id="trendsTempStat" style="font-family:var(--mono); font-size:11px; text-align:right; color:var(--ink-dim); line-height:1.5;"></div>
+        </div>
+        <div style="position:relative; height:180px;"><canvas id="trendChartTemp"></canvas></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px; padding:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; gap:10px;">
+          <div style="min-width:0;">
+            <div style="font-family:var(--display); font-size:18px; font-weight:500;">TAC</div>
+            <div style="font-size:11px; color:var(--ink-dim); font-family:var(--mono);">zone idéale : 80 – 120 ppm</div>
+          </div>
+          <div id="trendsTacStat" style="font-family:var(--mono); font-size:11px; text-align:right; color:var(--ink-dim); line-height:1.5;"></div>
+        </div>
+        <div style="position:relative; height:180px;"><canvas id="trendChartTac"></canvas></div>
+      </div>
+
+      <div style="margin-top:18px; padding:12px; background:var(--glass); border-radius:8px; font-size:12px; color:var(--ink-dim);">
+        💡 <strong style="color:var(--ink);">Astuce :</strong> les points sont colorés selon ta dernière mesure — vert (idéal), orange (à ajuster), rouge (critique). Plus tu prends de relevés régulièrement, plus les tendances sont fiables.
+      </div>
+    </div>
+  </div>
+
   <!-- METEO -->
   <div class="view" id="view-meteo">
     <h2 class="section-title">Météo & <em>filtration</em></h2>
@@ -2356,6 +2426,10 @@
   <button data-tab="mes" onclick="switchTab('mes')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
     Mesures
+  </button>
+  <button data-tab="trends" onclick="switchTab('trends')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+    Tendances
   </button>
   <button data-tab="meteo" onclick="switchTab('meteo')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
@@ -3560,6 +3634,131 @@ function exportICS() {
 }
 
 // PDF
+// Helpers PDF : stats sur 30 jours et capture des graphiques
+function computePdfStats(paramKey, idealMin, idealMax, days) {
+  days = days || 30;
+  const cutoff = Date.now() - days * 24 * 3600 * 1000;
+  const values = (state.measures || [])
+    .filter(m => m.ts >= cutoff && m[paramKey] != null && !isNaN(m[paramKey]))
+    .map(m => parseFloat(m[paramKey]));
+  if (!values.length) return { count: 0, pctInZone: null, trend: '→', avg: null };
+  const inZone = values.filter(v => v >= idealMin && v <= idealMax).length;
+  const pctInZone = Math.round((inZone / values.length) * 100);
+  const avg = values.reduce((s, v) => s + v, 0) / values.length;
+  // Tendance : compare la moyenne des 5 plus récentes vs les 5 plus anciennes
+  const chrono = (state.measures || [])
+    .filter(m => m.ts >= cutoff && m[paramKey] != null && !isNaN(m[paramKey]))
+    .slice()
+    .sort((a, b) => a.ts - b.ts)
+    .map(m => parseFloat(m[paramKey]));
+  let trend = '→';
+  if (chrono.length >= 4) {
+    const halfSize = Math.max(2, Math.floor(chrono.length / 3));
+    const oldAvg = chrono.slice(0, halfSize).reduce((s, v) => s + v, 0) / halfSize;
+    const newAvg = chrono.slice(-halfSize).reduce((s, v) => s + v, 0) / halfSize;
+    const delta = newAvg - oldAvg;
+    const ref = Math.abs(oldAvg) || 1;
+    const relDelta = delta / ref;
+    if (relDelta > 0.04) trend = '↗';
+    else if (relDelta < -0.04) trend = '↘';
+  }
+  return { count: values.length, pctInZone, trend, avg };
+}
+
+function renderChartToPdfImage(paramKey, label, idealMin, idealMax, softMin, softMax, color, yMin, yMax, decimals, unit, days) {
+  // Crée un canvas hors-écran, dessine un graphique Chart.js, puis renvoie le data-URL PNG
+  days = days || 30;
+  const cutoff = Date.now() - days * 24 * 3600 * 1000;
+  const measures = (state.measures || [])
+    .filter(m => m.ts >= cutoff && m[paramKey] != null && !isNaN(m[paramKey]))
+    .slice()
+    .sort((a, b) => a.ts - b.ts);
+  if (!measures.length) return null;
+
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width = 1100;
+  tmpCanvas.height = 400;
+  tmpCanvas.style.display = 'none';
+  document.body.appendChild(tmpCanvas);
+
+  const labels = measures.map(m => {
+    const d = new Date(m.ts);
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+  });
+  const values = measures.map(m => parseFloat(m[paramKey]));
+  const pointColors = values.map(v => {
+    if (v < softMin || v > softMax) return '#e94e4e';
+    if (v < idealMin || v > idealMax) return '#ffb454';
+    return '#7ac74f';
+  });
+
+  const idealZonePlugin = {
+    id: 'idealZonePdf',
+    beforeDatasetsDraw: (chart) => {
+      const ctx = chart.ctx;
+      const chartArea = chart.chartArea;
+      const scales = chart.scales;
+      if (!chartArea) return;
+      const yMax2 = scales.y.getPixelForValue(idealMax);
+      const yMin2 = scales.y.getPixelForValue(idealMin);
+      ctx.save();
+      ctx.fillStyle = 'rgba(122, 199, 79, 0.22)';
+      ctx.fillRect(chartArea.left, yMax2, chartArea.right - chartArea.left, yMin2 - yMax2);
+      ctx.restore();
+    }
+  };
+
+  const chart = new Chart(tmpCanvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: label,
+        data: values,
+        borderColor: color,
+        backgroundColor: color + '33',
+        borderWidth: 2.5,
+        tension: 0.3,
+        pointRadius: 4,
+        pointBackgroundColor: pointColors,
+        pointBorderColor: pointColors,
+        pointBorderWidth: 0,
+        fill: false
+      }]
+    },
+    options: {
+      responsive: false,
+      animation: false,
+      devicePixelRatio: 2,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          ticks: { color: '#444', font: { size: 14 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 },
+          grid: { color: 'rgba(0,0,0,0.06)' }
+        },
+        y: {
+          min: yMin,
+          max: yMax,
+          ticks: {
+            color: '#444',
+            font: { size: 14 },
+            callback: (v) => v.toFixed(decimals) + unit
+          },
+          grid: { color: 'rgba(0,0,0,0.06)' }
+        }
+      }
+    },
+    plugins: [idealZonePlugin]
+  });
+
+  // On force le rendu synchrone
+  chart.draw();
+  const dataUrl = tmpCanvas.toDataURL('image/png');
+  chart.destroy();
+  document.body.removeChild(tmpCanvas);
+  return dataUrl;
+}
+
 function exportPDF() {
   if (!window.jspdf) { showToast('PDF non chargé', true); return; }
   const { jsPDF } = window.jspdf;
@@ -3592,17 +3791,17 @@ function exportPDF() {
     doc.text('Dernière mesure : ' + lastDate, M, y); y += 8;
 
     const stats = [
-      { lbl: 'pH', val: last.ph != null ? last.ph.toFixed(1) : '—', unit: '', range: '7,2 - 7,4', status: phStatus(last.ph) },
-      { lbl: 'Chlore libre', val: last.cl != null ? last.cl.toFixed(1) : '—', unit: 'mg/L', range: '1 - 3 mg/L', status: clStatus(last.cl) },
-      { lbl: 'Alcalinité', val: last.tac != null ? Math.round(last.tac) : '—', unit: 'ppm', range: '80 - 120 ppm', status: tacStatus(last.tac) },
-      { lbl: 'Stabilisant', val: last.cya != null ? Math.round(last.cya) : '—', unit: 'mg/L', range: '30 - 50 mg/L', status: cyaStatus(last.cya) }
+      { lbl: 'pH', val: last.ph != null ? last.ph.toFixed(1) : '—', unit: '', range: '7,2 - 7,4', status: phStatus(last.ph), key: 'ph', idealMin: 7.2, idealMax: 7.4 },
+      { lbl: 'Chlore libre', val: last.cl != null ? last.cl.toFixed(1) : '—', unit: 'mg/L', range: '1 - 3 mg/L', status: clStatus(last.cl), key: 'cl', idealMin: 1, idealMax: 3 },
+      { lbl: 'Alcalinité', val: last.tac != null ? Math.round(last.tac) : '—', unit: 'ppm', range: '80 - 120 ppm', status: tacStatus(last.tac), key: 'tac', idealMin: 80, idealMax: 120 },
+      { lbl: 'Stabilisant', val: last.cya != null ? Math.round(last.cya) : '—', unit: 'mg/L', range: '30 - 50 mg/L', status: cyaStatus(last.cya), key: 'cya', idealMin: 30, idealMax: 50 }
     ];
     const colW = W / 2 - 3;
     stats.forEach((s, i) => {
       const col = i % 2, row = Math.floor(i / 2);
-      const x = M + col * (colW + 6), yy = y + row * 26;
+      const x = M + col * (colW + 6), yy = y + row * 30;
       doc.setDrawColor.apply(doc, C_LINE); doc.setLineWidth(0.3);
-      doc.roundedRect(x, yy, colW, 22, 2, 2, 'S');
+      doc.roundedRect(x, yy, colW, 26, 2, 2, 'S');
       const dotColor = s.status === 'good' ? C_GOOD : s.status === 'warn' ? C_WARN : s.status === 'bad' ? C_BAD : C_LINE;
       doc.setFillColor.apply(doc, dotColor); doc.circle(x + colW - 4, yy + 4, 1.2, 'F');
       doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor.apply(doc, C_DIM);
@@ -3616,8 +3815,27 @@ function exportPDF() {
       }
       doc.setFontSize(7);
       doc.text('cible ' + s.range, x + 3, yy + 19);
+      // Mini-stats 30j : tendance + % zone idéale
+      const stat30 = computePdfStats(s.key, s.idealMin, s.idealMax, 30);
+      if (stat30.count > 0) {
+        doc.setFontSize(7); doc.setTextColor.apply(doc, C_DIM);
+        const trendColor = stat30.trend === '↗' ? C_WARN : stat30.trend === '↘' ? C_DEEP : C_GOOD;
+        doc.text('30j :', x + 3, yy + 23.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor.apply(doc, trendColor);
+        doc.text(stat30.trend, x + 11, yy + 23.5);
+        doc.setFont('helvetica', 'normal');
+        const zoneColor = stat30.pctInZone >= 70 ? C_GOOD : stat30.pctInZone >= 40 ? C_WARN : C_BAD;
+        doc.setTextColor.apply(doc, zoneColor);
+        doc.text(stat30.pctInZone + '% en zone', x + 16, yy + 23.5);
+        doc.setTextColor.apply(doc, C_DIM);
+        doc.text('· ' + stat30.count + ' mes.', x + 16 + doc.getTextWidth(stat30.pctInZone + '% en zone') + 1, yy + 23.5);
+      } else {
+        doc.setFontSize(7); doc.setTextColor.apply(doc, C_DIM);
+        doc.text('30j : pas de données', x + 3, yy + 23.5);
+      }
     });
-    y += 26 * 2 + 4;
+    y += 30 * 2 + 4;
   } else {
     doc.setFontSize(10); doc.setFont('helvetica', 'italic'); doc.setTextColor.apply(doc, C_DIM);
     doc.text('Aucune mesure enregistrée.', M, y); y += 10;
@@ -3678,6 +3896,61 @@ function exportPDF() {
     y += 4;
   }
 
+  // ============================================================
+  // PAGE ÉVOLUTION 30 JOURS — avec graphiques
+  // ============================================================
+  if (typeof Chart !== 'undefined' && state.measures && state.measures.length >= 2) {
+    doc.addPage(); y = M;
+    doc.setTextColor.apply(doc, C_INK); doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+    doc.text('Évolution sur 30 jours', M, y); y += 4;
+    doc.setDrawColor.apply(doc, C_SHALLOW); doc.setLineWidth(0.8);
+    doc.line(M, y, M + 15, y); y += 7;
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor.apply(doc, C_DIM);
+    doc.text('Zone verte = plage idéale. Points verts/orange/rouge selon la mesure.', M, y); y += 8;
+
+    const chartParams = [
+      { key: 'ph',   label: 'pH',          color: '#0a7fa8', idealMin: 7.2, idealMax: 7.4, softMin: 6.8, softMax: 7.8, yMin: 6.5, yMax: 8.2, decimals: 2, unit: '' },
+      { key: 'cl',   label: 'Chlore libre',color: '#7ac74f', idealMin: 1,   idealMax: 3,   softMin: 0.5, softMax: 5,   yMin: 0,   yMax: 6,   decimals: 2, unit: ' mg/L' },
+      { key: 'temp', label: 'Température', color: '#e8b933', idealMin: 24,  idealMax: 30,  softMin: 20,  softMax: 32,  yMin: 10,  yMax: 36,  decimals: 1, unit: ' °C' },
+      { key: 'tac',  label: 'Alcalinité (TAC)', color: '#064a6e', idealMin: 80, idealMax: 120, softMin: 60, softMax: 150, yMin: 40, yMax: 180, decimals: 0, unit: ' ppm' }
+    ];
+
+    // 2 graphiques par page, layout 1 colonne
+    chartParams.forEach((p, idx) => {
+      // 2 graphiques par page : 1er et 2e sur la page courante, 3e et 4e sur une nouvelle page
+      if (idx === 2) { doc.addPage(); y = M + 8; }
+      const dataUrl = renderChartToPdfImage(p.key, p.label, p.idealMin, p.idealMax, p.softMin, p.softMax, p.color, p.yMin, p.yMax, p.decimals, p.unit, 30);
+      // Titre du graphique
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor.apply(doc, C_INK);
+      doc.text(p.label, M, y);
+      // Stats à droite
+      const s = computePdfStats(p.key, p.idealMin, p.idealMax, 30);
+      if (s.count > 0) {
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor.apply(doc, C_DIM);
+        const trendColor = s.trend === '↗' ? C_WARN : s.trend === '↘' ? C_DEEP : C_GOOD;
+        doc.text(s.count + ' mesures · ' + s.pctInZone + '% en zone idéale · tendance ', 210 - M, y, { align: 'right' });
+        const totalWidth = doc.getTextWidth(s.count + ' mesures · ' + s.pctInZone + '% en zone idéale · tendance ');
+        doc.setTextColor.apply(doc, trendColor); doc.setFont('helvetica', 'bold');
+        doc.text(s.trend, 210 - M, y, { align: 'right', baseline: 'alphabetic' });
+      }
+      y += 4;
+      if (dataUrl) {
+        try {
+          // Largeur image : 174mm (W), hauteur proportionnelle
+          doc.addImage(dataUrl, 'PNG', M, y, W, 55);
+          y += 60;
+        } catch(e) {
+          doc.setFont('helvetica', 'italic'); doc.setFontSize(9); doc.setTextColor.apply(doc, C_DIM);
+          doc.text('(Graphique non disponible)', M, y); y += 10;
+        }
+      } else {
+        doc.setFont('helvetica', 'italic'); doc.setFontSize(9); doc.setTextColor.apply(doc, C_DIM);
+        doc.text('Pas assez de mesures de ' + p.label.toLowerCase() + ' sur cette période.', M, y); y += 10;
+      }
+    });
+  }
+  // ============================================================
+
   doc.addPage(); y = M;
   doc.setTextColor.apply(doc, C_INK); doc.setFontSize(14); doc.setFont('helvetica', 'bold');
   doc.text('Routines d\'entretien', M, y); y += 4;
@@ -3724,6 +3997,56 @@ function exportPDF() {
     const fl = doc.splitTextToSize(p.fix, W);
     doc.text(fl, M, y); y += fl.length * 4 + 8;
   });
+
+  // ============================================================
+  // PAGE BRIEF PISCINIER — message prêt à transmettre
+  // ============================================================
+  doc.addPage(); y = M;
+  doc.setTextColor.apply(doc, C_INK); doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+  doc.text('À transmettre au piscinier', M, y); y += 4;
+  doc.setDrawColor.apply(doc, C_SHALLOW); doc.setLineWidth(0.8);
+  doc.line(M, y, M + 15, y); y += 8;
+  doc.setFontSize(9); doc.setFont('helvetica', 'italic'); doc.setTextColor.apply(doc, C_DIM);
+  doc.text('Brief synthétique reprenant l\'état de la piscine, à montrer ou lire au piscinier.', M, y); y += 9;
+
+  // Encadré gris clair avec le texte
+  let brief;
+  try { brief = buildPiscinierBrief(); }
+  catch(e) { brief = 'Brief indisponible.'; }
+  const briefLines = doc.splitTextToSize(brief, W - 10);
+  const boxHeight = briefLines.length * 5 + 12;
+  doc.setFillColor(248, 250, 252); doc.setDrawColor.apply(doc, C_LINE); doc.setLineWidth(0.3);
+  doc.roundedRect(M, y, W, boxHeight, 2, 2, 'FD');
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor.apply(doc, C_INK);
+  doc.text(briefLines, M + 5, y + 7);
+  y += boxHeight + 8;
+
+  // Récap des besoins détectés
+  let needs = [];
+  try { needs = (typeof detectNeeds === 'function') ? detectNeeds() : []; } catch(e) {}
+  if (needs.length) {
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor.apply(doc, C_DEEP);
+    doc.text('Besoins ou actions identifiés', M, y); y += 6;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor.apply(doc, C_INK);
+    needs.slice(0, 8).forEach(n => {
+      if (y > 275) { doc.addPage(); y = M; }
+      const lines = doc.splitTextToSize('• ' + n, W);
+      doc.text(lines, M, y); y += lines.length * 4.5 + 1;
+    });
+    y += 4;
+  }
+
+  // Coordonnées propriétaire
+  if (y > 245) { doc.addPage(); y = M; }
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor.apply(doc, C_DEEP);
+  doc.text('Contact propriétaire', M, y); y += 6;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor.apply(doc, C_INK);
+  doc.text(state.config.name || 'Piscine', M, y); y += 5;
+  if (state.config.location && state.config.location.name) {
+    doc.text(state.config.location.name, M, y); y += 5;
+  }
+  doc.text('Volume : ' + (state.config.volume || '—') + ' m³', M, y); y += 5;
+  // ============================================================
 
   const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
@@ -4419,6 +4742,230 @@ function boot() {
     initAppUI();
   }
 }
+
+// =================================================================
+// TENDANCES — Graphiques d'évolution sur 30 jours
+// =================================================================
+
+let trendsRange = 30;
+const trendsCharts = {};
+
+const TREND_PARAMS = [
+  { key: 'ph',   label: 'pH',          canvasId: 'trendChartPh',   statId: 'trendsPhStat',   idealMin: 7.2, idealMax: 7.4, softMin: 6.8, softMax: 7.8, color: '#4ec0d8', yMin: 6.5, yMax: 8.2, decimals: 2, unit: '' },
+  { key: 'cl',   label: 'Chlore',      canvasId: 'trendChartCl',   statId: 'trendsClStat',   idealMin: 1,   idealMax: 3,   softMin: 0.5, softMax: 5,   color: '#7ac74f', yMin: 0,   yMax: 6,   decimals: 2, unit: ' mg/L' },
+  { key: 'temp', label: 'Température', canvasId: 'trendChartTemp', statId: 'trendsTempStat', idealMin: 24,  idealMax: 30,  softMin: 20,  softMax: 32,  color: '#f5d97e', yMin: 10,  yMax: 36,  decimals: 1, unit: ' °C' },
+  { key: 'tac',  label: 'TAC',         canvasId: 'trendChartTac',  statId: 'trendsTacStat',  idealMin: 80,  idealMax: 120, softMin: 60,  softMax: 150, color: '#0a7fa8', yMin: 40,  yMax: 180, decimals: 0, unit: ' ppm' }
+];
+
+function setTrendsRange(days) {
+  trendsRange = days;
+  document.querySelectorAll('#view-trends .filter-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.range) === days);
+  });
+  renderTrends();
+}
+
+function getTrendData(paramKey, days) {
+  const cutoff = Date.now() - days * 24 * 3600 * 1000;
+  return (state.measures || [])
+    .filter(m => m.ts >= cutoff && m[paramKey] != null && !isNaN(m[paramKey]))
+    .slice()
+    .sort((a, b) => a.ts - b.ts)
+    .map(m => ({ x: m.ts, y: parseFloat(m[paramKey]) }));
+}
+
+function computeTrendStats(data, param) {
+  if (!data.length) return '—';
+  const values = data.map(d => d.y);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const avg = values.reduce((s, v) => s + v, 0) / values.length;
+  const d = param.decimals;
+  const u = param.unit;
+  const inZone = data.filter(p => p.y >= param.idealMin && p.y <= param.idealMax).length;
+  const pct = Math.round((inZone / data.length) * 100);
+  const color = pct >= 70 ? '#7ac74f' : pct >= 40 ? '#ffb454' : '#e94e4e';
+  return 'min ' + min.toFixed(d) + u + ' · moy ' + avg.toFixed(d) + u + ' · max ' + max.toFixed(d) + u + '<br><span style="color:' + color + '">' + pct + '% en zone idéale</span>';
+}
+
+function renderTrendChartSimple(param, data) {
+  const canvas = document.getElementById(param.canvasId);
+  if (!canvas) return;
+
+  if (trendsCharts[param.key]) {
+    trendsCharts[param.key].destroy();
+    delete trendsCharts[param.key];
+  }
+
+  if (!data.length) {
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(241, 248, 251, 0.4)';
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Aucune mesure de ' + param.label.toLowerCase() + ' sur cette période', canvas.width / 2, canvas.height / 2);
+    return;
+  }
+
+  const labels = data.map(p => {
+    const d = new Date(p.x);
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+  });
+  const values = data.map(p => p.y);
+
+  const pointColors = values.map(v => {
+    if (v < param.softMin || v > param.softMax) return '#e94e4e';
+    if (v < param.idealMin || v > param.idealMax) return '#ffb454';
+    return '#7ac74f';
+  });
+
+  const idealZonePlugin = {
+    id: 'idealZone_' + param.key,
+    beforeDatasetsDraw: (chart) => {
+      const ctx = chart.ctx;
+      const chartArea = chart.chartArea;
+      const scales = chart.scales;
+      if (!chartArea) return;
+      const yIdealMax = scales.y.getPixelForValue(param.idealMax);
+      const yIdealMin = scales.y.getPixelForValue(param.idealMin);
+      ctx.save();
+      ctx.fillStyle = 'rgba(122, 199, 79, 0.18)';
+      ctx.fillRect(chartArea.left, yIdealMax, chartArea.right - chartArea.left, yIdealMin - yIdealMax);
+      ctx.strokeStyle = 'rgba(122, 199, 79, 0.45)';
+      ctx.setLineDash([3, 3]);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(chartArea.left, yIdealMax);
+      ctx.lineTo(chartArea.right, yIdealMax);
+      ctx.moveTo(chartArea.left, yIdealMin);
+      ctx.lineTo(chartArea.right, yIdealMin);
+      ctx.stroke();
+      ctx.restore();
+    }
+  };
+
+  trendsCharts[param.key] = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: param.label,
+        data: values,
+        borderColor: param.color,
+        backgroundColor: param.color + '22',
+        borderWidth: 2,
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: pointColors,
+        pointBorderColor: pointColors,
+        pointBorderWidth: 0,
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 400 },
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(2, 24, 36, 0.95)',
+          borderColor: 'rgba(78, 192, 216, 0.3)',
+          borderWidth: 1,
+          titleColor: '#f1f8fb',
+          bodyColor: '#f1f8fb',
+          padding: 10,
+          callbacks: {
+            title: (items) => {
+              const idx = items[0].dataIndex;
+              const ts = data[idx].x;
+              return new Date(ts).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+            },
+            label: (item) => param.label + ' : ' + item.parsed.y.toFixed(param.decimals) + param.unit
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: 'rgba(241, 248, 251, 0.55)',
+            font: { size: 10, family: 'monospace' },
+            maxRotation: 0,
+            autoSkip: true,
+            maxTicksLimit: 6
+          },
+          grid: { color: 'rgba(241, 248, 251, 0.06)', drawBorder: false }
+        },
+        y: {
+          min: param.yMin,
+          max: param.yMax,
+          ticks: {
+            color: 'rgba(241, 248, 251, 0.55)',
+            font: { size: 10, family: 'monospace' },
+            callback: (v) => v.toFixed(param.decimals) + param.unit
+          },
+          grid: { color: 'rgba(241, 248, 251, 0.06)', drawBorder: false }
+        }
+      }
+    },
+    plugins: [idealZonePlugin]
+  });
+}
+
+function renderTrends() {
+  if (typeof Chart === 'undefined') {
+    console.warn('Chart.js n\'est pas chargé');
+    return;
+  }
+  const measures = state.measures || [];
+  const emptyEl = document.getElementById('trendsEmpty');
+  const contentEl = document.getElementById('trendsContent');
+  if (!emptyEl || !contentEl) return;
+  if (measures.length === 0) {
+    emptyEl.style.display = 'block';
+    contentEl.style.display = 'none';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  contentEl.style.display = 'block';
+  TREND_PARAMS.forEach(param => {
+    const data = getTrendData(param.key, trendsRange);
+    renderTrendChartSimple(param, data);
+    const statEl = document.getElementById(param.statId);
+    if (statEl) statEl.innerHTML = computeTrendStats(data, param);
+  });
+}
+
+// Hooks pour rafraîchir les graphiques au bon moment
+const baseSwitchTabForTrends = switchTab;
+switchTab = function(tab) {
+  baseSwitchTabForTrends(tab);
+  if (tab === 'trends') {
+    setTimeout(renderTrends, 50);
+  }
+};
+
+const baseSaveMeasureForTrends = saveMeasure;
+saveMeasure = function() {
+  baseSaveMeasureForTrends();
+  const trendsView = document.getElementById('view-trends');
+  if (trendsView && trendsView.classList.contains('active')) {
+    setTimeout(renderTrends, 100);
+  }
+};
+
+const baseApplySharedPayloadForTrends = applySharedPayload;
+applySharedPayload = function(data) {
+  baseApplySharedPayloadForTrends(data);
+  const trendsView = document.getElementById('view-trends');
+  if (trendsView && trendsView.classList.contains('active')) {
+    setTimeout(renderTrends, 100);
+  }
+};
 
 boot();
 </script>
