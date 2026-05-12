@@ -1,0 +1,108 @@
+// sw.js — Service Worker pour Ma Piscine
+// Stratégie : cache-first pour les assets, network-first pour les données Supabase
+
+const CACHE_VERSION = 'piscine-v1';
+const ASSETS_CACHE = `${CACHE_VERSION}-assets`;
+const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
+
+// Fichiers à mettre en cache au premier chargement
+const CORE_ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-76.png',
+  './icon-120.png',
+  './icon-152.png',
+  './icon-167.png',
+  './icon-180.png',
+  './icon-192.png',
+  './icon-512.png'
+];
+
+// INSTALL : mise en cache initiale
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(ASSETS_CACHE)
+      .then((cache) => cache.addAll(CORE_ASSETS).catch((err) => {
+        console.warn('[SW] Certaines ressources n\'ont pas pu être mises en cache:', err);
+      }))
+      .then(() => self.skipWaiting())
+  );
+});
+
+// ACTIVATE : nettoyage des vieux caches
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(
+        keys
+          .filter((key) => !key.startsWith(CACHE_VERSION))
+          .map((key) => caches.delete(key))
+      ))
+      .then(() => self.clients.claim())
+  );
+});
+
+// FETCH : stratégie selon le type de requête
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Ignorer les requêtes non-GET (POST vers Supabase, etc.)
+  if (request.method !== 'GET') return;
+
+  // Ne JAMAIS mettre Supabase en cache (sync temps réel, données fraîches obligatoires)
+  if (url.hostname.includes('supabase.co')) return;
+
+  // Ne pas intercepter les APIs météo (open-meteo) — toujours fraîches
+  if (url.hostname.includes('open-meteo.com') || url.hostname.includes('nominatim')) return;
+
+  // Police Google Fonts : cache-first (rarement changée)
+  if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
+    event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  // CDN jsPDF : cache-first
+  if (url.hostname.includes('cdnjs.cloudflare.com')) {
+    event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  // Ressources de l'app (même origine) : cache-first avec fallback réseau
+  if (url.origin === self.location.origin) {
+    event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  // Par défaut : on laisse passer
+});
+
+// Stratégie cache-first : on regarde dans le cache, sinon on va chercher en ligne et on met en cache
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+
+  try {
+    const response = await fetch(request);
+    if (response && response.status === 200) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch (err) {
+    // Si on est hors-ligne et que la ressource n'est pas en cache, on renvoie une page de fallback minimale
+    if (request.destination === 'document') {
+      const fallback = await caches.match('./index.html');
+      if (fallback) return fallback;
+    }
+    throw err;
+  }
+}
+
+// Permet à l'app de forcer la mise à jour du SW
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
