@@ -1683,6 +1683,8 @@
       <div class="onb-dot" data-dot="1"></div>
       <div class="onb-dot" data-dot="2"></div>
       <div class="onb-dot" data-dot="3"></div>
+      <div class="onb-dot" data-dot="4"></div>
+      <div class="onb-dot" data-dot="5"></div>
     </div>
 
     <div class="onb-step active" data-step="0">
@@ -1690,8 +1692,8 @@
       <div class="onb-eyebrow">Bienvenue</div>
       <h1 class="onb-title">Ton bassin,<br><em>au quotidien.</em></h1>
       <p class="onb-desc">
-        Configure ta piscine en 3 étapes pour obtenir des conseils précis,
-        une météo locale et des rappels adaptés à ton volume.
+        Configure ta piscine en 5 étapes pour obtenir des conseils précis,
+        une météo locale et des rappels adaptés à ton volume et ton traitement.
       </p>
       <div class="onb-actions">
         <button class="btn" onclick="onbNext()">Commencer
@@ -1701,7 +1703,7 @@
     </div>
 
     <div class="onb-step" data-step="1">
-      <div class="onb-eyebrow">Étape 1 / 3</div>
+      <div class="onb-eyebrow">Étape 1 / 5</div>
       <h1 class="onb-title">Comment <em>l'appeler ?</em></h1>
       <p class="onb-desc">Un petit nom pour ta piscine. Optionnel mais ça fait plaisir.</p>
       <div class="field">
@@ -1716,7 +1718,7 @@
     </div>
 
     <div class="onb-step" data-step="2">
-      <div class="onb-eyebrow">Étape 2 / 3</div>
+      <div class="onb-eyebrow">Étape 2 / 5</div>
       <h1 class="onb-title">Quel <em>volume ?</em></h1>
       <p class="onb-desc">Indispensable pour calculer les doses de produits, le temps de filtration et les vidanges.</p>
 
@@ -1776,7 +1778,128 @@
     </div>
 
     <div class="onb-step" data-step="3">
-      <div class="onb-eyebrow">Étape 3 / 3</div>
+      <div class="onb-eyebrow">Étape 3 / 5</div>
+      <h1 class="onb-title">Quel <em>traitement ?</em></h1>
+      <p class="onb-desc">Le désinfectant qui maintient ton eau saine. Ça détermine les seuils, conseils et produits adaptés.</p>
+
+      <div class="choice-cards">
+        <div class="choice-card" data-treatment="chlore" onclick="setTreatment('chlore')">
+          <div class="choice-icon">🧪</div>
+          <div class="choice-text">
+            <div class="choice-name">Chlore</div>
+            <div class="choice-sub">Le plus répandu, galet/granulé/liquide</div>
+          </div>
+          <div class="choice-check"></div>
+        </div>
+        <div class="choice-card" data-treatment="brome" onclick="setTreatment('brome')">
+          <div class="choice-icon">🟣</div>
+          <div class="choice-text">
+            <div class="choice-name">Brome</div>
+            <div class="choice-sub">Sans odeur, stable à haute température</div>
+          </div>
+          <div class="choice-check"></div>
+        </div>
+        <div class="choice-card" data-treatment="oxa" onclick="setTreatment('oxa')">
+          <div class="choice-icon">💨</div>
+          <div class="choice-text">
+            <div class="choice-name">Oxygène actif</div>
+            <div class="choice-sub">Doux pour la peau, plus écolo</div>
+          </div>
+          <div class="choice-check"></div>
+        </div>
+      </div>
+
+      <div class="onb-actions" style="margin-top:18px;">
+        <button class="btn btn-ghost" onclick="onbBack()">Retour</button>
+        <button class="btn" id="onbTreatmentNext" onclick="onbNext()" disabled>Suivant
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="onb-step" data-step="4">
+      <div class="onb-eyebrow">Étape 4 / 5</div>
+      <h1 class="onb-title">Ta <em>piscine ?</em></h1>
+      <p class="onb-desc">Quelques infos pour personnaliser tes conseils. Tu peux passer si tu ne sais pas.</p>
+
+      <div class="field">
+        <div class="field-label"><span class="name">Type de bassin</span></div>
+        <div class="choice-cards" style="margin-top:8px;">
+          <div class="choice-card" data-pooltype="enterre" onclick="setPoolType('enterre')">
+            <div class="choice-icon">🏊</div>
+            <div class="choice-text"><div class="choice-name">Enterrée</div><div class="choice-sub">Maçonnée, coque, liner enterré</div></div>
+            <div class="choice-check"></div>
+          </div>
+          <div class="choice-card" data-pooltype="semi" onclick="setPoolType('semi')">
+            <div class="choice-icon">⛱️</div>
+            <div class="choice-text"><div class="choice-name">Semi-enterrée</div><div class="choice-sub">Partiellement encastrée</div></div>
+            <div class="choice-check"></div>
+          </div>
+          <div class="choice-card" data-pooltype="hors-sol" onclick="setPoolType('hors-sol')">
+            <div class="choice-icon">🛟</div>
+            <div class="choice-text"><div class="choice-name">Hors-sol</div><div class="choice-sub">Tubulaire, bois, acier, autoportée</div></div>
+            <div class="choice-check"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:18px;">
+        <div class="field-label"><span class="name">Couverture / volet</span></div>
+        <div class="choice-cards" style="margin-top:8px;">
+          <div class="choice-card" data-cover="volet" onclick="setCover('volet')">
+            <div class="choice-icon">🪟</div>
+            <div class="choice-text"><div class="choice-name">Volet roulant</div><div class="choice-sub">Volet automatique ou immergé</div></div>
+            <div class="choice-check"></div>
+          </div>
+          <div class="choice-card" data-cover="bache" onclick="setCover('bache')">
+            <div class="choice-icon">🟦</div>
+            <div class="choice-text"><div class="choice-name">Bâche</div><div class="choice-sub">À bulles, hiver, ou bâche d'été</div></div>
+            <div class="choice-check"></div>
+          </div>
+          <div class="choice-card" data-cover="none" onclick="setCover('none')">
+            <div class="choice-icon">🌞</div>
+            <div class="choice-text"><div class="choice-name">Aucune</div><div class="choice-sub">Bassin à ciel ouvert</div></div>
+            <div class="choice-check"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:18px;">
+        <div class="field-label"><span class="name">Chauffage</span></div>
+        <div class="choice-cards" style="margin-top:8px;">
+          <div class="choice-card" data-heat="pac" onclick="setHeat('pac')">
+            <div class="choice-icon">🔥</div>
+            <div class="choice-text"><div class="choice-name">Pompe à chaleur</div><div class="choice-sub">PAC, le plus courant aujourd'hui</div></div>
+            <div class="choice-check"></div>
+          </div>
+          <div class="choice-card" data-heat="solaire" onclick="setHeat('solaire')">
+            <div class="choice-icon">☀️</div>
+            <div class="choice-text"><div class="choice-name">Solaire</div><div class="choice-sub">Capteurs ou tapis solaires</div></div>
+            <div class="choice-check"></div>
+          </div>
+          <div class="choice-card" data-heat="echangeur" onclick="setHeat('echangeur')">
+            <div class="choice-icon">🔧</div>
+            <div class="choice-text"><div class="choice-name">Échangeur</div><div class="choice-sub">Raccordé chaudière ou réseau</div></div>
+            <div class="choice-check"></div>
+          </div>
+          <div class="choice-card" data-heat="none" onclick="setHeat('none')">
+            <div class="choice-icon">❄️</div>
+            <div class="choice-text"><div class="choice-name">Aucun</div><div class="choice-sub">Eau au gré du soleil</div></div>
+            <div class="choice-check"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="onb-actions" style="margin-top:18px;">
+        <button class="btn btn-ghost" onclick="onbBack()">Retour</button>
+        <button class="btn" onclick="onbNext()">Suivant
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="onb-step" data-step="5">
+      <div class="onb-eyebrow">Étape 5 / 5</div>
       <h1 class="onb-title">Tu es <em>où ?</em></h1>
       <p class="onb-desc">On utilise ta ville pour la météo locale et l'estimation de la température de l'eau. Aucune donnée personnelle n'est envoyée ailleurs.</p>
 
@@ -1825,6 +1948,17 @@
 
   <!-- DASH -->
   <div class="view active" id="view-dash">
+    <div id="migrationBanner" style="display:none; margin-bottom:14px; padding:14px; background:linear-gradient(135deg, rgba(255,180,84,0.18), rgba(255,180,84,0.06)); border:1px solid rgba(255,180,84,0.35); border-radius:10px;">
+      <div style="display:flex; align-items:flex-start; gap:10px;">
+        <div style="font-size:22px;">⚙️</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-family:var(--display); font-weight:500; font-size:15px; margin-bottom:4px;">Complète ta configuration</div>
+          <div style="font-size:12.5px; color:var(--ink-dim); line-height:1.4; margin-bottom:8px;">L'app gère désormais plusieurs traitements. Le tien est par défaut sur <strong id="migrationCurrent" style="color:var(--ink);">Chlore</strong>. Va dans les réglages pour vérifier ou le modifier.</div>
+          <button class="btn btn-secondary" style="font-size:12px; padding:6px 12px;" onclick="switchTab('settings')">Aller aux réglages</button>
+        </div>
+        <button onclick="dismissMigrationBanner()" style="background:transparent; border:0; color:var(--ink-dim); cursor:pointer; font-size:16px; padding:0 4px;" aria-label="Fermer">×</button>
+      </div>
+    </div>
     <div id="dashAlert"></div>
     <div class="hero">
       <div class="hero-eyebrow">État général</div>
@@ -1839,13 +1973,13 @@
         <span class="stat-indicator" id="ind-ph"></span>
         <div class="stat-label">pH</div>
         <div class="stat-value" id="val-ph">—</div>
-        <div class="stat-range">cible 7,2 – 7,4</div>
+        <div class="stat-range" id="dashPhRange">cible 7,2 – 7,4</div>
       </div>
       <div class="stat">
         <span class="stat-indicator" id="ind-cl"></span>
-        <div class="stat-label">Chlore</div>
+        <div class="stat-label" id="dashDesinfLabel">Chlore</div>
         <div class="stat-value" id="val-cl">—<span class="small">mg/L</span></div>
-        <div class="stat-range">cible 1 – 3</div>
+        <div class="stat-range" id="dashDesinfRange">cible 1 – 3</div>
       </div>
       <div class="stat">
         <span class="stat-indicator" id="ind-tac"></span>
@@ -1853,7 +1987,7 @@
         <div class="stat-value" id="val-tac">—<span class="small">ppm</span></div>
         <div class="stat-range">TAC cible 80 – 120 ppm</div>
       </div>
-      <div class="stat">
+      <div class="stat" id="dashCyaCard">
         <span class="stat-indicator" id="ind-cya"></span>
         <div class="stat-label">Stabilisant</div>
         <div class="stat-value" id="val-cya">—<span class="small">mg/L</span></div>
@@ -1918,20 +2052,23 @@
   <div class="view" id="view-mes">
     <h2 class="section-title">Nouvelle <em>mesure</em></h2>
     <p class="section-sub">Saisis tes valeurs, analyse ou enregistre. Les conseils s'affichent en bas.</p>
+    <div id="testFreqHint" style="margin: 10px 0 14px; padding: 10px 12px; background: rgba(78,192,216,0.08); border: 1px solid rgba(78,192,216,0.18); border-radius: 8px; font-size: 12px; color: var(--ink-dim); line-height: 1.5;">
+      <strong style="color: var(--ink);">📋 À tester :</strong> <span id="testFreqText">pH 2-3 fois/sem · chlore 2-3 fois/sem · TAC 1 fois/mois.</span>
+    </div>
     <div class="card">
       <div class="field">
-        <div class="field-label"><span class="name">pH</span><span class="target">7,2 – 7,4</span></div>
+        <div class="field-label"><span class="name">pH</span><span class="target" id="phInputTarget">7,2 – 7,4</span></div>
         <input class="input" type="number" step="0.1" id="in-ph" placeholder="ex. 7,3" inputmode="decimal">
       </div>
-      <div class="field">
-        <div class="field-label"><span class="name">Chlore libre (mg/L)</span><span class="target">1 – 3</span></div>
+      <div class="field" id="field-desinf">
+        <div class="field-label"><span class="name" id="desinf-name">Chlore libre (mg/L)</span><span class="target" id="desinf-target">1 – 3</span></div>
         <input class="input" type="number" step="0.1" id="in-cl" placeholder="ex. 1,5" inputmode="decimal">
       </div>
       <div class="field">
         <div class="field-label"><span class="name">Alcalinité / TAC (ppm)</span><span class="target">80 – 120 · mensuel</span></div>
         <input class="input" type="number" step="1" id="in-tac" placeholder="ex. 100" inputmode="decimal">
       </div>
-      <div class="field">
+      <div class="field" id="field-cya">
         <div class="field-label"><span class="name">Stabilisant CYA (mg/L)</span><span class="target">30 – 50 · mensuel</span></div>
         <input class="input" type="number" step="1" id="in-cya" placeholder="optionnel" inputmode="decimal">
       </div>
@@ -1985,7 +2122,7 @@
         <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; gap:10px;">
           <div style="min-width:0;">
             <div style="font-family:var(--display); font-size:18px; font-weight:500;">pH</div>
-            <div style="font-size:11px; color:var(--ink-dim); font-family:var(--mono);">zone idéale : 7.2 – 7.4</div>
+            <div style="font-size:11px; color:var(--ink-dim); font-family:var(--mono);" id="trendCardPhRange">zone idéale : 7.2 – 7.4</div>
           </div>
           <div id="trendsPhStat" style="font-family:var(--mono); font-size:11px; text-align:right; color:var(--ink-dim); line-height:1.5;"></div>
         </div>
@@ -1995,8 +2132,8 @@
       <div class="card" style="margin-bottom:16px; padding:16px;">
         <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; gap:10px;">
           <div style="min-width:0;">
-            <div style="font-family:var(--display); font-size:18px; font-weight:500;">Chlore libre</div>
-            <div style="font-size:11px; color:var(--ink-dim); font-family:var(--mono);">zone idéale : 1 – 3 mg/L</div>
+            <div style="font-family:var(--display); font-size:18px; font-weight:500;" id="trendCardClTitle">Chlore libre</div>
+            <div style="font-size:11px; color:var(--ink-dim); font-family:var(--mono);" id="trendCardClRange">zone idéale : 1 – 3 mg/L</div>
           </div>
           <div id="trendsClStat" style="font-family:var(--mono); font-size:11px; text-align:right; color:var(--ink-dim); line-height:1.5;"></div>
         </div>
@@ -2319,6 +2456,28 @@
     </div>
 
     <div class="card">
+      <div class="card-title" style="margin-bottom: 6px;">Traitement</div>
+      <div class="card-sub" style="margin-bottom: 12px;">Type de désinfectant utilisé. Change les seuils, conseils et graphiques.</div>
+      <div class="choice-cards">
+        <div class="choice-card" data-set-treatment="chlore" onclick="changeTreatment('chlore')">
+          <div class="choice-icon">🧪</div>
+          <div class="choice-text"><div class="choice-name">Chlore</div><div class="choice-sub">Cible 1 – 3 mg/L</div></div>
+          <div class="choice-check"></div>
+        </div>
+        <div class="choice-card" data-set-treatment="brome" onclick="changeTreatment('brome')">
+          <div class="choice-icon">🟣</div>
+          <div class="choice-text"><div class="choice-name">Brome</div><div class="choice-sub">Cible 3 – 5 mg/L</div></div>
+          <div class="choice-check"></div>
+        </div>
+        <div class="choice-card" data-set-treatment="oxa" onclick="changeTreatment('oxa')">
+          <div class="choice-icon">💨</div>
+          <div class="choice-text"><div class="choice-name">Oxygène actif</div><div class="choice-sub">Cible 5 – 8 mg/L</div></div>
+          <div class="choice-check"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
       <div class="card-title" style="margin-bottom: 14px;">Localisation météo</div>
       <div class="field">
         <div class="field-label"><span class="name">Ville</span><span class="target" id="setCurrentCity">—</span></div>
@@ -2549,7 +2708,16 @@ let state = {
 
 // ONBOARDING
 let onbStep = 0;
-let onbData = { name: '', volume: null, volumeMode: 'm3', location: null };
+let onbData = {
+  name: '',
+  volume: null,
+  volumeMode: 'm3',
+  location: null,
+  treatment: null,    // 'chlore' | 'brome' | 'oxa'
+  poolType: null,     // 'enterre' | 'semi' | 'hors-sol'
+  cover: null,        // 'volet' | 'bache' | 'none'
+  heat: null          // 'pac' | 'solaire' | 'echangeur' | 'none'
+};
 
 function onbNext() {
   if (onbStep === 1) onbData.name = document.getElementById('onbName').value.trim();
@@ -2566,7 +2734,8 @@ function onbNext() {
       onbData.volume = Math.round(l * w * d * 10) / 10;
     }
   }
-  if (onbStep < 3) setOnbStep(onbStep + 1);
+  if (onbStep === 3 && !onbData.treatment) { showToast('Choisis ton traitement', true); return; }
+  if (onbStep < 5) setOnbStep(onbStep + 1);
 }
 
 function onbBack() { if (onbStep > 0) setOnbStep(onbStep - 1); }
@@ -2574,7 +2743,8 @@ function onbBack() { if (onbStep > 0) setOnbStep(onbStep - 1); }
 function setOnbStep(n) {
   onbStep = n;
   document.querySelectorAll('.onb-step').forEach(el => el.classList.remove('active'));
-  document.querySelector('.onb-step[data-step="' + n + '"]').classList.add('active');
+  const stepEl = document.querySelector('.onb-step[data-step="' + n + '"]');
+  if (stepEl) stepEl.classList.add('active');
   document.querySelectorAll('.onb-dot').forEach((el, i) => {
     el.classList.remove('active', 'done');
     if (i < n) el.classList.add('done');
@@ -2592,6 +2762,37 @@ function setVolumeMode(mode) {
   document.getElementById('volumeM3Form').style.display = mode === 'm3' ? 'block' : 'none';
   document.getElementById('volumeDimsForm').style.display = mode === 'dims' ? 'block' : 'none';
   updateOnbValidation();
+}
+
+// Nouvelles fonctions pour les sélecteurs de l'onboarding
+function setTreatment(t) {
+  onbData.treatment = t;
+  document.querySelectorAll('.choice-card[data-treatment]').forEach(c => {
+    c.classList.toggle('selected', c.dataset.treatment === t);
+  });
+  const nextBtn = document.getElementById('onbTreatmentNext');
+  if (nextBtn) nextBtn.disabled = false;
+}
+
+function setPoolType(t) {
+  onbData.poolType = t;
+  document.querySelectorAll('.choice-card[data-pooltype]').forEach(c => {
+    c.classList.toggle('selected', c.dataset.pooltype === t);
+  });
+}
+
+function setCover(c) {
+  onbData.cover = c;
+  document.querySelectorAll('.choice-card[data-cover]').forEach(el => {
+    el.classList.toggle('selected', el.dataset.cover === c);
+  });
+}
+
+function setHeat(h) {
+  onbData.heat = h;
+  document.querySelectorAll('.choice-card[data-heat]').forEach(el => {
+    el.classList.toggle('selected', el.dataset.heat === h);
+  });
 }
 
 function computeVolume() {
@@ -2717,12 +2918,17 @@ function finishOnboarding(skipMeteo) {
   const typedCity = document.getElementById('onbCity') ? document.getElementById('onbCity').value.trim() : '';
   if (!onbData.location && typedCity && !skipMeteo) onbData.location = { name: typedCity };
   if (!onbData.volume) { showToast('Le volume est nécessaire', true); setOnbStep(2); return; }
+  if (!onbData.treatment) { showToast('Le traitement est nécessaire', true); setOnbStep(3); return; }
   if (!onbData.name) onbData.name = 'Ma piscine';
 
   state.config = {
     name: onbData.name,
     volume: onbData.volume,
     location: skipMeteo ? null : onbData.location,
+    treatment: onbData.treatment,
+    poolType: onbData.poolType || null,
+    cover: onbData.cover || null,
+    heat: onbData.heat || null,
     created: Date.now()
   };
   saveKey(KEYS.config, state.config);
@@ -2768,6 +2974,7 @@ function initAppUI() {
   renderProblems();
   renderActions();
   renderPiscinier();
+  refreshMigrationBanner();
   updateSyncStatus();
   startRealtimeSync();
 
@@ -2823,17 +3030,132 @@ function switchTab(tab) {
 }
 
 // STATUS
+// =================================================================
+// SYSTÈME CENTRAL DES TRAITEMENTS
+// Un seul endroit où définir : nom, unité, seuils, conseils par traitement
+// =================================================================
+const TREATMENTS = {
+  chlore: {
+    id: 'chlore',
+    label: 'Chlore',
+    short: 'Chlore',
+    icon: '🧪',
+    desc: 'Le plus répandu. Désinfection puissante au galet, granulé ou liquide.',
+    inputKey: 'cl',
+    inputLabel: 'Chlore libre',
+    inputUnit: 'mg/L',
+    inputPlaceholder: 'ex. 1,5',
+    inputStep: 0.1,
+    idealMin: 1, idealMax: 3,
+    softMin: 0.5, softMax: 5,
+    yMin: 0, yMax: 6,
+    decimals: 2,
+    color: '#7ac74f',
+    // pH spécifique au traitement (chlore : 7.2-7.4 strict)
+    phIdealMin: 7.2, phIdealMax: 7.4,
+    phSoftMin: 6.8, phSoftMax: 7.8,
+    // Fréquence de tests recommandée
+    testFreq: { ph: '2-3 fois / semaine', desinf: '2-3 fois / semaine', tac: '1 fois / mois' },
+    advice: {
+      low: 'Chlore trop bas : choquer ou augmenter la dose de désinfectant pour relancer la désinfection.',
+      high: 'Chlore trop élevé : suspendre le traitement quelques jours, baigner moins, faire marcher la filtration.',
+      product: 'galets de chlore lent (entretien) ou chlore choc (rattrapage)'
+    }
+  },
+  brome: {
+    id: 'brome',
+    label: 'Brome',
+    short: 'Brome',
+    icon: '🟣',
+    desc: 'Sans odeur, stable à haute température. Idéal pour spas et piscines couvertes.',
+    inputKey: 'br',
+    inputLabel: 'Brome',
+    inputUnit: 'mg/L',
+    inputPlaceholder: 'ex. 2',
+    inputStep: 0.1,
+    // Brome : 1-3 mg/L (corrigé selon doc officielle)
+    idealMin: 1, idealMax: 3,
+    softMin: 0.5, softMax: 5,
+    yMin: 0, yMax: 6,
+    decimals: 2,
+    color: '#b48cd6',
+    // pH spécifique brome : 7.4-7.8 (plus tolérant aux pH plus hauts que le chlore)
+    phIdealMin: 7.4, phIdealMax: 7.8,
+    phSoftMin: 7.0, phSoftMax: 8.0,
+    testFreq: { ph: '1-2 fois / semaine', desinf: '1-2 fois / semaine', tac: '1 fois / mois' },
+    advice: {
+      low: 'Brome trop bas : ajouter du brome en pastilles ou activer le brominateur.',
+      high: 'Brome trop élevé : suspendre l\'ajout, laisser redescendre, aérer/filtrer.',
+      product: 'pastilles de brome lent (Bayrol, HTH, Mareva)'
+    }
+  },
+  oxa: {
+    id: 'oxa',
+    label: 'Oxygène actif',
+    short: 'Ox. actif',
+    icon: '💨',
+    desc: 'Doux pour la peau et les yeux. Plus écolo mais demande plus de suivi.',
+    inputKey: 'oxa',
+    inputLabel: 'Oxygène actif',
+    inputUnit: 'mg/L',
+    inputPlaceholder: 'ex. 8',
+    inputStep: 0.5,
+    // Oxygène actif : jusqu'à 10 mg/L (corrigé selon doc officielle)
+    idealMin: 5, idealMax: 10,
+    softMin: 3, softMax: 15,
+    yMin: 0, yMax: 18,
+    decimals: 1,
+    color: '#4ec0d8',
+    // pH spécifique oxa : 7.0-7.4 (eau plus acide nécessaire pour l'efficacité)
+    phIdealMin: 7.0, phIdealMax: 7.4,
+    phSoftMin: 6.8, phSoftMax: 7.6,
+    testFreq: { ph: '2 fois / semaine', desinf: '2-3 fois / semaine', tac: '1 fois / mois' },
+    advice: {
+      low: 'Oxygène actif trop bas : ajouter une dose d\'entretien (~10-15 ml/m³) et un activateur si fourni.',
+      high: 'Niveau très élevé : laisser baisser naturellement, baignade possible >10 mg/L mais peu agréable.',
+      product: 'oxygène actif liquide ou pastilles + activateur (selon marque)'
+    }
+  }
+};
+
+function getTreatment() {
+  const t = state.config && state.config.treatment;
+  return TREATMENTS[t] || TREATMENTS.chlore;
+}
+
+// Migration douce : si pas de traitement défini chez un utilisateur existant,
+// on le mettra par défaut sur "chlore" pour éviter de tout casser, mais on
+// affichera une bannière l'invitant à compléter sa config.
+function ensureTreatmentMigration() {
+  if (state.config && !state.config.treatment) {
+    state.config.treatment = 'chlore';
+    state.config.needsTreatmentSetup = true; // flag pour bannière
+    saveKey(KEYS.config, state.config);
+  }
+}
+
 function phStatus(v) {
   if (v == null || isNaN(v)) return 'neutral';
-  if (v < 6.8 || v > 7.8) return 'bad';
-  if (v < 7.2 || v > 7.4) return 'warn';
+  const t = getTreatment();
+  if (v < t.phSoftMin || v > t.phSoftMax) return 'bad';
+  if (v < t.phIdealMin || v > t.phIdealMax) return 'warn';
   return 'good';
 }
 function clStatus(v) {
+  // Fonction historique : interroge le traitement courant
+  const t = getTreatment();
   if (v == null || isNaN(v)) return 'neutral';
-  if (v < 0.5 || v > 5) return 'bad';
-  if (v < 1 || v > 3) return 'warn';
+  if (v < t.softMin || v > t.softMax) return 'bad';
+  if (v < t.idealMin || v > t.idealMax) return 'warn';
   return 'good';
+}
+// Alias plus explicite pour le futur
+function desinfStatus(v) { return clStatus(v); }
+function getDesinfValue(m) {
+  // Récupère la valeur de désinfectant dans une mesure selon le traitement
+  if (!m) return null;
+  const key = getTreatment().inputKey;
+  return m[key] != null ? m[key] : null;
 }
 function tacStatus(v) {
   if (v == null || isNaN(v)) return 'neutral';
@@ -2852,6 +3174,15 @@ const statusColors = { good: '#7ac74f', warn: '#ffb454', bad: '#e94e4e', neutral
 const statusLabel = { good: 'Équilibre parfait', warn: 'À ajuster', bad: 'Intervention nécessaire', neutral: 'Aucune mesure récente' };
 
 function renderDashboard() {
+  // Met à jour le label de la carte désinfectant selon le traitement actif
+  const tCfgDash = getTreatment();
+  const labelEl = document.getElementById('dashDesinfLabel');
+  const rangeEl = document.getElementById('dashDesinfRange');
+  if (labelEl) labelEl.textContent = tCfgDash.short;
+  if (rangeEl) rangeEl.textContent = 'cible ' + tCfgDash.idealMin + ' – ' + tCfgDash.idealMax;
+  // Et le formulaire de saisie
+  applyTreatmentToInputUI();
+
   const last = state.measures[0];
   const setInd = (id, status) => { const el = document.getElementById(id); if (el) el.style.background = statusColors[status]; };
 
@@ -2870,11 +3201,14 @@ function renderDashboard() {
   const fmt = (v, dec) => v != null && !isNaN(v) ? Number(v).toLocaleString('fr-FR', { minimumFractionDigits: dec === 0 ? 0 : 1, maximumFractionDigits: dec }) : '—';
 
   document.getElementById('val-ph').textContent = fmt(last.ph, 2);
-  document.getElementById('val-cl').innerHTML = fmt(last.cl, 1) + '<span class="small">mg/L</span>';
+  // Désinfectant dynamique : récupère selon le traitement actif
+  const tCfg = getTreatment();
+  const dVal = last[tCfg.inputKey];
+  document.getElementById('val-cl').innerHTML = fmt(dVal, 1) + '<span class="small">mg/L</span>';
   document.getElementById('val-tac').innerHTML = fmt(last.tac, 0) + '<span class="small">ppm</span>';
   document.getElementById('val-cya').innerHTML = fmt(last.cya, 0) + '<span class="small">mg/L</span>';
 
-  const s = { ph: phStatus(last.ph), cl: clStatus(last.cl), tac: tacStatus(last.tac), cya: cyaStatus(last.cya) };
+  const s = { ph: phStatus(last.ph), cl: clStatus(dVal), tac: tacStatus(last.tac), cya: cyaStatus(last.cya) };
   setInd('ind-ph', s.ph); setInd('ind-cl', s.cl); setInd('ind-tac', s.tac); setInd('ind-cya', s.cya);
 
   const order = { good: 0, warn: 1, bad: 2, neutral: -1 };
@@ -2900,14 +3234,54 @@ function getNumberInputs() {
     const v = document.getElementById(id).value.replace(',', '.');
     return v === '' ? null : parseFloat(v);
   };
-  return { ph: num('in-ph'), cl: num('in-cl'), tac: num('in-tac'), cya: num('in-cya'), th: num('in-th'), temp: num('in-temp') };
+  // La valeur saisie dans #in-cl est stockée sous la clé du traitement actif
+  // (cl pour chlore, br pour brome, oxa pour oxygène actif).
+  const desinfKey = getTreatment().inputKey;
+  const result = { ph: num('in-ph'), tac: num('in-tac'), cya: num('in-cya'), th: num('in-th'), temp: num('in-temp') };
+  result[desinfKey] = num('in-cl');
+  // On garde aussi 'cl' alimenté quand traitement = chlore pour compat
+  // Et on ne garde QUE la clé du traitement courant pour les autres (pas d'écho croisé)
+  return result;
+}
+
+function applyTreatmentToInputUI() {
+  // Met à jour le champ "désinfectant" pour refléter le traitement actif
+  const t = getTreatment();
+  const nameEl = document.getElementById('desinf-name');
+  const targetEl = document.getElementById('desinf-target');
+  const inputEl = document.getElementById('in-cl');
+  if (nameEl) nameEl.textContent = t.inputLabel + ' (' + t.inputUnit + ')';
+  if (targetEl) targetEl.textContent = t.idealMin + ' – ' + t.idealMax;
+  if (inputEl) {
+    inputEl.placeholder = t.inputPlaceholder;
+    inputEl.step = t.inputStep;
+  }
+  // Le stabilisant n'est utilisé qu'avec le chlore : on masque le champ ailleurs
+  const cyaField = document.getElementById('field-cya');
+  if (cyaField) cyaField.style.display = (t.id === 'chlore') ? '' : 'none';
+  const cyaCard = document.getElementById('dashCyaCard');
+  if (cyaCard) cyaCard.style.display = (t.id === 'chlore') ? '' : 'none';
+  // pH dynamique selon le traitement
+  const phStr = t.phIdealMin.toFixed(1).replace('.', ',') + ' – ' + t.phIdealMax.toFixed(1).replace('.', ',');
+  const phInputTarget = document.getElementById('phInputTarget');
+  if (phInputTarget) phInputTarget.textContent = phStr;
+  const dashPhRange = document.getElementById('dashPhRange');
+  if (dashPhRange) dashPhRange.textContent = 'cible ' + phStr;
+  const trendPhRange = document.getElementById('trendCardPhRange');
+  if (trendPhRange) trendPhRange.textContent = 'zone idéale : ' + phStr;
+  // Fréquence de tests selon traitement
+  const freqEl = document.getElementById('testFreqText');
+  if (freqEl) {
+    freqEl.textContent = 'pH ' + t.testFreq.ph + ' · ' + t.short.toLowerCase() + ' ' + t.testFreq.desinf + ' · TAC ' + t.testFreq.tac + '.';
+  }
 }
 
 function saveMeasure() {
   const m_inputs = getNumberInputs();
   const m = Object.assign({ ts: Date.now() }, m_inputs);
+  const dKey = getTreatment().inputKey;
 
-  if (m.ph == null && m.cl == null && m.tac == null && m.cya == null && m.th == null && m.temp == null) {
+  if (m.ph == null && m[dKey] == null && m.tac == null && m.cya == null && m.th == null && m.temp == null) {
     showToast('Saisis au moins une valeur', true);
     return;
   }
@@ -2937,7 +3311,8 @@ function saveMeasure() {
 
 function analyzeMeasure() {
   const m = getNumberInputs();
-  if (m.ph == null && m.cl == null && m.tac == null && m.cya == null && m.th == null && m.temp == null) {
+  const dKey = getTreatment().inputKey;
+  if (m.ph == null && m[dKey] == null && m.tac == null && m.cya == null && m.th == null && m.temp == null) {
     showToast('Saisis au moins une valeur', true);
     return;
   }
@@ -2966,7 +3341,19 @@ function renderHistory() {
     const mm = String(d.getMinutes()).padStart(2, '0');
     const vals = [];
     if (m.ph != null) vals.push('<span class="' + sCls(phStatus(m.ph)) + '"><span class="k">pH</span><span class="v">' + fmt(m.ph) + '</span></span>');
-    if (m.cl != null) vals.push('<span class="' + sCls(clStatus(m.cl)) + '"><span class="k">Cl</span><span class="v">' + fmt(m.cl) + '</span></span>');
+    // Désinfectants : on affiche celui qui est présent (chlore historique OU brome OU oxa)
+    if (m.cl != null) {
+      const isActive = getTreatment().id === 'chlore';
+      vals.push('<span class="' + (isActive ? sCls(clStatus(m.cl)) : '') + '"><span class="k">Cl</span><span class="v">' + fmt(m.cl) + '</span></span>');
+    }
+    if (m.br != null) {
+      const isActive = getTreatment().id === 'brome';
+      vals.push('<span class="' + (isActive ? sCls(clStatus(m.br)) : '') + '"><span class="k">Br</span><span class="v">' + fmt(m.br) + '</span></span>');
+    }
+    if (m.oxa != null) {
+      const isActive = getTreatment().id === 'oxa';
+      vals.push('<span class="' + (isActive ? sCls(clStatus(m.oxa)) : '') + '"><span class="k">O₂</span><span class="v">' + fmt(m.oxa) + '</span></span>');
+    }
     if (m.tac != null) vals.push('<span class="' + sCls(tacStatus(m.tac)) + '"><span class="k">ALK</span><span class="v">' + fmt(m.tac) + '</span></span>');
     if (m.cya != null) vals.push('<span class="' + sCls(cyaStatus(m.cya)) + '"><span class="k">CYA</span><span class="v">' + fmt(m.cya) + '</span></span>');
     if (m.th != null) vals.push('<span><span class="k">TH</span><span class="v">' + fmt(m.th) + '</span></span>');
@@ -2998,33 +3385,112 @@ function buildDiagnostic(m) {
   const V = state.config.volume;
 
   if (m.ph != null && !isNaN(m.ph)) {
-    if (m.ph >= 7.2 && m.ph <= 7.4) {
-      advice.push({ param: 'pH', status: 'good', value: m.ph.toFixed(1), icon: '✓', title: 'pH parfaitement équilibré', body: 'Le chlore agit à pleine efficacité. Rien à faire, continue comme ça.' });
-    } else if (m.ph < 7.2) {
-      const isVeryLow = m.ph < 6.8;
+    const tPh = getTreatment();
+    const phMin = tPh.phIdealMin;
+    const phMax = tPh.phIdealMax;
+    const phSoftMin = tPh.phSoftMin;
+    const phSoftMax = tPh.phSoftMax;
+    const phMid = (phMin + phMax) / 2;
+    const phStr = phMin.toFixed(1) + '–' + phMax.toFixed(1);
+    if (m.ph >= phMin && m.ph <= phMax) {
+      let goodBody = 'Le désinfectant agit à pleine efficacité. Rien à faire, continue comme ça.';
+      if (tPh.id === 'brome') goodBody = 'Le brome reste efficace dans cette plage. Continue de surveiller pour rester stable.';
+      if (tPh.id === 'oxa') goodBody = 'pH idéal pour l\'oxygène actif. Son efficacité y est maximale.';
+      advice.push({ param: 'pH', status: 'good', value: m.ph.toFixed(1), icon: '✓', title: 'pH parfaitement équilibré', body: goodBody });
+    } else if (m.ph < phMin) {
+      const isVeryLow = m.ph < phSoftMin;
       const actions = [];
       if (isVeryLow) actions.push({ b: '!', t: '<strong>Eau corrosive</strong> pour les équipements et inconfortable à la baignade.' });
-      const gap = (7.3 - m.ph) * 10;
+      const gap = (phMid - m.ph) * 10;
       const grams = Math.round(gap * 12 * V / 10);
       actions.push({ b: '→', t: 'Ajouter du <strong>pH+</strong> : environ <code>' + grams + ' g</code> (dilué dans un seau, versé devant les buses).' });
       actions.push({ b: '→', t: 'Filtration <strong>au moins 4 h</strong> après ajout.' });
       actions.push({ b: '→', t: 'Re-tester <strong>après 6 h</strong>, ajuster par petites doses.' });
-      advice.push({ param: 'pH', status: isVeryLow ? 'bad' : 'warn', value: m.ph.toFixed(1), icon: '↓', title: 'pH trop bas (acide)', body: 'Si le TAC est aussi bas, traite-le d\'abord : il stabilise le pH naturellement.', actions });
+      advice.push({ param: 'pH', status: isVeryLow ? 'bad' : 'warn', value: m.ph.toFixed(1), icon: '↓', title: 'pH trop bas (acide)', body: 'Cible : ' + phStr + '. Si le TAC est aussi bas, traite-le d\'abord : il stabilise le pH naturellement.', actions });
     } else {
-      const isVeryHigh = m.ph > 7.8;
+      const isVeryHigh = m.ph > phSoftMax;
       const actions = [];
-      if (isVeryHigh) actions.push({ b: '!', t: '<strong>Chlore peu efficace</strong> au-dessus de 7.8 : à 8.0 il ne désinfecte plus qu\'à ~20 %.' });
-      const gap = (m.ph - 7.3) * 10;
+      if (isVeryHigh) {
+        if (tPh.id === 'chlore') actions.push({ b: '!', t: '<strong>Chlore peu efficace</strong> au-dessus de 7.8 : à 8.0 il ne désinfecte plus qu\'à ~20 %.' });
+        else if (tPh.id === 'brome') actions.push({ b: '!', t: '<strong>Brome moins efficace</strong> et eau peu confortable au-delà de 8.0.' });
+        else if (tPh.id === 'oxa') actions.push({ b: '!', t: '<strong>Oxygène actif inefficace</strong> au-delà de 7.6 : il se dégrade très vite.' });
+      }
+      const gap = (m.ph - phMid) * 10;
       const grams = Math.round(gap * 15 * V / 10);
       actions.push({ b: '→', t: 'Ajouter du <strong>pH−</strong> : environ <code>' + grams + ' g</code> (dilué, versé devant les buses).' });
       actions.push({ b: '→', t: 'Filtration <strong>4 h minimum</strong> après ajout.' });
       actions.push({ b: '→', t: 'Re-tester après 6 h, ajuster par petites doses.' });
       if (m.th != null && m.th > 25) actions.push({ b: '→', t: 'Eau dure : surveille les dépôts blancs, un <strong>anti-calcaire</strong> peut aider.' });
-      advice.push({ param: 'pH', status: isVeryHigh ? 'bad' : 'warn', value: m.ph.toFixed(1), icon: '↑', title: 'pH trop haut (basique)', body: 'Vérifie aussi le TAC : trop élevé, il maintient le pH haut.', actions });
+      advice.push({ param: 'pH', status: isVeryHigh ? 'bad' : 'warn', value: m.ph.toFixed(1), icon: '↑', title: 'pH trop haut (basique)', body: 'Cible : ' + phStr + '. Vérifie aussi le TAC : trop élevé, il maintient le pH haut.', actions });
     }
   }
 
-  if (m.cl != null && !isNaN(m.cl)) {
+  // ===== DÉSINFECTANT (chlore / brome / oxygène actif) =====
+  const tDiag = getTreatment();
+  const dKeyDiag = tDiag.inputKey;
+  const dValDiag = m[dKeyDiag];
+  if (dValDiag != null && !isNaN(dValDiag)) {
+    const label = tDiag.inputLabel;
+    const unit = ' ' + tDiag.inputUnit;
+    const isChlore = (tDiag.id === 'chlore');
+    const isBrome = (tDiag.id === 'brome');
+    const isOxa = (tDiag.id === 'oxa');
+    if (dValDiag >= tDiag.idealMin && dValDiag <= tDiag.idealMax) {
+      let goodBody = 'La désinfection se fait correctement. Continue à surveiller 2-3 fois/semaine en été.';
+      if (isBrome) goodBody = 'Le brome désinfecte bien et reste stable. Continue à contrôler 1-2 fois/semaine.';
+      if (isOxa) goodBody = 'Niveau d\'oxygène actif idéal. Contrôle tous les 3-4 jours pour éviter une chute brutale.';
+      advice.push({ param: label, status: 'good', value: dValDiag.toFixed(tDiag.decimals) + unit, icon: '✓', title: label + ' au bon niveau', body: goodBody });
+    } else if (dValDiag < tDiag.idealMin) {
+      const isCritical = dValDiag < tDiag.softMin;
+      const actions = [];
+      if (isCritical) actions.push({ b: '!', t: '<strong>Risque d\'algues et de bactéries imminent.</strong> Limite la baignade.' });
+      if (isChlore) {
+        if (dValDiag < 0.5) {
+          const chocGrams = Math.round(20 * V);
+          actions.push({ b: '→', t: '<strong>Chlore choc</strong> : ~<code>' + chocGrams + ' g</code> (suivre dosage produit). Filtration <strong>24 h en continu</strong> après.' });
+        }
+        actions.push({ b: '→', t: 'Vérifier le diffuseur : <strong>ajouter un galet</strong> ou ouvrir davantage le doseur.' });
+        if (m.cya != null && m.cya < 20) actions.push({ b: '!', t: 'Stabilisant à <code>' + m.cya + ' mg/L</code> trop bas → le chlore est <strong>détruit par les UV en quelques heures</strong>.' });
+      } else if (isBrome) {
+        actions.push({ b: '→', t: 'Augmenter le débit du <strong>brominateur</strong> ou ajouter des <strong>pastilles de brome lent</strong>.' });
+        if (isCritical) {
+          const chocMl = Math.round(15 * V);
+          actions.push({ b: '→', t: 'Choc rattrapage : <strong>brome choc</strong> ~<code>' + chocMl + ' g/ml</code> (suivre dosage produit), filtration 24 h.' });
+        }
+        actions.push({ b: '→', t: 'Vérifier que les pastilles ne sont pas épuisées dans le brominateur.' });
+      } else if (isOxa) {
+        const doseMl = Math.round(10 * V);
+        actions.push({ b: '→', t: 'Ajouter de l\'oxygène actif liquide : ~<code>' + doseMl + ' ml</code>, plus l\'activateur si fourni avec ton produit.' });
+        if (isCritical) actions.push({ b: '!', t: '<strong>Niveau critique</strong> : choc d\'oxygène actif à 2× la dose normale.' });
+        actions.push({ b: '→', t: 'L\'oxygène actif chute vite par grosse chaleur, prévois un contrôle tous les 2-3 jours.' });
+      }
+      actions.push({ b: '→', t: 'Re-tester <strong>après 12 h</strong> de filtration.' });
+      const causes = [];
+      if (m.ph != null && m.ph > 7.5 && (isChlore || isBrome)) causes.push('pH élevé (désinfectant moins efficace)');
+      if (isChlore && m.cya != null && m.cya > 75) causes.push('stabilisant saturé');
+      if (isChlore && m.cya != null && m.cya < 20) causes.push('stabilisant insuffisant');
+      if (m.temp != null && m.temp >= 28) causes.push('eau chaude');
+      advice.push({ param: label, status: isCritical ? 'bad' : 'warn', value: dValDiag.toFixed(tDiag.decimals) + unit, icon: '↓', title: isCritical ? label + ' quasiment nul' : label + ' trop bas', body: causes.length ? '<strong>Cause probable :</strong> ' + causes.join(', ') + '.' : 'Augmente le dosage avant que des algues n\'apparaissent.', actions });
+    } else {
+      const isHigh = dValDiag > tDiag.softMax;
+      const actions = [];
+      if (isChlore) {
+        actions.push({ b: '→', t: '<strong>Retirer les galets</strong> du diffuseur pendant 24-48 h.' });
+        actions.push({ b: '→', t: 'Laisser baisser naturellement (soleil + filtration).' });
+        actions.push({ b: '→', t: '<strong>Pas de baignade</strong> tant que > ' + tDiag.idealMax + ' mg/L (irrite yeux/peau).' });
+      } else if (isBrome) {
+        actions.push({ b: '→', t: 'Retirer les pastilles ou réduire le débit du brominateur 1-2 jours.' });
+        actions.push({ b: '→', t: 'Faire fonctionner la filtration pour brassage. Le brome est moins agressif mais peut piquer à >8.' });
+      } else if (isOxa) {
+        actions.push({ b: '→', t: 'Suspendre l\'ajout d\'oxygène actif. Il se dégrade naturellement en quelques jours.' });
+        actions.push({ b: '→', t: 'La baignade reste possible, l\'oxygène actif est non-irritant.' });
+      }
+      actions.push({ b: '→', t: 'Re-tester chaque jour.' });
+      advice.push({ param: label, status: isHigh ? 'bad' : 'warn', value: dValDiag.toFixed(tDiag.decimals) + unit, icon: '↑', title: label + ' trop élevé', body: isOxa ? 'Surdosage : à laisser baisser naturellement.' : 'Surdosage : irritant et inutile.', actions });
+    }
+  }
+
+  if (false && m.cl != null && !isNaN(m.cl)) {  // ancien bloc neutralisé
     if (m.cl >= 1 && m.cl <= 3) {
       advice.push({ param: 'Chlore libre', status: 'good', value: m.cl.toFixed(1) + ' ppm', icon: '✓', title: 'Chlore au bon niveau', body: 'La désinfection se fait correctement. Continue à surveiller 2-3 fois/semaine en été.' });
     } else if (m.cl < 1) {
@@ -3077,7 +3543,7 @@ function buildDiagnostic(m) {
     }
   }
 
-  if (m.cya != null && !isNaN(m.cya)) {
+  if (getTreatment().id === 'chlore' && m.cya != null && !isNaN(m.cya)) {
     if (m.cya >= 30 && m.cya <= 50) {
       advice.push({ param: 'Stabilisant', status: 'good', value: Math.round(m.cya) + ' ppm', icon: '✓', title: 'Stabilisant idéal', body: 'Le chlore est protégé des UV juste ce qu\'il faut.' });
     } else if (m.cya < 30) {
@@ -3106,13 +3572,13 @@ function buildDiagnostic(m) {
   }
 
   if (m.th != null && !isNaN(m.th)) {
-    if (m.th >= 15 && m.th <= 25) {
-      advice.push({ param: 'TH / Dureté', status: 'good', value: Math.round(m.th) + ' °f', icon: '✓', title: 'Dureté de l\'eau idéale', body: 'Équilibre minéral correct.' });
-    } else if (m.th < 15) {
-      advice.push({ param: 'TH / Dureté', status: 'warn', value: Math.round(m.th) + ' °f', icon: '↓', title: 'Eau trop douce', body: 'Légèrement agressive pour le liner et joints.', actions: [{ b: '→', t: 'Pas urgent. Un <strong>correcteur de dureté</strong> peut aider si persistant.' }]});
+    if (m.th >= 10 && m.th <= 25) {
+      advice.push({ param: 'TH / Dureté', status: 'good', value: Math.round(m.th) + ' °f', icon: '✓', title: 'Dureté de l\'eau idéale', body: 'Équilibre minéral correct (entre 100 et 250 mg/L).' });
+    } else if (m.th < 10) {
+      advice.push({ param: 'TH / Dureté', status: 'warn', value: Math.round(m.th) + ' °f', icon: '↓', title: 'Eau trop douce', body: 'En-dessous de 100 mg/L : eau légèrement agressive pour le liner et joints.', actions: [{ b: '→', t: 'Pas urgent. Un <strong>correcteur de dureté</strong> peut aider si persistant.' }]});
     } else {
-      advice.push({ param: 'TH / Dureté', status: 'warn', value: Math.round(m.th) + ' °f', icon: '↑', title: 'Eau dure (calcaire)', body: 'Risque de dépôts sur ligne d\'eau et échelle.', actions: [
-        { b: '→', t: 'Maintenir pH à <strong>7.2</strong>.' },
+      advice.push({ param: 'TH / Dureté', status: 'warn', value: Math.round(m.th) + ' °f', icon: '↑', title: 'Eau dure (calcaire)', body: 'Au-dessus de 250 mg/L : risque de dépôts sur ligne d\'eau et échelle.', actions: [
+        { b: '→', t: 'Maintenir pH dans la plage basse de ta cible.' },
         { b: '→', t: 'Ajouter un <strong>anti-calcaire</strong> séquestrant.' },
         { b: '→', t: 'Nettoyer la ligne d\'eau chaque semaine.' }
       ]});
@@ -3120,13 +3586,18 @@ function buildDiagnostic(m) {
   }
 
   if (m.temp != null && !isNaN(m.temp)) {
+    const tTemp = getTreatment();
     if (m.temp >= 28) {
       const hours = '24/24';
-      advice.push({ param: 'Température eau', status: 'warn', value: m.temp.toFixed(1) + '°C', icon: '☀', title: 'Eau chaude : filtration 24/24', body: 'Le chlore se consomme vite et les algues prolifèrent.', actions: [
+      const actions = [
         { b: '→', t: 'Filtration : <strong>' + hours + '</strong> par jour, en journée.' },
-        { b: '→', t: 'Contrôler le chlore <strong>tous les jours</strong>.' },
-        { b: '→', t: 'Vérifier le stabilisant : 40-50 mg/L pour tenir.' }
-      ]});
+        { b: '→', t: 'Contrôler le ' + tTemp.short.toLowerCase() + ' <strong>tous les jours</strong>.' }
+      ];
+      if (tTemp.id === 'chlore') actions.push({ b: '→', t: 'Vérifier le stabilisant : 40-50 mg/L pour tenir.' });
+      if (tTemp.id === 'oxa') actions.push({ b: '!', t: '<strong>L\'oxygène actif se dégrade très vite à >28°C.</strong> Anti-algues hebdo conseillé.' });
+      if (tTemp.id === 'brome') actions.push({ b: '→', t: 'Le brome reste bien efficace à haute température, mais surveille la consommation.' });
+      let body = 'Le ' + tTemp.short.toLowerCase() + ' se consomme vite et les algues prolifèrent.';
+      advice.push({ param: 'Température eau', status: 'warn', value: m.temp.toFixed(1) + '°C', icon: '☀', title: 'Eau chaude : filtration 24/24', body: body, actions: actions });
     } else if (m.temp >= 20) {
       const hours = Math.round(m.temp / 2);
       advice.push({ param: 'Température eau', status: 'good', value: m.temp.toFixed(1) + '°C', icon: '💧', title: 'Température d\'été normale', body: 'Règle : filtration ≈ T° ÷ 2. Soit <strong>' + hours + ' h/jour</strong> à cette température.' });
@@ -3202,31 +3673,98 @@ function updateFiltration() {
 }
 
 // ROUTINES
-const routineDefs = {
-  daily: { pill: 'Tous les 2 jours · été', items: [
-    'Vérifier visuellement l\'eau',
-    'Vérifier le niveau d\'eau (milieu skimmer)',
-    'Contrôler pH + chlore',
-    'Ajuster le diffuseur de chlore si besoin'
-  ]},
-  weekly: { pill: 'Une fois par semaine', items: [
-    'Brosser parois + ligne d\'eau',
-    'Passer l\'épuisette',
-    'Aspirer le fond du bassin',
-    'Nettoyer panier skimmer',
-    'Nettoyer panier pompe',
-    'Vérifier la pression du filtre',
-    'Backwash si la pression est haute',
-    'Ajouter chlore lent si besoin'
-  ]},
-  monthly: { pill: 'Une fois par mois', items: [
-    "Tester l'alcalinité / TAC",
-    'Tester le stabilisant (CYA)',
-    'Vérifier le TH / calcaire',
-    'Nettoyage profond de la ligne d\'eau',
-    'Contrôle complet de l\'eau'
-  ]}
+// Routines adaptées au traitement (chlore = défaut, brome et oxa ont leurs spécificités)
+const routineDefsByTreatment = {
+  chlore: {
+    daily: { pill: 'Tous les 2 jours · été', items: [
+      'Vérifier visuellement l\'eau',
+      'Vérifier le niveau d\'eau (milieu skimmer)',
+      'Contrôler pH + chlore',
+      'Ajuster le diffuseur de chlore si besoin'
+    ]},
+    weekly: { pill: 'Une fois par semaine', items: [
+      'Brosser parois + ligne d\'eau',
+      'Passer l\'épuisette',
+      'Aspirer le fond du bassin',
+      'Nettoyer panier skimmer',
+      'Nettoyer panier pompe',
+      'Vérifier la pression du filtre',
+      'Backwash si la pression est haute',
+      'Ajouter chlore lent si besoin'
+    ]},
+    monthly: { pill: 'Une fois par mois', items: [
+      'Tester l\'alcalinité / TAC',
+      'Tester le stabilisant (CYA)',
+      'Vérifier le TH / calcaire',
+      'Nettoyage profond de la ligne d\'eau',
+      'Contrôle complet de l\'eau'
+    ]}
+  },
+  brome: {
+    daily: { pill: '1-2 fois par semaine', items: [
+      'Vérifier visuellement la clarté de l\'eau',
+      'Vérifier le niveau d\'eau (milieu skimmer)',
+      'Contrôler pH (cible 7,4 – 7,8)',
+      'Contrôler le brome (cible 1 – 3 mg/L)'
+    ]},
+    weekly: { pill: 'Une fois par semaine', items: [
+      'Brosser parois + ligne d\'eau',
+      'Passer l\'épuisette',
+      'Aspirer le fond du bassin',
+      'Nettoyer panier skimmer',
+      'Nettoyer panier pompe',
+      'Vérifier la pression du filtre',
+      'Backwash si la pression est haute',
+      'Recharger le brominateur en pastilles si besoin',
+      'Régler le débit du brominateur selon la fréquentation'
+    ]},
+    monthly: { pill: 'Une fois par mois', items: [
+      'Tester l\'alcalinité / TAC (cible 80 – 120)',
+      'Vérifier le TH / dureté (cible 100 – 250 mg/L)',
+      'Inspecter le brominateur (dépôts, débit)',
+      'Nettoyage profond de la ligne d\'eau',
+      'Contrôle complet de l\'eau'
+    ]}
+  },
+  oxa: {
+    daily: { pill: '2-3 fois par semaine', items: [
+      'Vérifier visuellement la clarté de l\'eau',
+      'Vérifier le niveau d\'eau (milieu skimmer)',
+      'Contrôler pH (cible 7,0 – 7,4 strict)',
+      'Contrôler l\'oxygène actif (peut chuter vite)',
+      'Surveiller la température (chaleur = consommation accélérée)'
+    ]},
+    weekly: { pill: 'Une fois par semaine', items: [
+      'Brosser parois + ligne d\'eau',
+      'Passer l\'épuisette',
+      'Aspirer le fond du bassin',
+      'Nettoyer panier skimmer',
+      'Nettoyer panier pompe',
+      'Vérifier la pression du filtre',
+      'Backwash si la pression est haute',
+      'Ajout d\'oxygène actif d\'entretien (selon dosage produit)',
+      'Ajout d\'anti-algues préventif (recommandé hebdo)',
+      'Filtration en continu si forte chaleur'
+    ]},
+    monthly: { pill: 'Une fois par mois', items: [
+      'Tester l\'alcalinité / TAC (cible 80 – 120)',
+      'Vérifier le TH / dureté (cible 100 – 250 mg/L)',
+      'Traitement choc oxygène actif',
+      'Nettoyage profond de la ligne d\'eau',
+      'Nettoyage approfondi du filtre',
+      'Contrôle complet de l\'eau'
+    ]}
+  }
 };
+
+// routineDefs reste accessible mais renvoie dynamiquement le bon jeu via Proxy
+const routineDefs = new Proxy({}, {
+  get: (_, prop) => {
+    const tId = (state && state.config && state.config.treatment) || 'chlore';
+    const set = routineDefsByTreatment[tId] || routineDefsByTreatment.chlore;
+    return set[prop];
+  }
+});
 const routinePeriodMs = {
   daily: 2 * 24 * 3600 * 1000,
   weekly: 7 * 24 * 3600 * 1000,
@@ -3790,12 +4328,21 @@ function exportPDF() {
     doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor.apply(doc, C_DIM);
     doc.text('Dernière mesure : ' + lastDate, M, y); y += 8;
 
+    const tCfgPdf = getTreatment();
+    const dValPdf = last[tCfgPdf.inputKey];
     const stats = [
       { lbl: 'pH', val: last.ph != null ? last.ph.toFixed(1) : '—', unit: '', range: '7,2 - 7,4', status: phStatus(last.ph), key: 'ph', idealMin: 7.2, idealMax: 7.4 },
-      { lbl: 'Chlore libre', val: last.cl != null ? last.cl.toFixed(1) : '—', unit: 'mg/L', range: '1 - 3 mg/L', status: clStatus(last.cl), key: 'cl', idealMin: 1, idealMax: 3 },
-      { lbl: 'Alcalinité', val: last.tac != null ? Math.round(last.tac) : '—', unit: 'ppm', range: '80 - 120 ppm', status: tacStatus(last.tac), key: 'tac', idealMin: 80, idealMax: 120 },
-      { lbl: 'Stabilisant', val: last.cya != null ? Math.round(last.cya) : '—', unit: 'mg/L', range: '30 - 50 mg/L', status: cyaStatus(last.cya), key: 'cya', idealMin: 30, idealMax: 50 }
+      { lbl: tCfgPdf.inputLabel, val: dValPdf != null ? dValPdf.toFixed(tCfgPdf.decimals === 0 ? 0 : 1) : '—', unit: tCfgPdf.inputUnit, range: tCfgPdf.idealMin + ' - ' + tCfgPdf.idealMax + ' ' + tCfgPdf.inputUnit, status: clStatus(dValPdf), key: tCfgPdf.inputKey, idealMin: tCfgPdf.idealMin, idealMax: tCfgPdf.idealMax },
+      { lbl: 'Alcalinité', val: last.tac != null ? Math.round(last.tac) : '—', unit: 'ppm', range: '80 - 120 ppm', status: tacStatus(last.tac), key: 'tac', idealMin: 80, idealMax: 120 }
     ];
+    // Stabilisant : seulement si traitement chlore
+    if (tCfgPdf.id === 'chlore') {
+      stats.push({ lbl: 'Stabilisant', val: last.cya != null ? Math.round(last.cya) : '—', unit: 'mg/L', range: '30 - 50 mg/L', status: cyaStatus(last.cya), key: 'cya', idealMin: 30, idealMax: 50 });
+    } else {
+      // Pour brome / oxa : on affiche la température à la place pour ne pas laisser un trou
+      const tempStatusForPdf = (v) => v == null ? 'neutral' : (v >= 24 && v <= 30 ? 'good' : (v < 20 || v > 32 ? 'bad' : 'warn'));
+      stats.push({ lbl: 'Température', val: last.temp != null ? last.temp.toFixed(1) : '—', unit: '°C', range: '24 - 30 °C', status: tempStatusForPdf(last.temp), key: 'temp', idealMin: 24, idealMax: 30 });
+    }
     const colW = W / 2 - 3;
     stats.forEach((s, i) => {
       const col = i % 2, row = Math.floor(i / 2);
@@ -3869,7 +4416,9 @@ function exportPDF() {
     doc.text(state.measures.length + (state.measures.length > 1 ? ' entrées' : ' entrée'), M, y); y += 6;
 
     const colsX = [M, M+30, M+50, M+72, M+92, M+114, M+136];
-    const headers = ['Date', 'pH', 'Cl', 'Alk.', 'CYA', 'TH', 'T° eau'];
+    const tCfgHdr = getTreatment();
+    const colDesinfHdr = tCfgHdr.id === 'brome' ? 'Br' : (tCfgHdr.id === 'oxa' ? 'O₂' : 'Cl');
+    const headers = ['Date', 'pH', colDesinfHdr, 'Alk.', 'CYA', 'TH', 'T° eau'];
     doc.setDrawColor.apply(doc, C_LINE); doc.setLineWidth(0.3);
     doc.line(M, y, M + W, y); y += 4;
     doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor.apply(doc, C_DEEP);
@@ -3884,9 +4433,12 @@ function exportPDF() {
       const hs = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
       if (idx % 2 === 0) { doc.setFillColor(248, 250, 252); doc.rect(M - 1, y - 4, W + 2, 6, 'F'); }
       doc.setTextColor.apply(doc, C_INK);
+      // Désinfectant selon traitement (récupère cl, br ou oxa selon ce qui est défini sur la mesure)
+      const dKeyHist = (state.config && state.config.treatment === 'brome') ? 'br' : (state.config && state.config.treatment === 'oxa') ? 'oxa' : 'cl';
+      const dValHist = m[dKeyHist] != null ? m[dKeyHist] : (m.cl != null ? m.cl : (m.br != null ? m.br : m.oxa));
       doc.text(ds + ' ' + hs, colsX[0], y);
       doc.text(m.ph != null ? m.ph.toFixed(1) : '—', colsX[1], y);
-      doc.text(m.cl != null ? m.cl.toFixed(1) : '—', colsX[2], y);
+      doc.text(dValHist != null ? dValHist.toFixed(1) : '—', colsX[2], y);
       doc.text(m.tac != null ? String(Math.round(m.tac)) : '—', colsX[3], y);
       doc.text(m.cya != null ? String(Math.round(m.cya)) : '—', colsX[4], y);
       doc.text(m.th != null ? String(Math.round(m.th)) : '—', colsX[5], y);
@@ -3908,9 +4460,10 @@ function exportPDF() {
     doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor.apply(doc, C_DIM);
     doc.text('Zone verte = plage idéale. Points verts/orange/rouge selon la mesure.', M, y); y += 8;
 
+    const tPdfChart = getTreatment();
     const chartParams = [
       { key: 'ph',   label: 'pH',          color: '#0a7fa8', idealMin: 7.2, idealMax: 7.4, softMin: 6.8, softMax: 7.8, yMin: 6.5, yMax: 8.2, decimals: 2, unit: '' },
-      { key: 'cl',   label: 'Chlore libre',color: '#7ac74f', idealMin: 1,   idealMax: 3,   softMin: 0.5, softMax: 5,   yMin: 0,   yMax: 6,   decimals: 2, unit: ' mg/L' },
+      { key: tPdfChart.inputKey, label: tPdfChart.inputLabel, color: tPdfChart.color, idealMin: tPdfChart.idealMin, idealMax: tPdfChart.idealMax, softMin: tPdfChart.softMin, softMax: tPdfChart.softMax, yMin: tPdfChart.yMin, yMax: tPdfChart.yMax, decimals: tPdfChart.decimals, unit: ' ' + tPdfChart.inputUnit },
       { key: 'temp', label: 'Température', color: '#e8b933', idealMin: 24,  idealMax: 30,  softMin: 20,  softMax: 32,  yMin: 10,  yMax: 36,  decimals: 1, unit: ' °C' },
       { key: 'tac',  label: 'Alcalinité (TAC)', color: '#064a6e', idealMin: 80, idealMax: 120, softMin: 60, softMax: 150, yMin: 40, yMax: 180, decimals: 0, unit: ' ppm' }
     ];
@@ -4162,16 +4715,31 @@ function renderDiagnosticInto(containerId, advice, persisted) {
 function detectNeeds() {
   const last = state.measures[0] || {};
   const needs = [];
+  const tCfg = getTreatment();
   if (last.ph != null && last.ph < 7.2) needs.push('pH+ / correcteur pH plus');
   if (last.ph != null && last.ph > 7.4) needs.push('pH- / correcteur pH moins');
-  if (last.cl != null && last.cl < 1) needs.push('Chlore lent ou chlore choc');
-  if (last.cl != null && last.cl > 3) needs.push('Bandelettes / test chlore pour suivi rapproché');
+  // Désinfectant selon traitement
+  const dVal = last[tCfg.inputKey];
+  if (dVal != null && dVal < tCfg.idealMin) {
+    if (tCfg.id === 'chlore') needs.push('Chlore lent ou chlore choc');
+    else if (tCfg.id === 'brome') needs.push('Brome lent / pastilles de rechargement');
+    else if (tCfg.id === 'oxa') needs.push('Oxygène actif liquide + activateur');
+  }
+  if (dVal != null && dVal > tCfg.idealMax) {
+    needs.push('Bandelettes / test ' + tCfg.short.toLowerCase() + ' pour suivi rapproché');
+  }
   if (last.tac != null && last.tac < 80) needs.push('TAC+ / rehausseur d\'alcalinité');
   if (last.tac != null && last.tac > 120) needs.push('Conseil piscinier pour baisse alcalinité');
-  if (last.cya != null && last.cya > 60) needs.push('Conseil renouvellement d\'eau / stabilisant élevé');
+  if (tCfg.id === 'chlore' && last.cya != null && last.cya > 60) needs.push('Conseil renouvellement d\'eau / stabilisant élevé');
   if (last.th != null && last.th > 25) needs.push('Anti-calcaire piscine');
-  if (last.temp != null && last.temp >= 28) needs.push('Contrôle chlore renforcé + filtration 24/24');
-  if (!needs.length) needs.push('Bandelettes d\'analyse piscine', 'Chlore lent', 'Nettoyant ligne d\'eau');
+  if (last.temp != null && last.temp >= 28) needs.push('Contrôle ' + tCfg.short.toLowerCase() + ' renforcé + filtration 24/24');
+  if (!needs.length) {
+    needs.push('Bandelettes d\'analyse piscine');
+    if (tCfg.id === 'chlore') needs.push('Chlore lent');
+    else if (tCfg.id === 'brome') needs.push('Brome lent');
+    else if (tCfg.id === 'oxa') needs.push('Oxygène actif + activateur');
+    needs.push('Nettoyant ligne d\'eau');
+  }
   return needs;
 }
 function renderPiscinier() {
@@ -4206,6 +4774,62 @@ function hydrateAdvancedSettings() {
   set('remTime', state.reminders.time);
   set('remEnabled', String(!!state.reminders.enabled));
   set('actAuthor', getMemberName());
+  // Surligner le traitement actif dans les réglages
+  const activeT = (state.config && state.config.treatment) || 'chlore';
+  document.querySelectorAll('.choice-card[data-set-treatment]').forEach(c => {
+    c.classList.toggle('selected', c.dataset.setTreatment === activeT);
+  });
+}
+
+function changeTreatment(newT) {
+  if (!TREATMENTS[newT]) return;
+  const current = state.config && state.config.treatment;
+  if (current === newT) return; // pas de changement
+  const tInfo = TREATMENTS[newT];
+  const confirmMsg = 'Passer au traitement « ' + tInfo.label + ' » ?\n\n' +
+    'Les seuils, conseils et graphiques seront adaptés.\n' +
+    'Tes mesures déjà enregistrées sont conservées.';
+  if (!confirm(confirmMsg)) return;
+  state.config.treatment = newT;
+  if (state.config.needsTreatmentSetup) delete state.config.needsTreatmentSetup;
+  saveKey(KEYS.config, state.config);
+  // Refresh complet de l'interface
+  applyTreatmentToInputUI();
+  renderDashboard();
+  renderHistory();
+  renderRoutines();
+  // Si on est sur l'onglet tendances, on relance les graphiques
+  const trendsView = document.getElementById('view-trends');
+  if (trendsView && trendsView.classList.contains('active') && typeof renderTrends === 'function') {
+    setTimeout(renderTrends, 50);
+  }
+  // Met à jour le surlignage et la bannière
+  hydrateAdvancedSettings();
+  refreshMigrationBanner();
+  pushRealtimeState();
+  showToast('Traitement changé : ' + tInfo.label);
+}
+
+function refreshMigrationBanner() {
+  // Affiche / masque la bannière "complète ta config" si besoin
+  const banner = document.getElementById('migrationBanner');
+  if (!banner) return;
+  if (state.config && state.config.needsTreatmentSetup) {
+    banner.style.display = 'block';
+    const t = getTreatment();
+    const lbl = document.getElementById('migrationCurrent');
+    if (lbl) lbl.textContent = t.label;
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function dismissMigrationBanner() {
+  if (state.config) {
+    delete state.config.needsTreatmentSetup;
+    saveKey(KEYS.config, state.config);
+  }
+  refreshMigrationBanner();
 }
 function saveReminderSettings() {
   state.reminders = {
@@ -4625,12 +5249,33 @@ runPhotoAIAnalysis = function() {
 function buildPiscinierBrief(needs) {
   const last = state.measures[0] || {};
   const city = state.config && state.config.location ? state.config.location.name : 'non précisée';
+  const tCfg = getTreatment();
   const parts = [];
-  parts.push('Bonjour, j’ai besoin d’un conseil pour ma piscine.');
-  parts.push('Piscine : ' + (state.config ? state.config.name : 'Piscine') + ' · ' + (state.config ? state.config.volume : '—') + ' m³ · Localisation : ' + city + '.');
-  parts.push('Traitement : chlore · Filtration : filtre à sable.');
-  parts.push('Derniers relevés : pH ' + (last.ph ?? '—') + ' · Chlore ' + (last.cl ?? '—') + ' mg/L · TAC ' + (last.tac ?? '—') + ' ppm · CYA ' + (last.cya ?? '—') + ' · Température ' + (last.temp ?? '—') + '°C.');
-  parts.push('Besoins détectés : ' + (needs || detectNeeds()).slice(0,5).join(', ') + '.');
+  parts.push('Bonjour, j\'ai besoin d\'un conseil pour ma piscine.');
+  // Caractéristiques piscine
+  const carac = [];
+  if (state.config && state.config.poolType) {
+    const labels = { 'enterre': 'enterrée', 'semi': 'semi-enterrée', 'hors-sol': 'hors-sol' };
+    carac.push(labels[state.config.poolType] || state.config.poolType);
+  }
+  if (state.config && state.config.cover && state.config.cover !== 'none') {
+    const labels = { 'volet': 'volet roulant', 'bache': 'bâche' };
+    carac.push('avec ' + (labels[state.config.cover] || state.config.cover));
+  }
+  if (state.config && state.config.heat && state.config.heat !== 'none') {
+    const labels = { 'pac': 'chauffée par PAC', 'solaire': 'chauffée solaire', 'echangeur': 'chauffée par échangeur' };
+    carac.push(labels[state.config.heat] || state.config.heat);
+  }
+  parts.push('Piscine : ' + (state.config ? state.config.name : 'Piscine') + ' · ' + (state.config ? state.config.volume : '—') + ' m³' + (carac.length ? ' · ' + carac.join(', ') : '') + ' · ' + city + '.');
+  parts.push('Traitement : ' + tCfg.label + '.');
+  // Derniers relevés (avec le bon désinfectant)
+  const dKey = tCfg.inputKey;
+  const dVal = last[dKey] != null ? last[dKey] : '—';
+  const relParts = ['pH ' + (last.ph != null ? last.ph : '—'), tCfg.short + ' ' + dVal + ' ' + tCfg.inputUnit, 'TAC ' + (last.tac != null ? last.tac : '—') + ' ppm'];
+  if (tCfg.id === 'chlore' && last.cya != null) relParts.push('CYA ' + last.cya);
+  if (last.temp != null) relParts.push('Température ' + last.temp + '°C');
+  parts.push('Derniers relevés : ' + relParts.join(' · ') + '.');
+  parts.push('Besoins détectés : ' + ((needs || detectNeeds()).slice(0,5).join(', ') || 'rien d\'urgent') + '.');
   parts.push('Pouvez-vous me dire quels produits ou actions vous recommandez ?');
   return parts.join('\n');
 }
@@ -4736,6 +5381,8 @@ function boot() {
     setupOnbListeners();
     setOnbStep(0);
   } else {
+    // Migration douce : utilisateur existant sans traitement défini
+    ensureTreatmentMigration();
     document.getElementById('onboarding').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
     document.getElementById('appNav').style.display = 'flex';
@@ -4750,12 +5397,27 @@ function boot() {
 let trendsRange = 30;
 const trendsCharts = {};
 
-const TREND_PARAMS = [
-  { key: 'ph',   label: 'pH',          canvasId: 'trendChartPh',   statId: 'trendsPhStat',   idealMin: 7.2, idealMax: 7.4, softMin: 6.8, softMax: 7.8, color: '#4ec0d8', yMin: 6.5, yMax: 8.2, decimals: 2, unit: '' },
-  { key: 'cl',   label: 'Chlore',      canvasId: 'trendChartCl',   statId: 'trendsClStat',   idealMin: 1,   idealMax: 3,   softMin: 0.5, softMax: 5,   color: '#7ac74f', yMin: 0,   yMax: 6,   decimals: 2, unit: ' mg/L' },
-  { key: 'temp', label: 'Température', canvasId: 'trendChartTemp', statId: 'trendsTempStat', idealMin: 24,  idealMax: 30,  softMin: 20,  softMax: 32,  color: '#f5d97e', yMin: 10,  yMax: 36,  decimals: 1, unit: ' °C' },
-  { key: 'tac',  label: 'TAC',         canvasId: 'trendChartTac',  statId: 'trendsTacStat',  idealMin: 80,  idealMax: 120, softMin: 60,  softMax: 150, color: '#0a7fa8', yMin: 40,  yMax: 180, decimals: 0, unit: ' ppm' }
-];
+function getTrendParams() {
+  // Construit la liste des paramètres à grapher selon le traitement actif
+  const t = getTreatment();
+  const list = [
+    { key: 'ph',   label: 'pH',          canvasId: 'trendChartPh',   statId: 'trendsPhStat',   idealMin: 7.2, idealMax: 7.4, softMin: 6.8, softMax: 7.8, color: '#4ec0d8', yMin: 6.5, yMax: 8.2, decimals: 2, unit: '' },
+    { key: t.inputKey, label: t.inputLabel, canvasId: 'trendChartCl', statId: 'trendsClStat', idealMin: t.idealMin, idealMax: t.idealMax, softMin: t.softMin, softMax: t.softMax, color: t.color, yMin: t.yMin, yMax: t.yMax, decimals: t.decimals, unit: ' ' + t.inputUnit },
+    { key: 'temp', label: 'Température', canvasId: 'trendChartTemp', statId: 'trendsTempStat', idealMin: 24,  idealMax: 30,  softMin: 20,  softMax: 32,  color: '#f5d97e', yMin: 10,  yMax: 36,  decimals: 1, unit: ' °C' },
+    { key: 'tac',  label: 'TAC',         canvasId: 'trendChartTac',  statId: 'trendsTacStat',  idealMin: 80,  idealMax: 120, softMin: 60,  softMax: 150, color: '#0a7fa8', yMin: 40,  yMax: 180, decimals: 0, unit: ' ppm' }
+  ];
+  return list;
+}
+
+// L'ancienne constante TREND_PARAMS reste pour compat mais devient dynamique
+const TREND_PARAMS = new Proxy({}, {
+  get: (_, prop) => {
+    if (prop === 'forEach') return getTrendParams().forEach.bind(getTrendParams());
+    if (prop === 'map') return getTrendParams().map.bind(getTrendParams());
+    if (prop === 'length') return getTrendParams().length;
+    return getTrendParams()[prop];
+  }
+});
 
 function setTrendsRange(days) {
   trendsRange = days;
@@ -4921,6 +5583,13 @@ function renderTrends() {
     console.warn('Chart.js n\'est pas chargé');
     return;
   }
+  // Mise à jour des titres selon le traitement actif
+  const tTrends = getTreatment();
+  const titleEl = document.getElementById('trendCardClTitle');
+  const rangeEl = document.getElementById('trendCardClRange');
+  if (titleEl) titleEl.textContent = tTrends.inputLabel;
+  if (rangeEl) rangeEl.textContent = 'zone idéale : ' + tTrends.idealMin + ' – ' + tTrends.idealMax + ' ' + tTrends.inputUnit;
+
   const measures = state.measures || [];
   const emptyEl = document.getElementById('trendsEmpty');
   const contentEl = document.getElementById('trendsContent');
@@ -4932,7 +5601,7 @@ function renderTrends() {
   }
   emptyEl.style.display = 'none';
   contentEl.style.display = 'block';
-  TREND_PARAMS.forEach(param => {
+  getTrendParams().forEach(param => {
     const data = getTrendData(param.key, trendsRange);
     renderTrendChartSimple(param, data);
     const statEl = document.getElementById(param.statId);
