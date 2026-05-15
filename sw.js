@@ -64,7 +64,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // CDN jsPDF : cache-first
-  if (url.hostname.includes('cdnjs.cloudflare.com')) {
+  if (url.hostname.includes('cdnjs.cloudflare.com') || url.hostname.includes('unpkg.com')) {
     event.respondWith(cacheFirst(request));
     return;
   }

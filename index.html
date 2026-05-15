@@ -27,6 +27,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
 
 <style>
   :root {
@@ -199,6 +200,132 @@
   @keyframes pulse {
     0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(122, 199, 79, 0.6); }
     50% { opacity: 0.6; box-shadow: 0 0 0 6px rgba(122, 199, 79, 0); }
+  }
+
+  /* SÉLECTEUR DE PISCINE */
+  .pool-switcher-wrap {
+    position: relative;
+    margin: 4px 0 18px;
+  }
+  .pool-switcher-btn {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(78, 192, 216, 0.1), rgba(10, 127, 168, 0.05));
+    border: 1px solid rgba(78, 192, 216, 0.22);
+    border-radius: 14px;
+    padding: 11px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.25s var(--ease);
+    color: var(--ink);
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .pool-switcher-btn:hover, .pool-switcher-btn:active {
+    background: linear-gradient(135deg, rgba(78, 192, 216, 0.15), rgba(10, 127, 168, 0.08));
+    border-color: rgba(78, 192, 216, 0.4);
+  }
+  .pool-switcher-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+  .pool-switcher-label {
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pool-switcher-caret {
+    color: var(--ink-dim);
+    transition: transform 0.2s var(--ease);
+  }
+  .pool-switcher-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, #052033, #03192a);
+    border: 1px solid rgba(78, 192, 216, 0.25);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+    z-index: 20;
+    display: none;
+  }
+  .pool-switcher-menu.open {
+    display: block;
+    animation: poolMenuIn 0.18s var(--ease);
+  }
+  @keyframes poolMenuIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .pool-switch-item {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--ink);
+    text-align: left;
+    transition: background 0.15s var(--ease);
+  }
+  .pool-switch-item:hover, .pool-switch-item:active {
+    background: rgba(78, 192, 216, 0.08);
+  }
+  .pool-switch-item.active {
+    background: rgba(78, 192, 216, 0.06);
+  }
+  .pool-switch-item-text { flex: 1; min-width: 0; }
+  .pool-switch-item-name {
+    font-family: var(--display);
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pool-switch-item-sub {
+    font-size: 11px;
+    color: var(--ink-dim);
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pool-switch-item-check {
+    color: var(--shallow);
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .pool-switch-divider {
+    height: 1px;
+    background: rgba(78, 192, 216, 0.15);
+    margin: 0;
+  }
+  .pool-switch-add {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--shallow);
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+  }
+  .pool-switch-add:hover, .pool-switch-add:active {
+    background: rgba(78, 192, 216, 0.1);
   }
 
   /* HERO */
@@ -1946,6 +2073,16 @@
     </div>
   </div>
 
+  <!-- SÉLECTEUR DE PISCINE -->
+  <div class="pool-switcher-wrap">
+    <button id="poolSwitcherBtn" class="pool-switcher-btn" onclick="togglePoolSwitcher()">
+      <span class="pool-switcher-icon">🏊</span>
+      <span class="pool-switcher-label" id="poolSwitcherLabel">Piscine</span>
+      <svg class="pool-switcher-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div id="poolSwitcherMenu" class="pool-switcher-menu"></div>
+  </div>
+
   <!-- DASH -->
   <div class="view active" id="view-dash">
     <div id="migrationBanner" style="display:none; margin-bottom:14px; padding:14px; background:linear-gradient(135deg, rgba(255,180,84,0.18), rgba(255,180,84,0.06)); border:1px solid rgba(255,180,84,0.35); border-radius:10px;">
@@ -2097,6 +2234,71 @@
       <div class="card-sub" id="historyCount">aucune mesure</div>
       <div id="historyList"></div>
     </div>
+  </div>
+
+  <!-- SCANNER PRODUITS -->
+  <div class="view" id="view-scan">
+    <h2 class="section-title">Scanner <em>un produit</em></h2>
+    <p class="section-sub">Scanne le code-barres d'un produit piscine pour obtenir la dose adaptée à ton bassin et tes dernières mesures.</p>
+
+    <!-- État initial : avant scan -->
+    <div id="scanIdleView">
+      <div class="card" style="padding:20px; text-align:center;">
+        <div style="font-size:42px; margin-bottom:12px;">📷</div>
+        <div style="font-family:var(--display); font-size:18px; margin-bottom:6px;">Prêt à scanner</div>
+        <div style="font-size:13px; color:var(--ink-dim); line-height:1.5; margin-bottom:18px;">Pointe la caméra sur le code-barres EAN13 (en bas du paquet, 13 chiffres). L'app reconnaîtra automatiquement le produit s'il est dans la base.</div>
+        <button class="btn" onclick="startBarcodeScanner()" style="margin-bottom:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+          Démarrer le scanner
+        </button>
+        <button class="btn btn-secondary" onclick="openManualEntry()" style="font-size:13px;">
+          Saisir un code manuellement
+        </button>
+      </div>
+
+      <!-- Catalogue complet -->
+      <div class="card" style="margin-top:14px;">
+        <div class="card-title" style="margin-bottom:6px;">Catalogue de produits</div>
+        <div class="card-sub" style="margin-bottom:12px;">Tu peux aussi parcourir directement les produits sans scanner.</div>
+        <div id="productCatalog"></div>
+      </div>
+    </div>
+
+    <!-- Vue caméra -->
+    <div id="scanCameraView" style="display:none;">
+      <div style="position:relative; width:100%; aspect-ratio:1; max-height:420px; background:#000; border-radius:16px; overflow:hidden; border:2px solid rgba(78,192,216,0.3);">
+        <video id="scanVideo" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover;"></video>
+        <div id="scanOverlay" style="position:absolute; inset:0; pointer-events:none; display:flex; align-items:center; justify-content:center;">
+          <div style="width:75%; height:35%; border:2px solid #19b6d0; border-radius:12px; box-shadow:0 0 0 9999px rgba(0,0,0,0.45);"></div>
+        </div>
+        <div id="scanStatus" style="position:absolute; bottom:12px; left:0; right:0; text-align:center; color:#fff; font-size:13px; text-shadow:0 1px 4px rgba(0,0,0,0.7);">Cherche un code-barres…</div>
+      </div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="btn btn-secondary" onclick="stopBarcodeScanner()">Annuler</button>
+        <button class="btn" onclick="openManualEntry()">Saisir manuellement</button>
+      </div>
+    </div>
+
+    <!-- Saisie manuelle -->
+    <div id="scanManualView" style="display:none;">
+      <div class="card" style="padding:18px;">
+        <div style="font-family:var(--display); font-size:16px; margin-bottom:6px;">Saisie manuelle</div>
+        <div style="font-size:12px; color:var(--ink-dim); margin-bottom:14px;">Si le scan ne marche pas, tape les 13 chiffres du code-barres (sous le code).</div>
+        <div class="field">
+          <input class="input" type="number" id="manualEAN" placeholder="ex. 3661234567890" inputmode="numeric">
+        </div>
+        <div class="btn-row" style="margin-top:6px;">
+          <button class="btn btn-secondary" onclick="cancelManualEntry()">Retour</button>
+          <button class="btn" onclick="submitManualEAN()">Valider</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit trouvé -->
+    <div id="scanResultView" style="display:none;"></div>
+
+    <!-- Produit inconnu : associer -->
+    <div id="scanUnknownView" style="display:none;"></div>
   </div>
 
   <!-- TENDANCES -->
@@ -2567,11 +2769,22 @@
       </div>
     </div>
 
+    <div class="card">
+      <div class="card-title" style="margin-bottom: 6px;">Mes piscines</div>
+      <div class="card-sub" style="margin-bottom: 12px;">Gère plusieurs piscines sur cet appareil (résidence principale, secondaire…).</div>
+      <div id="poolsListSettings" style="margin-bottom: 12px;"></div>
+      <button class="btn btn-secondary" onclick="createNewPool()" id="addPoolBtn">+ Ajouter une piscine</button>
+    </div>
+
     <div class="danger-zone">
       <div class="danger-title">Zone sensible</div>
+      <button class="btn btn-danger" id="deletePoolBtn" onclick="deleteCurrentPool()" style="display:none;">Supprimer la piscine active</button>
+      <div id="deletePoolHint" style="font-size: 11px; color: var(--ink-dim); margin: 10px 0 16px; line-height: 1.45; display:none;">
+        Supprime cette piscine et toutes ses données (mesures, routines, photos). Les autres piscines sont conservées. Action irréversible.
+      </div>
       <button class="btn btn-danger" onclick="confirmReset()">Réinitialiser l'application</button>
       <div style="font-size: 11px; color: var(--ink-dim); margin-top: 10px; line-height: 1.45;">
-        Supprime toutes les données et relance l'assistant. Action irréversible.
+        Supprime <strong>toutes</strong> les données (toutes piscines) et relance l'assistant. Action irréversible.
       </div>
     </div>
   </div>
@@ -2589,6 +2802,10 @@
   <button data-tab="trends" onclick="switchTab('trends')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
     Tendances
+  </button>
+  <button data-tab="scan" onclick="switchTab('scan')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 8v8M11 8v8M15 8v8M19 8v8"/></svg>
+    Scanner
   </button>
   <button data-tab="meteo" onclick="switchTab('meteo')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
@@ -2671,8 +2888,192 @@ const KEYS = {
   sync: 'piscine:sync',
   reminders: 'piscine:reminders',
   aiAnalyses: 'piscine:aiAnalyses',
-  family: 'piscine:family'
+  family: 'piscine:family',
+  pools: 'piscine:pools',           // tableau des piscines (multi-piscines)
+  activePoolId: 'piscine:activePoolId'  // id de la piscine active
 };
+
+// =================================================================
+// MULTI-PISCINES — gestion de plusieurs piscines sur un même appareil
+// Chaque piscine a son propre snapshot complet (config, mesures, routines, etc.)
+// La piscine active est synchronisée avec state.config / state.measures / etc.
+// =================================================================
+const MAX_POOLS = 5;
+
+function newPoolId() {
+  return 'pool_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6);
+}
+
+function getActivePool() {
+  if (!state.pools || !state.pools.length) return null;
+  const id = state.activePoolId;
+  return state.pools.find(p => p.id === id) || state.pools[0];
+}
+
+function captureActivePoolFromState() {
+  // Sauve les variables runtime (state.config, state.measures, etc.)
+  // dans le snapshot de la piscine active
+  if (!state.pools || !state.activePoolId) return;
+  const idx = state.pools.findIndex(p => p.id === state.activePoolId);
+  if (idx < 0) return;
+  state.pools[idx] = Object.assign({}, state.pools[idx], {
+    config: state.config,
+    measures: state.measures,
+    routines: state.routines,
+    routinesReset: state.routinesReset,
+    actions: state.actions,
+    aiAnalyses: state.aiAnalyses,
+    sync: state.sync,
+    reminders: state.reminders
+  });
+  persistAllPools();
+}
+
+function applyPoolToState(pool) {
+  // Remplit les variables runtime depuis un snapshot de piscine
+  state.config = pool.config || null;
+  state.measures = pool.measures || [];
+  state.routines = pool.routines || { daily: {}, weekly: {}, monthly: {} };
+  state.routinesReset = pool.routinesReset || { daily: 0, weekly: 0, monthly: 0 };
+  state.actions = pool.actions || [];
+  state.aiAnalyses = pool.aiAnalyses || [];
+  state.sync = pool.sync || null;
+  state.reminders = pool.reminders || { enabled: false, frequency: '2days', day: 6, time: '09:00' };
+}
+
+function persistAllPools() {
+  saveKey(KEYS.pools, state.pools);
+  saveKey(KEYS.activePoolId, state.activePoolId);
+}
+
+function switchPool(poolId) {
+  if (poolId === state.activePoolId) {
+    closePoolSwitcher();
+    return;
+  }
+  // Sauvegarde l'état actuel
+  captureActivePoolFromState();
+  // Bascule
+  const pool = state.pools.find(p => p.id === poolId);
+  if (!pool) return;
+  state.activePoolId = poolId;
+  saveKey(KEYS.activePoolId, poolId);
+  applyPoolToState(pool);
+  // Refresh complet de l'UI
+  closePoolSwitcher();
+  initAppUI();
+  refreshPoolSwitcherDisplay();
+  showToast('Piscine changée : ' + (pool.config && pool.config.name ? pool.config.name : 'Piscine'));
+}
+
+function createNewPool() {
+  if (state.pools.length >= MAX_POOLS) {
+    showToast('Maximum ' + MAX_POOLS + ' piscines atteint', true);
+    return;
+  }
+  // Sauvegarde l'état actuel avant de partir vers le nouvel onboarding
+  captureActivePoolFromState();
+  closePoolSwitcher();
+  // Réinitialise les variables runtime pour l'onboarding
+  state.config = null;
+  state.measures = [];
+  state.routines = { daily: {}, weekly: {}, monthly: {} };
+  state.routinesReset = { daily: 0, weekly: 0, monthly: 0 };
+  state.actions = [];
+  state.aiAnalyses = [];
+  state.sync = null;
+  state.reminders = { enabled: false, frequency: '2days', day: 6, time: '09:00' };
+  // Marque qu'on est en train d'ajouter une piscine (pas une création initiale)
+  state.addingPool = true;
+  // Lance l'onboarding
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('appNav').style.display = 'none';
+  document.getElementById('onboarding').style.display = 'flex';
+  onbStep = 0;
+  onbData = { name: '', volume: null, volumeMode: 'm3', location: null, treatment: null, poolType: null, cover: null, heat: null };
+  setupOnbListeners();
+  setOnbStep(0);
+}
+
+function deleteCurrentPool() {
+  if (state.pools.length <= 1) {
+    showToast('Impossible : il faut au moins une piscine', true);
+    return;
+  }
+  const active = getActivePool();
+  const nm = (active && active.config && active.config.name) || 'cette piscine';
+  if (!confirm('Supprimer « ' + nm + ' » et toutes ses données ?\n\nCette action est irréversible.')) return;
+  // Retire la piscine
+  state.pools = state.pools.filter(p => p.id !== state.activePoolId);
+  // Bascule sur la première restante
+  state.activePoolId = state.pools[0].id;
+  applyPoolToState(state.pools[0]);
+  persistAllPools();
+  initAppUI();
+  refreshPoolSwitcherDisplay();
+  showToast('Piscine supprimée');
+}
+
+function togglePoolSwitcher() {
+  const menu = document.getElementById('poolSwitcherMenu');
+  if (!menu) return;
+  if (menu.classList.contains('open')) {
+    closePoolSwitcher();
+  } else {
+    refreshPoolSwitcherMenu();
+    menu.classList.add('open');
+  }
+}
+
+function closePoolSwitcher() {
+  const menu = document.getElementById('poolSwitcherMenu');
+  if (menu) menu.classList.remove('open');
+}
+
+function refreshPoolSwitcherDisplay() {
+  // Met à jour le bouton (nom de la piscine active)
+  const btn = document.getElementById('poolSwitcherBtn');
+  if (!btn) return;
+  const active = getActivePool();
+  const nm = (active && active.config && active.config.name) ? active.config.name : 'Piscine';
+  const lbl = document.getElementById('poolSwitcherLabel');
+  if (lbl) lbl.textContent = nm;
+  // Affiche le sélecteur uniquement s'il y a plus d'une piscine, OU si on est à <5 (pour pouvoir ajouter)
+  btn.style.display = state.pools.length > 0 ? '' : 'none';
+}
+
+function refreshPoolSwitcherMenu() {
+  const menu = document.getElementById('poolSwitcherMenu');
+  if (!menu) return;
+  const active = state.activePoolId;
+  let html = '';
+  state.pools.forEach(p => {
+    const nm = (p.config && p.config.name) || 'Piscine';
+    const loc = (p.config && p.config.location && p.config.location.name) ? p.config.location.name : null;
+    const isActive = p.id === active;
+    html += '<button class="pool-switch-item' + (isActive ? ' active' : '') + '" onclick="switchPool(\'' + p.id + '\')">' +
+      '<div class="pool-switch-item-text">' +
+      '<div class="pool-switch-item-name">' + escapeHtml(nm) + '</div>' +
+      (loc ? '<div class="pool-switch-item-sub">' + escapeHtml(loc) + '</div>' : '') +
+      '</div>' +
+      (isActive ? '<div class="pool-switch-item-check">✓</div>' : '') +
+      '</button>';
+  });
+  if (state.pools.length < MAX_POOLS) {
+    html += '<div class="pool-switch-divider"></div>' +
+      '<button class="pool-switch-add" onclick="createNewPool()">' +
+      '<span style="font-size:18px;">+</span> Ajouter une piscine' +
+      '</button>';
+  } else {
+    html += '<div class="pool-switch-divider"></div>' +
+      '<div style="padding:8px 12px; font-size:11px; color:var(--ink-dim); text-align:center;">Limite atteinte (' + MAX_POOLS + ')</div>';
+  }
+  menu.innerHTML = html;
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 
 function loadKey(key, fallback) {
   try {
@@ -2684,14 +3085,37 @@ function loadKey(key, fallback) {
 function saveKey(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
+    // Synchroniser dans state.pools si on a une piscine active
+    syncKeyToActivePool(key, value);
     return true;
   } catch(e) {
     try {
       localStorage.removeItem(KEYS.meteoCache);
       localStorage.setItem(key, JSON.stringify(value));
+      syncKeyToActivePool(key, value);
       return true;
     } catch(e2) { return false; }
   }
+}
+
+function syncKeyToActivePool(key, value) {
+  if (!state.pools || !state.activePoolId) return;
+  const idx = state.pools.findIndex(p => p.id === state.activePoolId);
+  if (idx < 0) return;
+  // Mapping clé → propriété du snapshot piscine
+  if (key === KEYS.config) state.pools[idx].config = value;
+  else if (key === KEYS.measures) state.pools[idx].measures = value;
+  else if (key === KEYS.routines) {
+    state.pools[idx].routines = value.routines;
+    state.pools[idx].routinesReset = value.resets;
+  }
+  else if (key === KEYS.actions) state.pools[idx].actions = value;
+  else if (key === KEYS.aiAnalyses) state.pools[idx].aiAnalyses = value;
+  else if (key === KEYS.sync) state.pools[idx].sync = value;
+  else if (key === KEYS.reminders) state.pools[idx].reminders = value;
+  else return; // Pas une clé piscine, on ne touche pas
+  // Persiste le tableau global (sans repasser par saveKey pour éviter récursion)
+  try { localStorage.setItem(KEYS.pools, JSON.stringify(state.pools)); } catch(e) {}
 }
 
 // STATE
@@ -2931,6 +3355,30 @@ function finishOnboarding(skipMeteo) {
     heat: onbData.heat || null,
     created: Date.now()
   };
+
+  // === MULTI-PISCINES ===
+  // Pour la 1ère piscine OU pour un ajout, on insère dans le tableau pools
+  if (!state.pools) state.pools = [];
+  const newPool = {
+    id: newPoolId(),
+    config: state.config,
+    measures: [],
+    routines: { daily: {}, weekly: {}, monthly: {} },
+    routinesReset: { daily: 0, weekly: 0, monthly: 0 },
+    actions: [],
+    aiAnalyses: [],
+    sync: null,
+    reminders: { enabled: false, frequency: '2days', day: 6, time: '09:00' }
+  };
+  state.pools.push(newPool);
+  state.activePoolId = newPool.id;
+  // Si c'est un ajout (pas le 1er onboarding), on doit appliquer les nouveaux états vides à state.*
+  if (state.addingPool) {
+    applyPoolToState(newPool);
+    delete state.addingPool;
+  }
+  persistAllPools();
+  // Compat : on garde aussi l'écriture sur l'ancienne clé pour le cas où on aurait raté quelque chose
   saveKey(KEYS.config, state.config);
 
   document.getElementById('onboarding').style.display = 'none';
@@ -2938,6 +3386,7 @@ function finishOnboarding(skipMeteo) {
   document.getElementById('appNav').style.display = 'flex';
 
   initAppUI();
+  refreshPoolSwitcherDisplay();
   showToast('Bienvenue ' + state.config.name);
 }
 
@@ -3027,6 +3476,10 @@ function switchTab(tab) {
     b.classList.toggle('active', b.dataset.tab === tab);
   });
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Si on entre dans les réglages, rafraîchir la liste des piscines
+  if (tab === 'settings' && typeof renderPoolsListSettings === 'function') {
+    renderPoolsListSettings();
+  }
 }
 
 // STATUS
@@ -3121,6 +3574,513 @@ const TREATMENTS = {
 function getTreatment() {
   const t = state.config && state.config.treatment;
   return TREATMENTS[t] || TREATMENTS.chlore;
+}
+
+// =================================================================
+// BIBLIOTHÈQUE PRODUITS PISCINE
+// Base interne des produits courants français. Chaque produit a un
+// calcul de dose adapté au volume de la piscine et aux dernières mesures.
+// Les EAN sont laissés à null par défaut : ils seront appris au fur et à
+// mesure des scans (système d'auto-apprentissage stocké par piscine).
+// =================================================================
+const PRODUCT_CATEGORIES = {
+  'ph-plus':       { label: 'pH +',                 color: '#7ac74f', icon: '↑' },
+  'ph-minus':      { label: 'pH −',                 color: '#f5a25d', icon: '↓' },
+  'chlore-lent':   { label: 'Chlore lent',          color: '#7ac74f', icon: '🧪' },
+  'chlore-choc':   { label: 'Chlore choc',          color: '#e94e4e', icon: '⚡' },
+  'brome-lent':    { label: 'Brome lent',           color: '#b48cd6', icon: '🟣' },
+  'oxa-liquide':   { label: 'Oxygène actif liq.',   color: '#4ec0d8', icon: '💧' },
+  'oxa-pastille':  { label: 'Oxygène actif past.',  color: '#4ec0d8', icon: '⊙' },
+  'oxa-activateur':{ label: 'Activateur ox. actif', color: '#19b6d0', icon: '✨' },
+  'stabilisant':   { label: 'Stabilisant CYA',      color: '#f5d97e', icon: '☀' },
+  'algicide-cur':  { label: 'Anti-algues curatif',  color: '#39c168', icon: '🦠' },
+  'algicide-prev': { label: 'Anti-algues préventif',color: '#7ac74f', icon: '🛡' },
+  'floculant':     { label: 'Floculant',            color: '#4ec0d8', icon: '☁' },
+  'clarifiant':    { label: 'Clarifiant',           color: '#19b6d0', icon: '✨' },
+  'tac-plus':      { label: 'TAC +',                color: '#0a7fa8', icon: '↑' },
+  'anti-calcaire': { label: 'Anti-calcaire',        color: '#888780', icon: '◇' },
+  'ligne-eau':     { label: 'Dégraissant ligne',    color: '#888780', icon: '~' },
+  'detartrant':    { label: 'Détartrant filtre',    color: '#888780', icon: '⚙' },
+  'hivernage':     { label: 'Hivernage',            color: '#4ec0d8', icon: '❄' },
+  'remise-route':  { label: 'Remise en service',    color: '#f5d97e', icon: '🌱' }
+};
+
+const PRODUCTS = [
+  // ============ pH + ============
+  { id:'phplus_bayrol_granul', brand:'Bayrol', name:'pH+ Granulés', category:'ph-plus', ean:null,
+    format:'1,5 kg', ingredient:'Carbonate de sodium',
+    desc:'Augmente le pH de l\'eau quand il est trop bas (eau agressive).',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Verser dans un seau d\'eau tiède avant ajout', 'Gants recommandés', 'Stocker au sec, hors enfants'],
+    steps:['Filtration en marche', 'Diluer la dose calculée dans un seau d\'eau (jamais l\'inverse)', 'Verser lentement devant les buses de refoulement', 'Laisser filtrer 4h minimum', 'Re-tester après 6h, ne jamais corriger plusieurs fois en une journée']
+  },
+  { id:'phplus_hth_granul', brand:'HTH', name:'pH+ Mini', category:'ph-plus', ean:null,
+    format:'1,2 kg', ingredient:'Carbonate de sodium',
+    desc:'Augmente le pH de l\'eau.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Diluer avant ajout','Gants recommandés'],
+    steps:['Diluer dans un seau d\'eau', 'Verser devant les buses, filtration active', 'Filtration 4h minimum', 'Re-tester après 6h']
+  },
+  { id:'phplus_generic', brand:'Mareva / Génération', name:'pH+ liquide', category:'ph-plus', ean:null,
+    format:'5 L', ingredient:'Soude caustique diluée',
+    desc:'Version liquide du pH+, plus rapide à diluer.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Liquide CAUSTIQUE : gants + lunettes OBLIGATOIRES', 'Ne JAMAIS mélanger avec un autre produit', 'Ne pas verser dans un skimmer rempli d\'eau chlorée'],
+    steps:['Filtration en marche','Verser lentement devant les buses', 'Filtration 4h minimum', 'Re-tester après 6h']
+  },
+
+  // ============ pH − ============
+  { id:'phminus_bayrol_granul', brand:'Bayrol', name:'pH- Granulés', category:'ph-minus', ean:null,
+    format:'1,5 kg', ingredient:'Bisulfate de sodium',
+    desc:'Diminue le pH de l\'eau quand il est trop élevé (chlore inefficace, eau irritante).',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Diluer dans un seau d\'eau tiède', 'Gants + lunettes recommandés', 'Ne JAMAIS mélanger avec chlore choc'],
+    steps:['Filtration en marche','Diluer la dose dans un seau d\'eau (verser le produit dans l\'eau, pas l\'inverse)', 'Verser devant les buses', 'Filtration 4h minimum', 'Re-tester après 6h']
+  },
+  { id:'phminus_hth_granul', brand:'HTH', name:'pH Minus', category:'ph-minus', ean:null,
+    format:'2 kg', ingredient:'Bisulfate de sodium',
+    desc:'Diminue le pH.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Diluer avant ajout','Gants recommandés','Ne pas mélanger avec d\'autres produits'],
+    steps:['Filtration active','Diluer dans un seau d\'eau','Verser devant les buses','Filtration 4h','Re-tester après 6h']
+  },
+  { id:'phminus_generic_liq', brand:'Mareva / Génération', name:'pH- liquide', category:'ph-minus', ean:null,
+    format:'5 L', ingredient:'Acide sulfurique dilué (~15%)',
+    desc:'Version liquide du pH-, plus économique pour grandes piscines.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['ACIDE : gants + lunettes OBLIGATOIRES','Ne JAMAIS verser sur du chlore solide','Stocker à part des autres produits'],
+    steps:['Filtration active','Verser lentement devant les buses','Filtration 4h minimum','Re-tester après 6h']
+  },
+
+  // ============ Chlore lent ============
+  { id:'chlent_bayrol_galets', brand:'Bayrol', name:'Chlorilong 250 (galets)', category:'chlore-lent', ean:null,
+    format:'5 kg / galets 250 g', ingredient:'Trichloroisocyanurate (TCCA) + stabilisant',
+    desc:'Galet de chlore à dissolution lente pour entretien continu (5-7 jours par galet).',
+    compatibility:['chlore'],
+    warnings:['Uniquement pour piscine au chlore','Ne JAMAIS mettre directement dans le skimmer pour chlore choc','Contient du stabilisant : surveiller le CYA mensuellement'],
+    steps:['Placer dans skimmer, panier flotteur ou diffuseur','Adapter la quantité selon volume et baignade','Maintenir pH 7,2-7,4 pour efficacité maximale','Tester chlore + pH 2-3 fois par semaine']
+  },
+  { id:'chlent_hth_galets', brand:'HTH', name:'Maxi-Tab', category:'chlore-lent', ean:null,
+    format:'5 kg / galets 200 g', ingredient:'Trichloroisocyanurate (TCCA)',
+    desc:'Chlore galets longue durée.',
+    compatibility:['chlore'],
+    warnings:['Stabilisé : surveille le CYA tous les mois'],
+    steps:['Placer dans skimmer ou diffuseur','Tester pH + chlore 2-3 fois par semaine','Renouveler quand dissout']
+  },
+  { id:'chlent_castorama', brand:'Marque distributeur', name:'Galets chlore lent', category:'chlore-lent', ean:null,
+    format:'5 kg', ingredient:'Trichloroisocyanurate (TCCA)',
+    desc:'Chlore lent galets, marque enseigne (Castorama, Leroy Merlin, Bricorama…).',
+    compatibility:['chlore'],
+    warnings:['Stabilisé : surveille le CYA'],
+    steps:['Skimmer ou diffuseur','Test 2-3 fois/semaine']
+  },
+
+  // ============ Chlore choc ============
+  { id:'chchoc_bayrol_pastille', brand:'Bayrol', name:'Chloriklar (pastilles 20g)', category:'chlore-choc', ean:null,
+    format:'1 kg / pastilles 20 g', ingredient:'Dichloroisocyanurate (DCCN) non-stabilisé',
+    desc:'Chlore choc à dissolution rapide pour rattraper une eau dégradée (eau verte, après orage, etc.).',
+    compatibility:['chlore'],
+    warnings:['Ne PAS mélanger avec pH-','Verser le soir pour limiter l\'évaporation','Filtration 24h en continu après','Pas de baignade tant que chlore > 3 mg/L'],
+    steps:['Soirée : pré-dissoudre dans un seau d\'eau tiède','Verser devant les buses, pompe active','Filtration 24h non-stop','Re-tester chlore + pH le lendemain']
+  },
+  { id:'chchoc_hth_granul', brand:'HTH', name:'Granuchlore (granulés)', category:'chlore-choc', ean:null,
+    format:'5 kg', ingredient:'Hypochlorite de calcium 70%',
+    desc:'Chlore choc à action rapide.',
+    compatibility:['chlore'],
+    warnings:['Verser après dilution stricte dans un seau','Pas de baignade pendant 12-24h','Eau dure : risque dépôts calcaires'],
+    steps:['Dissoudre dans seau d\'eau','Verser devant les buses','Filtration 24h','Re-tester le lendemain']
+  },
+  { id:'chchoc_mareva', brand:'Mareva', name:'Reva-Klor choc', category:'chlore-choc', ean:null,
+    format:'5 kg', ingredient:'Dichloroisocyanurate',
+    desc:'Chlore choc rapide non-stabilisé.',
+    compatibility:['chlore'],
+    warnings:['Diluer avant ajout','Pas de baignade tant que >3 mg/L'],
+    steps:['Dilution stricte','Verser devant buses','Filtration 24h']
+  },
+
+  // ============ Brome lent ============
+  { id:'brom_bayrol', brand:'Bayrol', name:'Brome Sticks', category:'brome-lent', ean:null,
+    format:'5 kg / pastilles 20 g', ingredient:'BCDMH (bromochlorodiméthylhydantoïne)',
+    desc:'Pastilles de brome à dissolution lente. Stable à haute température, sans odeur.',
+    compatibility:['brome'],
+    warnings:['Uniquement pour piscine au brome','Utiliser un brominateur dédié (pas le skimmer pour le chlore !)','Ne pas mélanger avec chlore'],
+    steps:['Placer dans brominateur ou diffuseur dédié','Régler le débit selon fréquentation','Tester pH + brome 1-2 fois par semaine','Maintenir pH 7,4-7,8 pour efficacité']
+  },
+  { id:'brom_hth', brand:'HTH', name:'Brome HTH', category:'brome-lent', ean:null,
+    format:'5 kg / pastilles 20 g', ingredient:'BCDMH',
+    desc:'Pastilles de brome longue durée.',
+    compatibility:['brome'],
+    warnings:['Pas de mélange avec chlore'],
+    steps:['Brominateur','Test 1-2/semaine']
+  },
+  { id:'brom_mareva', brand:'Mareva', name:'Reva-Brome', category:'brome-lent', ean:null,
+    format:'5 kg', ingredient:'BCDMH',
+    desc:'Brome lent.',
+    compatibility:['brome'],
+    warnings:['Brominateur requis'],
+    steps:['Placer dans brominateur','Maintenir pH 7,4-7,8']
+  },
+
+  // ============ Oxygène actif ============
+  { id:'oxa_bayrol_liq', brand:'Bayrol', name:'Soft & Easy liquide', category:'oxa-liquide', ean:null,
+    format:'5 L', ingredient:'Peroxyde d\'hydrogène 35%',
+    desc:'Oxygène actif liquide pour traitement doux. Se dégrade rapidement, prévoir un suivi régulier.',
+    compatibility:['oxa'],
+    warnings:['Stocker hors chaleur (perd vite son efficacité)','Gants + lunettes','Ne JAMAIS mélanger avec chlore ou brome','Filtration en marche obligatoire'],
+    steps:['Filtration active','Verser lentement devant les buses','Tester l\'oxygène actif tous les 2-3 jours','Forte chaleur = consommation accélérée']
+  },
+  { id:'oxa_hth_past', brand:'HTH', name:'Easy Oxy pastilles', category:'oxa-pastille', ean:null,
+    format:'1 kg / pastilles 200 g', ingredient:'Persulfate de potassium',
+    desc:'Pastilles d\'oxygène actif solides, pratiques en entretien.',
+    compatibility:['oxa'],
+    warnings:['Pas de mélange chlore/brome','Conservation : sec'],
+    steps:['Placer dans diffuseur','Test 2-3 fois/semaine','Surveiller température']
+  },
+  { id:'oxa_mareva_act', brand:'Mareva', name:'Reva-Oxygen Activateur', category:'oxa-activateur', ean:null,
+    format:'1 L', ingredient:'Tensio-actifs spécifiques',
+    desc:'Activateur d\'oxygène actif pour booster son efficacité (à associer à l\'oxa).',
+    compatibility:['oxa'],
+    warnings:['À utiliser uniquement avec oxygène actif','Suivre dosage produit'],
+    steps:['Verser après l\'oxygène actif','Filtration 4h']
+  },
+
+  // ============ Stabilisant ============
+  { id:'cya_bayrol', brand:'Bayrol', name:'Chlorilong Stabilisator', category:'stabilisant', ean:null,
+    format:'1 kg', ingredient:'Acide cyanurique',
+    desc:'Protège le chlore contre la destruction par les UV. À ajouter en début de saison ou après vidange.',
+    compatibility:['chlore'],
+    warnings:['Uniquement pour piscine au chlore','Ne pas dépasser 70 mg/L (effet inverse : chlore moins efficace)','Action lente : test après 24-48h'],
+    steps:['Diluer dans un seau d\'eau (peut être très lent)','Verser devant les buses','Filtration 24h','Re-tester après 2 jours']
+  },
+
+  // ============ Algicides ============
+  { id:'alg_bayrol_cur', brand:'Bayrol', name:'Désalgine Choc', category:'algicide-cur', ean:null,
+    format:'1 L', ingredient:'Sels d\'ammonium quaternaire concentrés',
+    desc:'Anti-algues curatif puissant pour traiter une eau verte ou trouble.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Combiner avec chlore choc pour résultat optimal','Brossage des parois après ajout','Filtration 24h non-stop'],
+    steps:['Brosser parois + fond avant ajout','Verser dose dans l\'eau, filtration active','Ajouter aussi chlore choc 30 min après','Filtration 24h','Aspirer dépôts au fond le lendemain']
+  },
+  { id:'alg_hth_prev', brand:'HTH', name:'Algicide Plus', category:'algicide-prev', ean:null,
+    format:'1 L', ingredient:'Polymères + ammoniums quaternaires',
+    desc:'Anti-algues préventif hebdomadaire pour éviter le retour des algues.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Ne pas surdoser (mousse)','Action préventive uniquement'],
+    steps:['Doser hebdomadairement','Verser devant les buses','Filtration normale']
+  },
+  { id:'alg_mareva', brand:'Mareva', name:'Reva-Klar', category:'algicide-prev', ean:null,
+    format:'1 L', ingredient:'Polymères',
+    desc:'Anti-algues + clarifiant.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Ne pas mélanger autres produits dans la pompe'],
+    steps:['Dose hebdo','Devant les buses']
+  },
+
+  // ============ Floculant / Clarifiant ============
+  { id:'flo_bayrol', brand:'Bayrol', name:'Quick-Floc', category:'floculant', ean:null,
+    format:'1 kg / 8 sachets', ingredient:'Polychlorure d\'aluminium',
+    desc:'Floculant à mettre dans le skimmer en cas d\'eau trouble persistante. Agglomère les particules fines.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Filtre à SABLE uniquement (pas cartouche !)','Ne pas dépasser 1 chaussette par 30 m³','Pression filtre à surveiller (backwash après)'],
+    steps:['Placer la chaussette dans le skimmer','Filtration continue 24-48h','Backwash dès que pression monte','Aspirer dépôts au fond après']
+  },
+  { id:'cla_hth', brand:'HTH', name:'Clarifiant Plus', category:'clarifiant', ean:null,
+    format:'1 L', ingredient:'Polymères naturels',
+    desc:'Clarifiant liquide pour eau légèrement trouble. Compatible tous types de filtres.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Doser selon volume','Filtration continue 12h après'],
+    steps:['Verser dose devant les buses','Filtration 12h non-stop','Eau redevient claire en 24h']
+  },
+
+  // ============ TAC+ ============
+  { id:'tac_bayrol', brand:'Bayrol', name:'Alca Plus', category:'tac-plus', ean:null,
+    format:'5 kg', ingredient:'Bicarbonate de sodium',
+    desc:'Augmente l\'alcalinité totale pour stabiliser le pH.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Ne pas dépasser 120 mg/L','Action progressive sur 24-48h'],
+    steps:['Diluer dans un seau','Verser devant les buses','Filtration 6h','Re-tester après 24h']
+  },
+
+  // ============ Anti-calcaire ============
+  { id:'ac_bayrol', brand:'Bayrol', name:'Calci-Liquid', category:'anti-calcaire', ean:null,
+    format:'1 L', ingredient:'Polyphosphates',
+    desc:'Séquestrant pour éviter les dépôts calcaires sur ligne d\'eau et équipements (eau dure).',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Eau >25°f recommandée','Dose hebdomadaire ou bi-mensuelle'],
+    steps:['Verser dose dans l\'eau','Filtration normale','Renouveler chaque semaine']
+  },
+
+  // ============ Ligne d'eau ============
+  { id:'le_bayrol', brand:'Bayrol', name:'Bordnet gel', category:'ligne-eau', ean:null,
+    format:'1 L gel', ingredient:'Détergent doux + tensio-actifs',
+    desc:'Gel dégraissant pour nettoyer la ligne d\'eau (résidus gras, traces).',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Application sur ligne d\'eau hors-bassin','Rincer avant remise en eau'],
+    steps:['Appliquer le gel sur éponge ou tampon','Frotter la ligne d\'eau','Rincer abondamment']
+  },
+
+  // ============ Détartrant filtre ============
+  { id:'df_hth', brand:'HTH', name:'Filtre Clean', category:'detartrant', ean:null,
+    format:'1 L', ingredient:'Acide phosphorique dilué',
+    desc:'Détartrant pour cartouches de filtration ou sable.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Hors bassin uniquement','Gants + lunettes','Bien rincer avant remise en service'],
+    steps:['Démonter le filtre','Tremper cartouche/sable dans solution diluée','Rincer abondamment','Remonter et tester']
+  },
+
+  // ============ Hivernage ============
+  { id:'hiv_bayrol', brand:'Bayrol', name:'Puripool Super', category:'hivernage', ean:null,
+    format:'1 L', ingredient:'Sels d\'ammonium + séquestrant',
+    desc:'Produit d\'hivernage à mettre avant la couverture pour protéger l\'eau et le bassin.',
+    compatibility:['chlore','brome','oxa'],
+    warnings:['Faire avant la baisse sous 12°C','Ne pas baigner après ajout','Action longue durée tout l\'hiver'],
+    steps:['Vérifier équilibre eau (pH, TAC)','Verser dose totale dans le bassin','Faire tourner filtration 24h','Couvrir et arrêter la filtration ensuite']
+  },
+
+  // ============ Remise en service ============
+  { id:'rr_bayrol', brand:'Bayrol', name:'Remise en route Choc', category:'remise-route', ean:null,
+    format:'5 L', ingredient:'Hypochlorite + clarifiant',
+    desc:'Kit de redémarrage piscine au printemps : choc chlore + clarifiant en une étape.',
+    compatibility:['chlore'],
+    warnings:['Brosser parois avant','Filtration 48h continue après','Eau verte = traitement choc additionnel'],
+    steps:['Découvrir, nettoyer skimmers/paniers','Brosser parois et fond','Verser le produit, filtration 48h non-stop','Tester pH + chlore après 24h, ajuster','Aspirer dépôts si nécessaire']
+  }
+];
+
+// =================================================================
+// MOTEUR DE CALCUL DE DOSE
+// Pour chaque catégorie, on calcule la quantité réellement adaptée à
+// la piscine de l'utilisateur (volume + dernière mesure).
+// =================================================================
+function computeProductDose(product) {
+  const vol = (state.config && state.config.volume) || 50;
+  const last = (state.measures && state.measures[0]) || {};
+  const cat = product.category;
+  const t = getTreatment();
+  const out = { qty: null, unit: 'g', note: null, formatted: null, secondary: null };
+
+  // pH +
+  if (cat === 'ph-plus') {
+    if (last.ph == null) {
+      out.note = 'Pas de mesure récente de pH : utilise la dose indiquée sur le pack.';
+      return out;
+    }
+    const cible = (t.phIdealMin + t.phIdealMax) / 2;
+    if (last.ph >= t.phIdealMin) {
+      out.note = 'Ton pH (' + last.ph.toFixed(1) + ') est déjà dans la cible (' + t.phIdealMin + '-' + t.phIdealMax + '). Pas besoin de pH+.';
+      out.qty = 0;
+      return out;
+    }
+    const gap = cible - last.ph; // ex 0.3
+    const grams = Math.round(12 * vol * gap * 10); // 12g/m³/0.1pH
+    out.qty = grams;
+    out.unit = product.ingredient && product.ingredient.includes('Soude') ? 'mL' : 'g';
+    out.note = 'Calculé pour remonter ton pH de ' + last.ph.toFixed(1) + ' → ' + cible.toFixed(1) + ' (cible ' + t.phIdealMin + '-' + t.phIdealMax + ').';
+    out.secondary = '⚠ Ne corrige pas plus de 0,5 point pH en une fois. Re-teste après 6h.';
+    return out;
+  }
+
+  // pH -
+  if (cat === 'ph-minus') {
+    if (last.ph == null) {
+      out.note = 'Pas de mesure récente de pH : utilise la dose indiquée sur le pack.';
+      return out;
+    }
+    const cible = (t.phIdealMin + t.phIdealMax) / 2;
+    if (last.ph <= t.phIdealMax) {
+      out.note = 'Ton pH (' + last.ph.toFixed(1) + ') est déjà dans la cible (' + t.phIdealMin + '-' + t.phIdealMax + '). Pas besoin de pH-.';
+      out.qty = 0;
+      return out;
+    }
+    const gap = last.ph - cible;
+    const grams = Math.round(15 * vol * gap * 10);
+    out.qty = grams;
+    out.unit = product.ingredient && product.ingredient.includes('cide') ? 'mL' : 'g';
+    out.note = 'Calculé pour baisser ton pH de ' + last.ph.toFixed(1) + ' → ' + cible.toFixed(1) + '.';
+    out.secondary = '⚠ Ne corrige pas plus de 0,5 point pH en une fois. Re-teste après 6h.';
+    return out;
+  }
+
+  // Chlore lent
+  if (cat === 'chlore-lent') {
+    out.qty = Math.round(vol / 15); // ~1 galet 250g pour 15 m³ par semaine
+    out.unit = 'galets de 250g / semaine';
+    out.note = 'Dose d\'entretien hebdomadaire pour ' + vol + ' m³. Renouveler quand dissout.';
+    return out;
+  }
+
+  // Chlore choc
+  if (cat === 'chlore-choc') {
+    out.qty = Math.round(vol * 20); // 20g/m³ (dose choc standard)
+    out.unit = 'g';
+    if (last.cl != null && last.cl < 0.5) out.secondary = '⚠ Chlore très bas (' + last.cl + ' mg/L) : dose choc justifiée.';
+    out.note = 'Dose choc standard pour ' + vol + ' m³. Filtration 24h non-stop après ajout.';
+    return out;
+  }
+
+  // Brome lent
+  if (cat === 'brome-lent') {
+    out.qty = Math.round(vol / 12);
+    out.unit = 'pastilles de 20g / semaine';
+    out.note = 'Dose d\'entretien hebdomadaire estimée pour ' + vol + ' m³.';
+    return out;
+  }
+
+  // Oxygène actif liquide
+  if (cat === 'oxa-liquide') {
+    out.qty = Math.round(vol * 15); // ~15 mL/m³ par semaine
+    out.unit = 'mL / semaine';
+    out.note = 'Dose d\'entretien hebdomadaire estimée. Suivre exactement le dosage du pack.';
+    return out;
+  }
+
+  // Oxygène actif pastilles
+  if (cat === 'oxa-pastille') {
+    out.qty = Math.round(vol / 5);
+    out.unit = 'pastilles de 200g / semaine';
+    out.note = 'Dose d\'entretien hebdomadaire estimée pour ' + vol + ' m³.';
+    return out;
+  }
+
+  // Activateur oxa
+  if (cat === 'oxa-activateur') {
+    out.qty = Math.round(vol * 5);
+    out.unit = 'mL';
+    out.note = 'Dose d\'activateur estimée. Doit toujours être combiné à l\'oxygène actif.';
+    return out;
+  }
+
+  // Stabilisant
+  if (cat === 'stabilisant') {
+    if (last.cya != null && last.cya >= 30) {
+      out.note = 'Ton stabilisant est déjà à ' + last.cya + ' mg/L (cible 30-50). Pas besoin d\'en rajouter.';
+      out.qty = 0;
+      return out;
+    }
+    const current = last.cya || 0;
+    const target = 40;
+    const gap = target - current;
+    out.qty = Math.round(vol * gap * 1); // ~1g/m³ pour +1 mg/L
+    out.unit = 'g';
+    out.note = 'Calculé pour passer de ' + current + ' à ' + target + ' mg/L.';
+    out.secondary = '⚠ Dissolution lente : test après 48h.';
+    return out;
+  }
+
+  // Anti-algues curatif
+  if (cat === 'algicide-cur') {
+    out.qty = Math.round(vol * 25);
+    out.unit = 'mL';
+    out.note = 'Dose choc curative pour ' + vol + ' m³. Combiner avec un chlore choc 30 min après.';
+    return out;
+  }
+
+  // Anti-algues préventif
+  if (cat === 'algicide-prev') {
+    out.qty = Math.round(vol * 8);
+    out.unit = 'mL / semaine';
+    out.note = 'Dose préventive hebdomadaire pour ' + vol + ' m³.';
+    return out;
+  }
+
+  // Floculant
+  if (cat === 'floculant') {
+    out.qty = Math.max(1, Math.round(vol / 30));
+    out.unit = 'chaussettes (1 / 30 m³)';
+    out.note = 'À placer dans le skimmer. Filtre à SABLE uniquement.';
+    return out;
+  }
+
+  // Clarifiant
+  if (cat === 'clarifiant') {
+    out.qty = Math.round(vol * 5);
+    out.unit = 'mL';
+    out.note = 'Dose clarifiante pour ' + vol + ' m³.';
+    return out;
+  }
+
+  // TAC+
+  if (cat === 'tac-plus') {
+    if (last.tac == null) {
+      out.note = 'Pas de mesure récente de TAC : utilise la dose indiquée sur le pack.';
+      return out;
+    }
+    if (last.tac >= 80) {
+      out.note = 'Ton TAC est déjà bon (' + last.tac + ' ppm). Pas besoin de TAC+.';
+      out.qty = 0;
+      return out;
+    }
+    const gap = 100 - last.tac;
+    out.qty = Math.round(vol * gap * 0.16); // ~16g/m³ pour +10 ppm
+    out.unit = 'g';
+    out.note = 'Calculé pour passer de ' + last.tac + ' à 100 ppm.';
+    return out;
+  }
+
+  // Anti-calcaire
+  if (cat === 'anti-calcaire') {
+    out.qty = Math.round(vol * 3);
+    out.unit = 'mL / semaine';
+    out.note = 'Dose hebdomadaire d\'entretien.';
+    if (last.th != null && last.th > 25) out.secondary = '⚠ Eau dure (TH ' + Math.round(last.th) + ' °f) : ce produit est utile.';
+    return out;
+  }
+
+  // Hivernage
+  if (cat === 'hivernage') {
+    out.qty = Math.round(vol * 100);
+    out.unit = 'mL (dose totale)';
+    out.note = 'Dose unique avant couverture. À utiliser eau < 12 °C.';
+    return out;
+  }
+
+  // Remise en service
+  if (cat === 'remise-route') {
+    out.qty = Math.round(vol * 50);
+    out.unit = 'mL (dose totale)';
+    out.note = 'Dose unique de redémarrage. Filtration 48h non-stop après.';
+    return out;
+  }
+
+  // Catégories sans calcul spécifique (ligne d'eau, détartrant)
+  out.note = 'Suivre les indications du pack pour ce produit.';
+  return out;
+}
+
+function checkProductCompatibility(product) {
+  const t = getTreatment();
+  if (!product.compatibility || !product.compatibility.length) return { ok: true };
+  if (product.compatibility.indexOf(t.id) >= 0) return { ok: true };
+  return {
+    ok: false,
+    message: 'Ce produit n\'est pas compatible avec ton traitement actuel (' + t.label + '). Il est destiné aux piscines traitées à : ' + product.compatibility.map(c => (TREATMENTS[c] || {label:c}).label).join(', ') + '.'
+  };
+}
+
+function getProductsByCategory(catId) {
+  return PRODUCTS.filter(p => p.category === catId);
+}
+
+function getProductById(id) {
+  return PRODUCTS.find(p => p.id === id);
+}
+
+function findProductByEAN(ean) {
+  if (!ean) return null;
+  // 1. Vérifier les EAN appris pour la piscine active
+  const learned = (state.config && state.config.learnedEANs) || {};
+  if (learned[ean]) {
+    return getProductById(learned[ean]);
+  }
+  // 2. Vérifier les EAN intégrés au catalogue (si on les a ajoutés)
+  return PRODUCTS.find(p => p.ean === ean) || null;
+}
+
+function learnEAN(ean, productId) {
+  if (!ean || !productId) return;
+  if (!state.config.learnedEANs) state.config.learnedEANs = {};
+  state.config.learnedEANs[ean] = productId;
+  saveKey(KEYS.config, state.config);
 }
 
 // Migration douce : si pas de traitement défini chez un utilisateur existant,
@@ -4779,6 +5739,53 @@ function hydrateAdvancedSettings() {
   document.querySelectorAll('.choice-card[data-set-treatment]').forEach(c => {
     c.classList.toggle('selected', c.dataset.setTreatment === activeT);
   });
+  // Multi-piscines
+  renderPoolsListSettings();
+}
+
+function renderPoolsListSettings() {
+  const wrap = document.getElementById('poolsListSettings');
+  if (!wrap) return;
+  if (!state.pools || state.pools.length === 0) {
+    wrap.innerHTML = '<div style="font-size:12px; color:var(--ink-dim); padding:8px 0;">Aucune piscine enregistrée.</div>';
+    return;
+  }
+  let html = '';
+  state.pools.forEach(p => {
+    const nm = (p.config && p.config.name) || 'Piscine';
+    const isActive = p.id === state.activePoolId;
+    const vol = p.config && p.config.volume ? p.config.volume + ' m³' : '—';
+    const tt = p.config && p.config.treatment ? (TREATMENTS[p.config.treatment] || {}).label || 'Chlore' : 'Chlore';
+    const measureCount = (p.measures || []).length;
+    html += '<div style="display:flex; align-items:center; gap:10px; padding:10px 12px; margin-bottom:6px; background:' + (isActive ? 'rgba(78,192,216,0.1)' : 'var(--glass)') + '; border:1px solid ' + (isActive ? 'rgba(78,192,216,0.3)' : 'var(--line)') + '; border-radius:10px;">' +
+      '<div style="font-size:18px;">🏊</div>' +
+      '<div style="flex:1; min-width:0;">' +
+        '<div style="font-family:var(--display); font-size:14px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + escapeHtml(nm) + (isActive ? ' <span style="font-size:10px; color:var(--shallow); font-weight:600;">· ACTIVE</span>' : '') + '</div>' +
+        '<div style="font-size:11px; color:var(--ink-dim); margin-top:2px;">' + vol + ' · ' + tt + ' · ' + measureCount + ' mesure' + (measureCount > 1 ? 's' : '') + '</div>' +
+      '</div>' +
+      (isActive ? '' : '<button onclick="switchPool(\'' + p.id + '\')" style="background:transparent; border:1px solid var(--line); color:var(--ink-dim); padding:6px 10px; border-radius:8px; font-size:11px; cursor:pointer;">Activer</button>') +
+      '</div>';
+  });
+  wrap.innerHTML = html;
+  // Bouton "Ajouter" : désactivé si max atteint
+  const addBtn = document.getElementById('addPoolBtn');
+  if (addBtn) {
+    if (state.pools.length >= MAX_POOLS) {
+      addBtn.disabled = true;
+      addBtn.textContent = 'Maximum ' + MAX_POOLS + ' piscines atteint';
+    } else {
+      addBtn.disabled = false;
+      addBtn.textContent = '+ Ajouter une piscine';
+    }
+  }
+  // Bouton "Supprimer piscine active" : visible seulement s'il y en a plus d'1
+  const delBtn = document.getElementById('deletePoolBtn');
+  const delHint = document.getElementById('deletePoolHint');
+  if (delBtn && delHint) {
+    const show = (state.pools.length > 1);
+    delBtn.style.display = show ? '' : 'none';
+    delHint.style.display = show ? '' : 'none';
+  }
 }
 
 function changeTreatment(newT) {
@@ -5353,6 +6360,16 @@ function closeIosModal() { document.getElementById('iosModal').classList.remove(
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('iosModal');
   if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeIosModal(); });
+
+  // Fermer le sélecteur de piscine quand on clique ailleurs
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('poolSwitcherMenu');
+    const btn = document.getElementById('poolSwitcherBtn');
+    if (!menu || !btn) return;
+    if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
+      closePoolSwitcher();
+    }
+  });
 });
 
 // SW
@@ -5365,28 +6382,373 @@ if ('serviceWorker' in navigator) {
 window.addEventListener('resize', positionSegmentIndicator);
 
 // BOOT
+// =================================================================
+// SCANNER PRODUITS — barcode camera + manual + product display
+// =================================================================
+let barcodeReader = null;
+let barcodeStream = null;
+
+async function startBarcodeScanner() {
+  // Affiche la vue caméra
+  document.getElementById('scanIdleView').style.display = 'none';
+  document.getElementById('scanManualView').style.display = 'none';
+  document.getElementById('scanResultView').style.display = 'none';
+  document.getElementById('scanUnknownView').style.display = 'none';
+  document.getElementById('scanCameraView').style.display = 'block';
+
+  if (typeof ZXing === 'undefined') {
+    showToast('Lib scanner non chargée. Vérifie ta connexion.', true);
+    stopBarcodeScanner();
+    return;
+  }
+
+  try {
+    // Demande caméra arrière sur mobile
+    barcodeStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' } },
+      audio: false
+    });
+    const video = document.getElementById('scanVideo');
+    video.srcObject = barcodeStream;
+    await video.play();
+
+    barcodeReader = new ZXing.BrowserMultiFormatReader();
+    document.getElementById('scanStatus').textContent = 'Cherche un code-barres…';
+
+    barcodeReader.decodeFromVideoDevice(null, video, (result, err) => {
+      if (result) {
+        const code = result.getText();
+        // Vibrer
+        if (navigator.vibrate) navigator.vibrate(80);
+        document.getElementById('scanStatus').textContent = 'Code lu : ' + code;
+        stopBarcodeScanner();
+        handleScannedEAN(code);
+      }
+      // Les erreurs intermédiaires sont normales (image pas encore claire)
+    });
+  } catch (e) {
+    console.warn('Camera error', e);
+    let msg = 'Impossible d\'accéder à la caméra.';
+    if (e && e.name === 'NotAllowedError') msg = 'Permission caméra refusée. Active-la dans les réglages du navigateur.';
+    if (e && e.name === 'NotFoundError') msg = 'Aucune caméra trouvée.';
+    showToast(msg, true);
+    stopBarcodeScanner();
+  }
+}
+
+function stopBarcodeScanner() {
+  if (barcodeReader) {
+    try { barcodeReader.reset(); } catch(e) {}
+    barcodeReader = null;
+  }
+  if (barcodeStream) {
+    barcodeStream.getTracks().forEach(t => t.stop());
+    barcodeStream = null;
+  }
+  document.getElementById('scanCameraView').style.display = 'none';
+  // Si pas d'autre vue active, revenir à l'accueil
+  const resVisible = document.getElementById('scanResultView').style.display !== 'none';
+  const unkVisible = document.getElementById('scanUnknownView').style.display !== 'none';
+  const manVisible = document.getElementById('scanManualView').style.display !== 'none';
+  if (!resVisible && !unkVisible && !manVisible) {
+    document.getElementById('scanIdleView').style.display = 'block';
+  }
+}
+
+function openManualEntry() {
+  stopBarcodeScanner();
+  document.getElementById('scanIdleView').style.display = 'none';
+  document.getElementById('scanResultView').style.display = 'none';
+  document.getElementById('scanUnknownView').style.display = 'none';
+  document.getElementById('scanManualView').style.display = 'block';
+  setTimeout(() => { const el = document.getElementById('manualEAN'); if (el) el.focus(); }, 100);
+}
+
+function cancelManualEntry() {
+  document.getElementById('scanManualView').style.display = 'none';
+  document.getElementById('scanIdleView').style.display = 'block';
+}
+
+function submitManualEAN() {
+  const v = (document.getElementById('manualEAN').value || '').trim();
+  if (!v || v.length < 8) {
+    showToast('Tape au moins 8 chiffres', true);
+    return;
+  }
+  handleScannedEAN(v);
+}
+
+function handleScannedEAN(ean) {
+  // Cache toutes les vues sauf le résultat
+  document.getElementById('scanIdleView').style.display = 'none';
+  document.getElementById('scanCameraView').style.display = 'none';
+  document.getElementById('scanManualView').style.display = 'none';
+
+  const product = findProductByEAN(ean);
+  if (product) {
+    renderProductResult(product, ean);
+  } else {
+    renderUnknownProduct(ean);
+  }
+}
+
+function renderProductResult(product, ean) {
+  const cat = PRODUCT_CATEGORIES[product.category] || { label: product.category, color: '#888', icon: '?' };
+  const dose = computeProductDose(product);
+  const compat = checkProductCompatibility(product);
+
+  let html = '<div class="card" style="padding:18px;">';
+  // Header
+  html += '<div style="display:flex; align-items:flex-start; gap:14px; margin-bottom:14px;">';
+  html += '<div style="width:54px; height:54px; border-radius:12px; background:' + cat.color + '22; border:1px solid ' + cat.color + '55; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0;">' + cat.icon + '</div>';
+  html += '<div style="flex:1; min-width:0;">';
+  html += '<div style="font-size:11px; color:' + cat.color + '; font-family:var(--mono); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:3px;">' + escapeHtml(cat.label) + '</div>';
+  html += '<div style="font-family:var(--display); font-size:17px; font-weight:500; line-height:1.25;">' + escapeHtml(product.brand) + '</div>';
+  html += '<div style="font-size:13px; color:var(--ink-dim);">' + escapeHtml(product.name) + ' · ' + escapeHtml(product.format || '') + '</div>';
+  html += '</div></div>';
+
+  // Compatibilité (warning si traitement incompatible)
+  if (!compat.ok) {
+    html += '<div style="background:rgba(233,78,78,0.1); border:1px solid rgba(233,78,78,0.3); border-radius:10px; padding:12px; margin-bottom:14px;">';
+    html += '<div style="font-weight:600; color:#e94e4e; font-size:13px; margin-bottom:4px;">⚠ Incompatible avec ton traitement</div>';
+    html += '<div style="font-size:12px; color:var(--ink-dim); line-height:1.4;">' + escapeHtml(compat.message) + '</div>';
+    html += '</div>';
+  }
+
+  // Description
+  if (product.desc) {
+    html += '<div style="font-size:13px; color:var(--ink); line-height:1.5; margin-bottom:16px;">' + escapeHtml(product.desc) + '</div>';
+  }
+
+  // DOSE PERSONNALISÉE
+  html += '<div style="background:linear-gradient(135deg, rgba(78,192,216,0.12), rgba(10,127,168,0.06)); border:1px solid rgba(78,192,216,0.3); border-radius:12px; padding:14px; margin-bottom:14px;">';
+  html += '<div style="font-size:11px; color:var(--shallow); text-transform:uppercase; letter-spacing:0.05em; font-family:var(--mono); margin-bottom:6px;">📊 Dose pour ta piscine</div>';
+  if (dose.qty != null) {
+    if (dose.qty === 0) {
+      html += '<div style="font-family:var(--display); font-size:20px; font-weight:500; margin-bottom:6px; color:#7ac74f;">✓ Pas besoin pour le moment</div>';
+    } else {
+      html += '<div style="font-family:var(--display); font-size:28px; font-weight:600; line-height:1; margin-bottom:6px;">~' + escapeHtml(String(dose.qty)) + ' <span style="font-size:14px; color:var(--ink-dim); font-weight:400;">' + escapeHtml(dose.unit) + '</span></div>';
+    }
+  } else {
+    html += '<div style="font-family:var(--display); font-size:16px; color:var(--ink-dim); margin-bottom:6px;">Suivre le dosage du pack</div>';
+  }
+  if (dose.note) html += '<div style="font-size:12px; color:var(--ink-dim); line-height:1.45;">' + escapeHtml(dose.note) + '</div>';
+  if (dose.secondary) html += '<div style="font-size:12px; color:var(--warn); line-height:1.45; margin-top:6px;">' + escapeHtml(dose.secondary) + '</div>';
+  html += '</div>';
+
+  // Mode d'emploi
+  if (product.steps && product.steps.length) {
+    html += '<div style="margin-bottom:14px;">';
+    html += '<div style="font-family:var(--display); font-size:14px; font-weight:500; margin-bottom:8px;">📋 Mode d\'emploi</div>';
+    html += '<ol style="margin:0; padding-left:18px; font-size:13px; color:var(--ink); line-height:1.7;">';
+    product.steps.forEach(s => { html += '<li>' + escapeHtml(s) + '</li>'; });
+    html += '</ol>';
+    html += '</div>';
+  }
+
+  // Précautions
+  if (product.warnings && product.warnings.length) {
+    html += '<div style="background:rgba(255,180,84,0.08); border:1px solid rgba(255,180,84,0.25); border-radius:10px; padding:12px; margin-bottom:14px;">';
+    html += '<div style="font-weight:600; color:var(--warn); font-size:13px; margin-bottom:6px;">⚠ Précautions</div>';
+    html += '<ul style="margin:0; padding-left:16px; font-size:12px; color:var(--ink-dim); line-height:1.55;">';
+    product.warnings.forEach(w => { html += '<li>' + escapeHtml(w) + '</li>'; });
+    html += '</ul>';
+    html += '</div>';
+  }
+
+  // Ingrédient actif
+  if (product.ingredient) {
+    html += '<div style="font-size:11px; color:var(--ink-dim); margin-bottom:14px;"><strong>Ingrédient actif :</strong> ' + escapeHtml(product.ingredient) + '</div>';
+  }
+
+  // Actions
+  html += '<div class="btn-row" style="margin-top:6px;">';
+  html += '<button class="btn btn-secondary" onclick="resetScanView()">Scanner un autre</button>';
+  if (compat.ok && dose.qty !== 0) {
+    html += '<button class="btn" onclick="markProductUsed(\'' + product.id + '\', ' + (dose.qty || 'null') + ', \'' + (dose.unit || '').replace(/'/g, '\\\'') + '\')">J\'ai utilisé ce produit</button>';
+  }
+  html += '</div>';
+
+  html += '</div>';
+  document.getElementById('scanResultView').innerHTML = html;
+  document.getElementById('scanResultView').style.display = 'block';
+}
+
+function renderUnknownProduct(ean) {
+  let html = '<div class="card" style="padding:18px;">';
+  html += '<div style="text-align:center; margin-bottom:18px;">';
+  html += '<div style="font-size:42px; margin-bottom:10px;">🤷</div>';
+  html += '<div style="font-family:var(--display); font-size:18px; margin-bottom:4px;">Produit inconnu</div>';
+  html += '<div style="font-size:13px; color:var(--ink-dim);">Code-barres <code style="background:var(--glass); padding:2px 6px; border-radius:4px;">' + escapeHtml(ean) + '</code> non reconnu.</div>';
+  html += '</div>';
+  html += '<div style="font-size:13px; color:var(--ink); line-height:1.5; margin-bottom:14px;">Tu peux <strong>l\'associer à un produit du catalogue</strong> : l\'app le mémorisera pour les prochains scans.</div>';
+
+  // Liste par catégorie pour rapide association
+  html += '<div style="max-height:340px; overflow-y:auto; border:1px solid var(--line); border-radius:10px;">';
+  const cats = Object.keys(PRODUCT_CATEGORIES);
+  cats.forEach(catId => {
+    const items = getProductsByCategory(catId);
+    if (!items.length) return;
+    const cat = PRODUCT_CATEGORIES[catId];
+    html += '<div style="padding:8px 12px; background:var(--glass); font-size:10px; text-transform:uppercase; color:' + cat.color + '; font-family:var(--mono); letter-spacing:0.05em;">' + escapeHtml(cat.label) + '</div>';
+    items.forEach(p => {
+      html += '<button onclick="associateEANto(\'' + escapeHtml(ean) + '\', \'' + p.id + '\')" style="display:block; width:100%; text-align:left; background:transparent; border:0; border-top:1px solid var(--line); padding:10px 12px; color:var(--ink); cursor:pointer;">';
+      html += '<div style="font-size:13px; font-weight:500;">' + escapeHtml(p.brand) + ' · ' + escapeHtml(p.name) + '</div>';
+      html += '<div style="font-size:11px; color:var(--ink-dim);">' + escapeHtml(p.format || '') + '</div>';
+      html += '</button>';
+    });
+  });
+  html += '</div>';
+
+  html += '<div class="btn-row" style="margin-top:14px;">';
+  html += '<button class="btn btn-secondary" onclick="resetScanView()">Annuler</button>';
+  html += '</div>';
+
+  html += '</div>';
+  document.getElementById('scanUnknownView').innerHTML = html;
+  document.getElementById('scanUnknownView').style.display = 'block';
+}
+
+function associateEANto(ean, productId) {
+  learnEAN(ean, productId);
+  showToast('Produit mémorisé ✓');
+  document.getElementById('scanUnknownView').style.display = 'none';
+  const product = getProductById(productId);
+  if (product) renderProductResult(product, ean);
+}
+
+function resetScanView() {
+  document.getElementById('scanResultView').style.display = 'none';
+  document.getElementById('scanResultView').innerHTML = '';
+  document.getElementById('scanUnknownView').style.display = 'none';
+  document.getElementById('scanUnknownView').innerHTML = '';
+  document.getElementById('scanManualView').style.display = 'none';
+  document.getElementById('scanCameraView').style.display = 'none';
+  document.getElementById('scanIdleView').style.display = 'block';
+}
+
+function markProductUsed(productId, qty, unit) {
+  const product = getProductById(productId);
+  if (!product) return;
+  // Construire le texte de l'action
+  let txt = product.brand + ' ' + product.name;
+  if (qty && qty !== 'null') txt += ' (~' + qty + ' ' + unit + ')';
+  const cat = PRODUCT_CATEGORIES[product.category] || {};
+  if (!state.actions) state.actions = [];
+  state.actions.unshift({
+    ts: Date.now(),
+    type: 'Produit utilisé',
+    text: txt,
+    priority: 'info',
+    author: getMemberName(),
+    productId: productId
+  });
+  if (state.actions.length > 200) state.actions = state.actions.slice(0, 200);
+  saveKey(KEYS.actions, state.actions);
+  if (typeof renderActions === 'function') renderActions();
+  if (typeof pushRealtimeState === 'function') pushRealtimeState();
+  showToast('✓ Ajouté à ton historique');
+}
+
+function renderProductCatalog() {
+  const wrap = document.getElementById('productCatalog');
+  if (!wrap) return;
+  let html = '';
+  Object.keys(PRODUCT_CATEGORIES).forEach(catId => {
+    const items = getProductsByCategory(catId);
+    if (!items.length) return;
+    const cat = PRODUCT_CATEGORIES[catId];
+    html += '<details style="margin-bottom:6px; border:1px solid var(--line); border-radius:8px; overflow:hidden;">';
+    html += '<summary style="padding:10px 12px; cursor:pointer; background:var(--glass); display:flex; align-items:center; gap:10px;">';
+    html += '<span style="font-size:16px;">' + cat.icon + '</span>';
+    html += '<span style="flex:1; font-size:13px; font-family:var(--display); font-weight:500;">' + escapeHtml(cat.label) + '</span>';
+    html += '<span style="font-size:11px; color:var(--ink-dim);">' + items.length + '</span>';
+    html += '</summary>';
+    items.forEach(p => {
+      html += '<button onclick="renderProductResult(getProductById(\'' + p.id + '\'), \'(catalogue)\'); document.getElementById(\'scanIdleView\').style.display=\'none\';" style="display:block; width:100%; text-align:left; background:transparent; border:0; border-top:1px solid var(--line); padding:10px 12px; color:var(--ink); cursor:pointer;">';
+      html += '<div style="font-size:13px; font-weight:500;">' + escapeHtml(p.brand) + ' · ' + escapeHtml(p.name) + '</div>';
+      html += '<div style="font-size:11px; color:var(--ink-dim);">' + escapeHtml(p.format || '') + '</div>';
+      html += '</button>';
+    });
+    html += '</details>';
+  });
+  wrap.innerHTML = html;
+}
+
+// Hook : à l'arrivée sur l'onglet scanner, rendre le catalogue
+const baseSwitchTabForScanner = switchTab;
+switchTab = function(tab) {
+  baseSwitchTabForScanner(tab);
+  if (tab === 'scan') {
+    renderProductCatalog();
+  } else {
+    // Si on quitte l'onglet scan, on coupe la caméra
+    if (barcodeStream) stopBarcodeScanner();
+  }
+};
+
 function boot() {
   importSharedStateFromUrl();
-  state.measures = loadKey(KEYS.measures, []);
-  const r = loadKey(KEYS.routines, null);
-  if (r) { state.routines = r.routines || state.routines; state.routinesReset = r.resets || state.routinesReset; }
-  state.config = loadKey(KEYS.config, null);
-  state.actions = loadKey(KEYS.actions, []);
-  state.aiAnalyses = loadKey(KEYS.aiAnalyses, []);
-  state.sync = loadKey(KEYS.sync, null);
+
+  // Chargement multi-piscines : si on a déjà un tableau, on l'utilise
+  state.pools = loadKey(KEYS.pools, null);
+  state.activePoolId = loadKey(KEYS.activePoolId, null);
+
+  if (state.pools && state.pools.length > 0) {
+    // Mode multi-piscines déjà initialisé
+    const activePool = state.pools.find(p => p.id === state.activePoolId) || state.pools[0];
+    state.activePoolId = activePool.id;
+    applyPoolToState(activePool);
+    if (state.config) ensureTreatmentMigration();
+  } else {
+    // Premier démarrage en mode multi-piscines
+    // On charge l'ancien format (mono-piscine)
+    state.measures = loadKey(KEYS.measures, []);
+    const r = loadKey(KEYS.routines, null);
+    if (r) { state.routines = r.routines || state.routines; state.routinesReset = r.resets || state.routinesReset; }
+    state.config = loadKey(KEYS.config, null);
+    state.actions = loadKey(KEYS.actions, []);
+    state.aiAnalyses = loadKey(KEYS.aiAnalyses, []);
+    state.sync = loadKey(KEYS.sync, null);
+    state.reminders = Object.assign(state.reminders || {}, loadKey(KEYS.reminders, {}));
+
+    if (state.config) {
+      // Migration : convertit l'ancienne config en première piscine du tableau
+      ensureTreatmentMigration();
+      const firstPool = {
+        id: newPoolId(),
+        config: state.config,
+        measures: state.measures,
+        routines: state.routines,
+        routinesReset: state.routinesReset,
+        actions: state.actions,
+        aiAnalyses: state.aiAnalyses,
+        sync: state.sync,
+        reminders: state.reminders
+      };
+      state.pools = [firstPool];
+      state.activePoolId = firstPool.id;
+      persistAllPools();
+      // Les anciennes clés legacy restent pour compat mais ne seront plus utilisées
+    } else {
+      // Pas de données : nouveau user
+      state.pools = [];
+      state.activePoolId = null;
+    }
+  }
+
+  // Famille reste un système global (par piscine via sync.poolId)
   state.family = loadKey(FAMILY_KEY, null);
-  state.reminders = Object.assign(state.reminders || {}, loadKey(KEYS.reminders, {}));
 
   if (!state.config) {
     setupOnbListeners();
     setOnbStep(0);
   } else {
-    // Migration douce : utilisateur existant sans traitement défini
-    ensureTreatmentMigration();
     document.getElementById('onboarding').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
     document.getElementById('appNav').style.display = 'flex';
     initAppUI();
+    refreshPoolSwitcherDisplay();
   }
 }
 
