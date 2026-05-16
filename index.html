@@ -1961,12 +1961,13 @@
   .onboarding {
     position: fixed;
     inset: 0;
-    background: linear-gradient(180deg, #03263d 0%, #021824 100%);
+    background: var(--bg-page);
     z-index: 1000;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    color: var(--ink);
   }
   .onboarding::before {
     content: '';
@@ -1974,8 +1975,13 @@
     inset: 0;
     background:
       radial-gradient(ellipse 80% 60% at 20% 0%, rgba(78, 192, 216, 0.16), transparent 60%),
-      radial-gradient(ellipse 80% 50% at 80% 100%, rgba(245, 217, 126, 0.08), transparent 60%);
+      radial-gradient(ellipse 80% 50% at 80% 100%, rgba(245, 217, 126, 0.06), transparent 60%);
     pointer-events: none;
+  }
+  [data-theme="light"] .onboarding::before {
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(8, 145, 178, 0.12), transparent 60%),
+      radial-gradient(ellipse 80% 50% at 80% 100%, rgba(245, 158, 11, 0.06), transparent 60%);
   }
   .onb-content {
     max-width: 460px;
@@ -1998,30 +2004,35 @@
   }
   .onb-dot {
     flex: 1;
-    height: 3px;
-    background: var(--ink-ghost);
+    height: 4px;
+    background: var(--line-strong);
     border-radius: 100px;
     transition: background 0.3s var(--ease);
   }
-  .onb-dot.active { background: var(--shallow); }
-  .onb-dot.done { background: var(--leaf); }
+  .onb-dot.active { background: var(--brand); }
+  .onb-dot.done { background: var(--good); }
   .onb-eyebrow {
     font-size: 11px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--shallow);
-    font-weight: 500;
+    color: var(--brand);
+    font-weight: 700;
     margin-bottom: 10px;
   }
   .onb-title {
     font-family: var(--display);
     font-size: 36px;
-    line-height: 1;
-    font-weight: 500;
+    line-height: 1.05;
+    font-weight: 600;
     letter-spacing: -0.03em;
     margin-bottom: 14px;
+    color: var(--ink);
   }
-  .onb-title em { font-style: italic; color: var(--shallow); font-weight: 400; }
+  .onb-title em {
+    font-style: italic;
+    color: var(--brand);
+    font-weight: 500;
+  }
   .onb-desc {
     font-size: 15px;
     color: var(--ink-dim);
@@ -2050,51 +2061,78 @@
 
   .choice-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
   .choice-card {
-    background: var(--glass);
-    border: 1px solid var(--line);
-    border-radius: 16px;
+    background: var(--bg-card-flat);
+    border: 1.5px solid var(--line-strong);
+    border-radius: var(--r-lg);
     padding: 16px;
     cursor: pointer;
     transition: all 0.2s var(--ease);
     display: flex;
     align-items: center;
     gap: 14px;
+    color: var(--ink);
   }
-  .choice-card:hover { border-color: rgba(78, 192, 216, 0.3); }
+  [data-theme="light"] .choice-card {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.12);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  }
+  .choice-card:hover {
+    border-color: var(--brand);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
   .choice-card.selected {
-    background: var(--glass-active);
-    border-color: var(--shallow);
-    box-shadow: 0 0 0 3px rgba(78, 192, 216, 0.15);
+    background: var(--brand-gradient-soft);
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(78, 192, 216, 0.18);
+  }
+  [data-theme="light"] .choice-card.selected {
+    background: linear-gradient(135deg, rgba(8, 145, 178, 0.08), rgba(6, 182, 212, 0.04));
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.18);
   }
   .choice-card .choice-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 11px;
-    background: rgba(78, 192, 216, 0.12);
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--brand-gradient-soft);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 22px;
     flex-shrink: 0;
   }
-  .choice-card.selected .choice-icon { background: rgba(78, 192, 216, 0.25); }
+  .choice-card.selected .choice-icon {
+    background: var(--brand-gradient);
+    color: #fff;
+  }
   .choice-card .choice-text { flex: 1; }
-  .choice-card .choice-name { font-weight: 500; font-size: 14px; }
-  .choice-card .choice-sub { font-size: 12px; color: var(--ink-dim); margin-top: 2px; line-height: 1.4; }
+  .choice-card .choice-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .choice-card .choice-sub {
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
   .choice-card .choice-check {
-    width: 22px;
-    height: 22px;
-    border: 1.5px solid var(--ink-dim);
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--line-strong);
     border-radius: 50%;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.25s var(--ease-bounce);
+    background: var(--bg-secondary);
   }
   .choice-card.selected .choice-check {
-    background: var(--shallow);
-    border-color: var(--shallow);
+    background: var(--brand);
+    border-color: var(--brand);
   }
   .choice-card.selected .choice-check::after {
     content: '';
@@ -2113,13 +2151,17 @@
     left: 0;
     right: 0;
     margin-top: 6px;
-    background: var(--abyss);
-    border: 1px solid var(--line-strong);
-    border-radius: 14px;
+    background: var(--bg-secondary);
+    border: 1.5px solid var(--line-strong);
+    border-radius: var(--r-md);
     max-height: 240px;
     overflow-y: auto;
     z-index: 10;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    box-shadow: var(--shadow-lg);
+  }
+  [data-theme="light"] .city-results {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.12);
   }
   .city-results.hidden { display: none; }
   .city-result {
@@ -2127,39 +2169,43 @@
     cursor: pointer;
     border-bottom: 1px solid var(--line);
     transition: background 0.15s;
+    color: var(--ink);
   }
   .city-result:last-child { border-bottom: none; }
-  .city-result:hover, .city-result.selected { background: var(--glass-active); }
-  .city-result .city-name { font-weight: 500; font-size: 14px; }
+  .city-result:hover, .city-result.selected { background: var(--brand-gradient-soft); }
+  .city-result .city-name { font-weight: 600; font-size: 14px; color: var(--ink); }
   .city-result .city-region { font-size: 11px; color: var(--ink-dim); margin-top: 2px; }
 
   /* Volume preview */
   .volume-preview {
-    background: linear-gradient(135deg, rgba(78, 192, 216, 0.1), rgba(78, 192, 216, 0.03));
-    border: 1px solid rgba(78, 192, 216, 0.25);
-    border-radius: 14px;
-    padding: 14px 16px;
+    background: var(--brand-gradient-soft);
+    border: 1.5px solid var(--line-brand);
+    border-radius: var(--r-lg);
+    padding: 16px 18px;
     margin-top: 12px;
     text-align: center;
   }
   .volume-preview .lbl {
-    font-size: 10px;
-    letter-spacing: 0.18em;
+    font-size: 11px;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--shallow);
-    margin-bottom: 4px;
+    color: var(--brand);
+    margin-bottom: 6px;
+    font-weight: 700;
   }
   .volume-preview .val {
     font-family: var(--display);
     font-size: 32px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: -0.02em;
+    color: var(--ink);
   }
   .volume-preview .val .unit {
     font-size: 14px;
     color: var(--ink-dim);
     font-family: var(--body);
     margin-left: 4px;
+    font-weight: 500;
   }
 
   .onb-actions {
@@ -2715,8 +2761,8 @@
       </div>
 
       <div id="cityChosen" style="display:none; margin-top: 12px;">
-        <div class="volume-preview" style="background: linear-gradient(135deg, rgba(122, 199, 79, 0.1), rgba(122, 199, 79, 0.03)); border-color: rgba(122, 199, 79, 0.25);">
-          <div class="lbl" style="color: var(--leaf);">Ville sélectionnée</div>
+        <div class="volume-preview" style="background: var(--good-soft); border-color: var(--good);">
+          <div class="lbl" style="color: var(--good);">Ville sélectionnée</div>
           <div class="val" style="font-size: 22px;" id="cityChosenName">—</div>
         </div>
       </div>
