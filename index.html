@@ -790,40 +790,98 @@
     transform: translateX(-50%);
     z-index: 50;
     display: flex;
-    gap: 3px;
-    padding: 5px;
-    background: rgba(2, 24, 36, 0.88);
+    gap: 4px;
+    padding: 6px;
+    background: var(--bg-secondary);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid var(--line-strong);
-    border-radius: 100px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+    border-radius: var(--r-full);
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  [data-theme="light"] .nav {
+    background: rgba(255,255,255,0.92);
+    border-color: rgba(15, 23, 42, 0.08);
   }
   .nav button {
     background: transparent;
     border: none;
     color: var(--ink-dim);
-    padding: 9px 11px;
-    border-radius: 100px;
+    padding: 9px 14px;
+    border-radius: var(--r-full);
     cursor: pointer;
     font-family: var(--body);
     font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    transition: all 0.3s var(--ease);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: color 0.2s var(--ease), background 0.2s var(--ease);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    min-width: 52px;
+    min-width: 56px;
+    position: relative;
   }
-  .nav button svg { width: 18px; height: 18px; stroke-width: 1.8; transition: transform 0.3s var(--ease); }
+  .nav button svg { width: 20px; height: 20px; stroke-width: 2; transition: transform 0.3s var(--ease-bounce); }
+  .nav button:active svg { transform: scale(0.88); }
   .nav button.active {
-    background: linear-gradient(180deg, var(--mid), var(--deep));
-    color: var(--ink);
-    box-shadow: 0 4px 14px rgba(10, 127, 168, 0.45);
+    color: var(--ink-strong);
   }
-  .nav button.active svg { transform: scale(1.1); }
+  .nav button.active::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    background: var(--brand-gradient);
+    border-radius: var(--r-full);
+    box-shadow: var(--shadow-md);
+    z-index: -1;
+  }
+  .nav button.active svg { color: #fff; transform: scale(1.05); }
+  .nav button.active { color: #fff; }
+
+  /* Bouton central scanner : mise en valeur premium */
+  /* Nav */
+  .nav { padding-top: 6px; }
+  .nav button.nav-center {
+    padding: 6px 4px;
+    margin: 0 2px;
+    min-width: 60px;
+    background: transparent;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+    font-weight: 700;
+  }
+  .nav button.nav-center .nav-center-circle {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--brand-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(78, 192, 216, 0.5);
+    margin-bottom: 4px;
+    color: #fff;
+    transition: transform 0.3s var(--ease-bounce), box-shadow 0.3s var(--ease);
+    position: relative;
+  }
+  [data-theme="light"] .nav button.nav-center .nav-center-circle {
+    background: var(--brand-gradient);
+    box-shadow: 0 4px 14px rgba(8, 145, 178, 0.4);
+  }
+  .nav button.nav-center svg {
+    width: 20px; height: 20px; color: #fff; stroke-width: 2.5;
+    transition: transform 0.3s var(--ease-bounce);
+  }
+  .nav button.nav-center:active .nav-center-circle { transform: scale(0.9); }
+  .nav button.nav-center.active .nav-center-circle {
+    transform: scale(1.1);
+    box-shadow: 0 6px 18px rgba(78, 192, 216, 0.7);
+  }
+  /* Le bouton scanner ne doit pas avoir le fond gradient horizontal du active */
+  .nav button.nav-center.active::before { display: none; }
+  .nav button.nav-center.active { color: var(--brand); }
+  .nav button.nav-center { color: var(--ink-dim); }
 
   /* FORM */
   .field { margin-bottom: 14px; }
@@ -831,33 +889,193 @@
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 7px;
+    margin-bottom: 8px;
   }
-  .field-label .name { font-size: 13px; font-weight: 500; }
+  .field-label .name { font-size: 13px; font-weight: 600; color: var(--ink); }
   .field-label .target {
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 11px;
     color: var(--ink-faint);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
+    background: var(--bg-overlay);
+    padding: 2px 8px;
+    border-radius: var(--r-full);
   }
   .input {
     width: 100%;
-    background: rgba(0,0,0,0.25);
+    background: var(--bg-tertiary);
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--r-md);
     padding: 14px 16px;
     color: var(--ink);
     font-family: var(--mono);
     font-size: 16px;
-    transition: all 0.2s var(--ease);
+    font-weight: 500;
+    transition: border-color 0.2s var(--ease), background 0.2s var(--ease), box-shadow 0.2s var(--ease);
   }
-  .input::placeholder { color: var(--ink-faint); }
+  .input::placeholder { color: var(--ink-faint); font-weight: 400; }
   .input:focus {
-    border-color: var(--shallow);
-    background: rgba(0,0,0,0.4);
+    border-color: var(--brand);
+    background: var(--bg-secondary);
     box-shadow: 0 0 0 3px rgba(78, 192, 216, 0.15);
   }
   .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* ============================================================
+     MEASURE SLIDERS — saisie avec curseur visuel + valeur exacte
+     ============================================================ */
+  .measure-slider {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .measure-slider:last-of-type {
+    border-bottom: 0;
+    padding-bottom: 16px;
+  }
+  .ms-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .ms-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .ms-target {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    background: var(--bg-overlay);
+    padding: 2px 8px;
+    border-radius: var(--r-full);
+  }
+  .ms-value-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .ms-value {
+    flex: 1;
+    background: var(--bg-tertiary);
+    border: 1.5px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 10px 14px;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+    transition: border-color 0.2s var(--ease);
+    text-align: center;
+  }
+  .ms-value::-webkit-outer-spin-button,
+  .ms-value::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .ms-value:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(78, 192, 216, 0.15);
+  }
+  .ms-value.has-value { border-color: var(--brand); color: var(--brand); }
+  .ms-clear {
+    width: 36px; height: 40px;
+    border: 1.5px solid var(--line);
+    background: var(--bg-tertiary);
+    color: var(--ink-dim);
+    border-radius: var(--r-md);
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.15s var(--ease);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ms-clear:hover {
+    border-color: var(--bad);
+    color: var(--bad);
+  }
+  [data-theme="light"] .ms-value,
+  [data-theme="light"] .ms-clear {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.12);
+  }
+  .ms-slider-wrap {
+    position: relative;
+    height: 30px;
+    display: flex;
+    align-items: center;
+  }
+  .ms-slider {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 30px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  /* Track WebKit */
+  .ms-slider::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: var(--r-full);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--line);
+  }
+  /* Track Firefox */
+  .ms-slider::-moz-range-track {
+    height: 8px;
+    border-radius: var(--r-full);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--line);
+  }
+  /* Thumb WebKit */
+  .ms-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--brand-gradient);
+    border: 3px solid var(--bg-secondary);
+    box-shadow: 0 2px 8px rgba(78, 192, 216, 0.4);
+    margin-top: -9px;
+    cursor: grab;
+    transition: transform 0.15s var(--ease-bounce);
+  }
+  .ms-slider::-webkit-slider-thumb:active { transform: scale(1.15); cursor: grabbing; }
+  /* Thumb Firefox */
+  .ms-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--brand);
+    border: 3px solid var(--bg-secondary);
+    box-shadow: 0 2px 8px rgba(78, 192, 216, 0.4);
+    cursor: grab;
+  }
+  /* Zone idéale (en arrière-plan de la piste) */
+  .ms-zone {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 8px;
+    background: var(--good-gradient);
+    opacity: 0.45;
+    border-radius: var(--r-full);
+    z-index: 1;
+    pointer-events: none;
+    transition: left 0.3s var(--ease), width 0.3s var(--ease);
+  }
+  .ms-scale {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-top: 4px;
+    padding: 0 4px;
+  }
 
   /* BUTTONS */
   .btn {
@@ -882,21 +1100,57 @@
   .btn:active { transform: scale(0.97); }
   .btn:hover { filter: brightness(1.1); box-shadow: var(--shadow-lg); }
   .btn-ghost {
-    background: var(--glass);
-    border: 1px solid var(--line);
+    background: var(--bg-overlay);
+    border: 1.5px solid var(--line-strong);
     color: var(--ink);
     box-shadow: none;
+    font-weight: 500;
   }
-  .btn-ghost:hover { background: var(--glass-strong); filter: none; border-color: var(--line-brand); }
+  .btn-ghost:hover {
+    background: var(--bg-tertiary);
+    filter: none;
+    border-color: var(--brand);
+    color: var(--brand);
+  }
   .btn-secondary {
     background: var(--bg-tertiary);
     color: var(--ink);
-    border: 1px solid var(--line);
-    box-shadow: none;
+    border: 1.5px solid var(--line-strong);
+    box-shadow: var(--shadow-sm);
+    font-weight: 600;
   }
-  .btn-secondary:hover { background: var(--bg-overlay); filter: none; border-color: var(--line-brand); }
+  .btn-secondary:hover {
+    background: var(--bg-secondary);
+    filter: none;
+    border-color: var(--brand);
+    color: var(--brand);
+    box-shadow: var(--shadow-md);
+  }
+  /* Mode clair : encore plus contrasté pour les boutons secondaires */
+  [data-theme="light"] .btn-secondary {
+    background: #ffffff;
+    border: 1.5px solid rgba(15, 23, 42, 0.15);
+    color: var(--ink);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+  }
+  [data-theme="light"] .btn-secondary:hover {
+    background: #f8fafc;
+    border-color: var(--brand);
+    color: var(--brand-deep);
+  }
+  [data-theme="light"] .btn-ghost {
+    background: rgba(15, 23, 42, 0.04);
+    border: 1.5px solid rgba(15, 23, 42, 0.12);
+    color: var(--ink);
+  }
+  [data-theme="light"] .btn-ghost:hover {
+    background: #ffffff;
+    border-color: var(--brand);
+    color: var(--brand-deep);
+  }
   .btn-danger {
     background: var(--bad-gradient);
+    color: #fff;
     box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);
   }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
@@ -1204,37 +1458,151 @@
     border: 1px solid rgba(78, 192, 216, 0.2);
   }
 
-  /* VIEWS */
-  .view { display: none; animation: viewIn 0.35s var(--ease); }
-  .view.active { display: block; }
+  /* VIEWS - Transitions polies */
+  .view { display: none; }
+  .view.active {
+    display: block;
+    animation: viewIn 0.4s var(--ease-out);
+  }
   @keyframes viewIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Animation en cascade pour les enfants directs du dashboard */
+  .view.active > * {
+    animation: cascadeIn 0.5s var(--ease-out) backwards;
+  }
+  .view.active > *:nth-child(1) { animation-delay: 0.02s; }
+  .view.active > *:nth-child(2) { animation-delay: 0.06s; }
+  .view.active > *:nth-child(3) { animation-delay: 0.1s; }
+  .view.active > *:nth-child(4) { animation-delay: 0.14s; }
+  .view.active > *:nth-child(5) { animation-delay: 0.18s; }
+  .view.active > *:nth-child(6) { animation-delay: 0.22s; }
+  @keyframes cascadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Stat cards : animation au survol/tap (effet "pop") */
+  .stat-card { will-change: transform; }
+  .stat-card:active { transform: scale(0.96); }
+
+  /* Hero card : entrée plus marquée */
+  .hero-card {
+    animation: heroIn 0.6s var(--ease-out);
+  }
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Animation des valeurs (compteurs qui changent) */
+  .value-update {
+    animation: valuePulse 0.4s var(--ease-out);
+  }
+  @keyframes valuePulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  /* Bouton : ripple feedback */
+  .btn { position: relative; overflow: hidden; }
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.35) 0%, transparent 60%);
+    opacity: 0;
+    transform: scale(0.5);
+    transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
+    pointer-events: none;
+  }
+  .btn:active::after {
+    opacity: 1;
+    transform: scale(2);
+    transition: transform 0s, opacity 0s;
+  }
+
+  /* List rows : slide subtile */
+  .list-row {
+    animation: rowIn 0.35s var(--ease-out) backwards;
+  }
+  .list-row:nth-child(2) { animation-delay: 0.05s; }
+  .list-row:nth-child(3) { animation-delay: 0.1s; }
+  .list-row:nth-child(4) { animation-delay: 0.15s; }
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Loading skeleton (pour les futurs états chargement) */
+  .skeleton {
+    background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.5s infinite;
+    border-radius: var(--r-md);
+  }
+  @keyframes skeletonShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Mode clair : ajustements globaux pour la lisibilité */
+  [data-theme="light"] .input {
+    background: #ffffff;
+    border: 1.5px solid rgba(15, 23, 42, 0.12);
+    color: var(--ink);
+  }
+  [data-theme="light"] .input:focus {
+    border-color: var(--brand);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.12);
+  }
+  [data-theme="light"] select {
+    background: #ffffff !important;
+    border: 1.5px solid rgba(15, 23, 42, 0.12) !important;
+    color: var(--ink) !important;
+  }
+  [data-theme="light"] .card {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+  }
+  [data-theme="light"] .field-label .target {
+    background: rgba(15, 23, 42, 0.05);
+    color: var(--ink-dim);
+  }
+  /* Toast en mode clair : reste lisible */
+  [data-theme="light"] .toast {
+    color: #fff;
   }
 
   /* TOAST */
   .toast {
     position: fixed;
-    bottom: calc(100px + env(safe-area-inset-bottom));
+    bottom: calc(110px + env(safe-area-inset-bottom));
     left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: var(--leaf);
-    color: #021824;
-    padding: 11px 18px;
-    border-radius: 100px;
+    transform: translateX(-50%) translateY(20px) scale(0.9);
+    background: var(--good-gradient);
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: var(--r-full);
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     z-index: 100;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    box-shadow: var(--shadow-lg);
     opacity: 0;
-    transition: all 0.3s var(--ease-bounce);
+    transition: opacity 0.3s var(--ease), transform 0.4s var(--ease-bounce);
     pointer-events: none;
     white-space: nowrap;
+    letter-spacing: 0.01em;
   }
   .toast.show {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0) scale(1);
   }
+  .toast.error { background: var(--bad-gradient); }
 
   /* EMPTY */
   .empty {
@@ -2393,7 +2761,7 @@
 
   <!-- DASH -->
   <div class="view active" id="view-dash">
-    <div id="migrationBanner" style="display:none; margin-bottom:14px; padding:14px; background:linear-gradient(135deg, rgba(255,180,84,0.18), rgba(255,180,84,0.06)); border:1px solid rgba(255,180,84,0.35); border-radius:10px;">
+    <div id="migrationBanner" style="display:none; margin-bottom:14px; padding:14px; background:var(--warn-soft); border:1px solid var(--line-strong); border-radius:var(--r-md);">
       <div style="display:flex; align-items:flex-start; gap:10px;">
         <div style="font-size:22px;">⚙️</div>
         <div style="flex:1; min-width:0;">
@@ -2405,7 +2773,62 @@
       </div>
     </div>
     <div id="dashAlert"></div>
-    <div class="hero">
+
+    <!-- HERO CARD : État global de la piscine -->
+    <div class="hero-card" id="dashHeroCard">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; position:relative; z-index:1;">
+        <div>
+          <div style="font-size:11px; opacity:0.85; text-transform:uppercase; letter-spacing:0.08em; font-weight:600; margin-bottom:4px;">État de ta piscine</div>
+          <div style="font-family:var(--display); font-size:32px; font-weight:600; line-height:1.1;" id="dashHeroStatus">—</div>
+          <div style="font-size:13px; opacity:0.9; margin-top:4px;" id="dashHeroSub">Aucune mesure récente</div>
+        </div>
+        <div id="dashHeroIcon" style="font-size:40px; opacity:0.9; line-height:1;">💧</div>
+      </div>
+      <div id="dashHeroAction" style="background:rgba(255,255,255,0.18); border-radius:var(--r-md); padding:10px 12px; font-size:12.5px; line-height:1.4; backdrop-filter:blur(8px); display:none; position:relative; z-index:1;">
+        <strong>Action recommandée :</strong> <span id="dashHeroActionText">—</span>
+      </div>
+    </div>
+
+    <!-- GRILLE DE STAT CARDS COLORÉES -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;" id="dashStatsGrid">
+      <div class="stat-card brand" onclick="switchTab('mes')" id="dashCardPh">
+        <div>
+          <div class="stat-card-label">pH</div>
+          <div class="stat-card-value" id="val-ph">—</div>
+        </div>
+        <div class="stat-card-meta" id="dashPhRange">cible 7,2 – 7,4</div>
+      </div>
+      <div class="stat-card good" onclick="switchTab('mes')" id="dashCardCl">
+        <div>
+          <div class="stat-card-label" id="dashDesinfLabel">Chlore</div>
+          <div class="stat-card-value" id="val-cl">—<span class="unit">mg/L</span></div>
+        </div>
+        <div class="stat-card-meta" id="dashDesinfRange">cible 1 – 3</div>
+      </div>
+      <div class="stat-card purple" onclick="switchTab('mes')" id="dashCardTac">
+        <div>
+          <div class="stat-card-label">Alcalinité</div>
+          <div class="stat-card-value" id="val-tac">—<span class="unit">ppm</span></div>
+        </div>
+        <div class="stat-card-meta">TAC cible 80 – 120</div>
+      </div>
+      <div class="stat-card cyan" onclick="switchTab('mes')" id="dashCyaCard">
+        <div>
+          <div class="stat-card-label">Stabilisant</div>
+          <div class="stat-card-value" id="val-cya">—<span class="unit">mg/L</span></div>
+        </div>
+        <div class="stat-card-meta">cible 30 – 50</div>
+      </div>
+    </div>
+
+    <!-- Indicateurs cachés pour compatibilité avec renderDashboard existant -->
+    <span id="ind-ph" style="display:none;"></span>
+    <span id="ind-cl" style="display:none;"></span>
+    <span id="ind-tac" style="display:none;"></span>
+    <span id="ind-cya" style="display:none;"></span>
+
+    <!-- Hero fallback (pour code legacy qui le cherche, caché) -->
+    <div class="hero" style="display:none;">
       <div class="hero-eyebrow">État général</div>
       <div class="hero-value" id="overallStatus">—</div>
       <div class="hero-status" id="overallBadge">
@@ -2413,32 +2836,7 @@
         <span id="overallText">Aucune mesure</span>
       </div>
     </div>
-    <div class="stats-grid">
-      <div class="stat">
-        <span class="stat-indicator" id="ind-ph"></span>
-        <div class="stat-label">pH</div>
-        <div class="stat-value" id="val-ph">—</div>
-        <div class="stat-range" id="dashPhRange">cible 7,2 – 7,4</div>
-      </div>
-      <div class="stat">
-        <span class="stat-indicator" id="ind-cl"></span>
-        <div class="stat-label" id="dashDesinfLabel">Chlore</div>
-        <div class="stat-value" id="val-cl">—<span class="small">mg/L</span></div>
-        <div class="stat-range" id="dashDesinfRange">cible 1 – 3</div>
-      </div>
-      <div class="stat">
-        <span class="stat-indicator" id="ind-tac"></span>
-        <div class="stat-label">Alcalinité</div>
-        <div class="stat-value" id="val-tac">—<span class="small">ppm</span></div>
-        <div class="stat-range">TAC cible 80 – 120 ppm</div>
-      </div>
-      <div class="stat" id="dashCyaCard">
-        <span class="stat-indicator" id="ind-cya"></span>
-        <div class="stat-label">Stabilisant</div>
-        <div class="stat-value" id="val-cya">—<span class="small">mg/L</span></div>
-        <div class="stat-range">cible 30 – 50</div>
-      </div>
-    </div>
+
     <div class="card">
       <div class="card-title">Filtration du jour</div>
       <div class="card-sub">Selon la température de l'eau</div>
@@ -2455,6 +2853,10 @@
         <div class="schedule" id="filtSchedule">—</div>
       </div>
     </div>
+
+    <!-- RECOMMANDATION PRODUIT BAYROL (s'affiche seulement si problème détecté) -->
+    <div id="bayrolRecoCard" style="display:none; margin-bottom: 14px;"></div>
+
     <div class="tip">
       <div class="tip-icon">☀</div>
       <div class="tip-text"><strong>Le trio gagnant :</strong> pH juste, chlore suffisant, filtration longue en journée. Ça évite 80 % des problèmes.</div>
@@ -2495,37 +2897,118 @@
 
   <!-- MESURES -->
   <div class="view" id="view-mes">
-    <h2 class="section-title">Nouvelle <em>mesure</em></h2>
-    <p class="section-sub">Saisis tes valeurs, analyse ou enregistre. Les conseils s'affichent en bas.</p>
-    <div id="testFreqHint" style="margin: 10px 0 14px; padding: 10px 12px; background: rgba(78,192,216,0.08); border: 1px solid rgba(78,192,216,0.18); border-radius: 8px; font-size: 12px; color: var(--ink-dim); line-height: 1.5;">
-      <strong style="color: var(--ink);">📋 À tester :</strong> <span id="testFreqText">pH 2-3 fois/sem · chlore 2-3 fois/sem · TAC 1 fois/mois.</span>
+    <!-- Header contextuel avec dernière mesure -->
+    <div id="mesureHeader" style="margin-bottom: 18px;">
+      <div style="font-size: 11px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; font-weight: 600;">Nouvelle mesure</div>
+      <div style="font-family: var(--display); font-size: 28px; font-weight: 600; line-height: 1.15; margin-bottom: 6px;">Saisir mes valeurs</div>
+      <div id="mesureContext" style="font-size: 13px; color: var(--ink-dim);">Aucune mesure précédente</div>
     </div>
-    <div class="card">
-      <div class="field">
-        <div class="field-label"><span class="name">pH</span><span class="target" id="phInputTarget">7,2 – 7,4</span></div>
-        <input class="input" type="number" step="0.1" id="in-ph" placeholder="ex. 7,3" inputmode="decimal">
+
+    <!-- Chip fréquence de test recommandée -->
+    <div id="testFreqHint" style="display:inline-flex; align-items:center; gap:8px; margin-bottom: 16px; padding: 8px 14px; background: var(--brand-gradient-soft); border: 1px solid var(--line-brand); border-radius: var(--r-full); font-size: 12px; color: var(--ink); line-height: 1.4;">
+      <span style="font-size: 14px;">📋</span>
+      <span><strong>À tester :</strong> <span id="testFreqText">pH 2-3 fois/sem · chlore 2-3 fois/sem · TAC 1 fois/mois</span></span>
+    </div>
+
+    <!-- Carte de saisie avec sliders -->
+    <div class="card" style="padding: 18px;">
+      <div class="measure-slider" data-key="ph" data-min="6.5" data-max="8.5" data-step="0.1" data-decimals="1">
+        <div class="ms-head">
+          <div class="ms-label">🧪 pH</div>
+          <div class="ms-target" id="phInputTarget">7,2 – 7,4</div>
+        </div>
+        <div class="ms-value-row">
+          <input type="number" class="ms-value" step="0.1" id="in-ph" placeholder="—" inputmode="decimal">
+          <button type="button" class="ms-clear" onclick="clearMeasureSlider('ph')" aria-label="Vider">×</button>
+        </div>
+        <div class="ms-slider-wrap">
+          <input type="range" class="ms-slider" id="sl-ph" min="6.5" max="8.5" step="0.1">
+          <div class="ms-zone" id="zn-ph"></div>
+        </div>
+        <div class="ms-scale"><span>6,5</span><span>7,5</span><span>8,5</span></div>
       </div>
-      <div class="field" id="field-desinf">
-        <div class="field-label"><span class="name" id="desinf-name">Chlore libre (mg/L)</span><span class="target" id="desinf-target">1 – 3</span></div>
-        <input class="input" type="number" step="0.1" id="in-cl" placeholder="ex. 1,5" inputmode="decimal">
+
+      <div class="measure-slider" data-key="cl" data-min="0" data-max="6" data-step="0.1" data-decimals="1">
+        <div class="ms-head">
+          <div class="ms-label" id="desinf-name">💧 Chlore libre (mg/L)</div>
+          <div class="ms-target" id="desinf-target">1 – 3</div>
+        </div>
+        <div class="ms-value-row">
+          <input type="number" class="ms-value" step="0.1" id="in-cl" placeholder="—" inputmode="decimal">
+          <button type="button" class="ms-clear" onclick="clearMeasureSlider('cl')" aria-label="Vider">×</button>
+        </div>
+        <div class="ms-slider-wrap">
+          <input type="range" class="ms-slider" id="sl-cl" min="0" max="6" step="0.1">
+          <div class="ms-zone" id="zn-cl"></div>
+        </div>
+        <div class="ms-scale"><span>0</span><span>3</span><span>6</span></div>
       </div>
-      <div class="field">
-        <div class="field-label"><span class="name">Alcalinité / TAC (ppm)</span><span class="target">80 – 120 · mensuel</span></div>
-        <input class="input" type="number" step="1" id="in-tac" placeholder="ex. 100" inputmode="decimal">
+
+      <div class="measure-slider" data-key="tac" data-min="0" data-max="200" data-step="5" data-decimals="0">
+        <div class="ms-head">
+          <div class="ms-label">⚖️ Alcalinité / TAC (ppm)</div>
+          <div class="ms-target">80 – 120 · mensuel</div>
+        </div>
+        <div class="ms-value-row">
+          <input type="number" class="ms-value" step="1" id="in-tac" placeholder="—" inputmode="decimal">
+          <button type="button" class="ms-clear" onclick="clearMeasureSlider('tac')" aria-label="Vider">×</button>
+        </div>
+        <div class="ms-slider-wrap">
+          <input type="range" class="ms-slider" id="sl-tac" min="0" max="200" step="5">
+          <div class="ms-zone" id="zn-tac"></div>
+        </div>
+        <div class="ms-scale"><span>0</span><span>100</span><span>200</span></div>
       </div>
-      <div class="field" id="field-cya">
-        <div class="field-label"><span class="name">Stabilisant CYA (mg/L)</span><span class="target">30 – 50 · mensuel</span></div>
-        <input class="input" type="number" step="1" id="in-cya" placeholder="optionnel" inputmode="decimal">
+
+      <div class="measure-slider" data-key="cya" data-min="0" data-max="100" data-step="5" data-decimals="0" id="field-cya">
+        <div class="ms-head">
+          <div class="ms-label">☀ Stabilisant CYA (mg/L)</div>
+          <div class="ms-target">30 – 50 · mensuel</div>
+        </div>
+        <div class="ms-value-row">
+          <input type="number" class="ms-value" step="1" id="in-cya" placeholder="—" inputmode="decimal">
+          <button type="button" class="ms-clear" onclick="clearMeasureSlider('cya')" aria-label="Vider">×</button>
+        </div>
+        <div class="ms-slider-wrap">
+          <input type="range" class="ms-slider" id="sl-cya" min="0" max="100" step="5">
+          <div class="ms-zone" id="zn-cya"></div>
+        </div>
+        <div class="ms-scale"><span>0</span><span>50</span><span>100</span></div>
       </div>
-      <div class="field">
-        <div class="field-label"><span class="name">TH / Dureté (°f)</span><span class="target">15 – 25</span></div>
-        <input class="input" type="number" step="1" id="in-th" placeholder="optionnel" inputmode="decimal">
+
+      <div class="measure-slider" data-key="th" data-min="0" data-max="50" data-step="1" data-decimals="0">
+        <div class="ms-head">
+          <div class="ms-label">💎 TH / Dureté (°f)</div>
+          <div class="ms-target">10 – 25</div>
+        </div>
+        <div class="ms-value-row">
+          <input type="number" class="ms-value" step="1" id="in-th" placeholder="—" inputmode="decimal">
+          <button type="button" class="ms-clear" onclick="clearMeasureSlider('th')" aria-label="Vider">×</button>
+        </div>
+        <div class="ms-slider-wrap">
+          <input type="range" class="ms-slider" id="sl-th" min="0" max="50" step="1">
+          <div class="ms-zone" id="zn-th"></div>
+        </div>
+        <div class="ms-scale"><span>0</span><span>25</span><span>50</span></div>
       </div>
-      <div class="field">
-        <div class="field-label"><span class="name">Température (°C)</span><span class="target">à noter en été</span></div>
-        <input class="input" type="number" step="0.5" id="in-temp" placeholder="ex. 26" inputmode="decimal">
+
+      <div class="measure-slider" data-key="temp" data-min="10" data-max="35" data-step="0.5" data-decimals="1">
+        <div class="ms-head">
+          <div class="ms-label">🌡 Température (°C)</div>
+          <div class="ms-target">à noter en été</div>
+        </div>
+        <div class="ms-value-row">
+          <input type="number" class="ms-value" step="0.5" id="in-temp" placeholder="—" inputmode="decimal">
+          <button type="button" class="ms-clear" onclick="clearMeasureSlider('temp')" aria-label="Vider">×</button>
+        </div>
+        <div class="ms-slider-wrap">
+          <input type="range" class="ms-slider" id="sl-temp" min="10" max="35" step="0.5">
+          <div class="ms-zone" id="zn-temp"></div>
+        </div>
+        <div class="ms-scale"><span>10°</span><span>22°</span><span>35°</span></div>
       </div>
-      <div class="btn-row">
+
+      <div class="btn-row" style="margin-top: 6px;">
         <button class="btn btn-secondary" onclick="analyzeMeasure()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
           Analyser
@@ -2536,7 +3019,11 @@
         </button>
       </div>
     </div>
+
+    <!-- Diagnostic (rendu par renderAdvice) -->
     <div id="adviceContainer" class="advice-wrap"></div>
+
+    <!-- Historique -->
     <div class="card">
       <div class="card-title">Historique</div>
       <div class="card-sub" id="historyCount">aucune mesure</div>
@@ -2945,6 +3432,62 @@
   </div>
 
   <!-- SETTINGS -->
+  <!-- PLUS : menu d'accès aux fonctions secondaires -->
+  <div class="view" id="view-more">
+    <h2 class="section-title">Plus <em>de fonctions</em></h2>
+    <p class="section-sub">Toutes les fonctions de l'app, accessibles en un clic.</p>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px;">
+      <div class="stat-card brand" onclick="switchTab('meteo')">
+        <div class="stat-card-label">☀ Météo</div>
+        <div class="stat-card-value" style="font-size:18px;">Prévisions</div>
+        <div class="stat-card-meta">7 jours + temp eau</div>
+      </div>
+      <div class="stat-card good" onclick="switchTab('rout')">
+        <div class="stat-card-label">✓ Routines</div>
+        <div class="stat-card-value" style="font-size:18px;">Entretien</div>
+        <div class="stat-card-meta">Quoi faire et quand</div>
+      </div>
+      <div class="stat-card purple" onclick="switchTab('actions')">
+        <div class="stat-card-label">📝 Actions</div>
+        <div class="stat-card-value" style="font-size:18px;">Historique</div>
+        <div class="stat-card-meta">Tout ce que tu as fait</div>
+      </div>
+      <div class="stat-card cyan" onclick="switchTab('journal')">
+        <div class="stat-card-label">📅 Journal</div>
+        <div class="stat-card-value" style="font-size:18px;">Mesures</div>
+        <div class="stat-card-meta">Tout l'historique</div>
+      </div>
+      <div class="stat-card pink" onclick="switchTab('family')">
+        <div class="stat-card-label">👥 Famille</div>
+        <div class="stat-card-value" style="font-size:18px;">Membres</div>
+        <div class="stat-card-meta">Sync entre membres</div>
+      </div>
+      <div class="stat-card orange" onclick="switchTab('ia')">
+        <div class="stat-card-label">✨ IA Photo</div>
+        <div class="stat-card-value" style="font-size:18px;">Analyse</div>
+        <div class="stat-card-meta">Photo de l'eau</div>
+      </div>
+      <div class="stat-card warn" onclick="switchTab('piscinier')">
+        <div class="stat-card-label">🛠 Piscinier</div>
+        <div class="stat-card-value" style="font-size:18px;">Brief pro</div>
+        <div class="stat-card-meta">PDF + conseils</div>
+      </div>
+      <div class="stat-card" style="background: linear-gradient(135deg, #64748b, #334155);" onclick="switchTab('aide')">
+        <div class="stat-card-label">? Aide</div>
+        <div class="stat-card-value" style="font-size:18px;">Guide</div>
+        <div class="stat-card-meta">Comment ça marche</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 18px;">
+      <button class="btn btn-secondary" onclick="switchTab('settings')" style="display:flex; align-items:center; gap:10px; justify-content:flex-start; padding:14px 16px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Réglages de l'app
+      </button>
+    </div>
+  </div>
+
   <div class="view" id="view-settings">
     <h2 class="section-title">Réglages</h2>
     <p class="section-sub">Modifie les infos de ta piscine et de ta localisation.</p>
@@ -3116,53 +3659,24 @@
 
 <nav class="nav" id="appNav" style="display:none;">
   <button class="active" data-tab="dash" onclick="switchTab('dash')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1h-5v-7h-6v7H4a1 1 0 01-1-1V9.5z"/></svg>
     Accueil
   </button>
   <button data-tab="mes" onclick="switchTab('mes')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-    Mesures
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2v6m6-6v6M3 10h18M5 6h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/><path d="M8 14h2m4 0h2m-8 4h2m4 0h2"/></svg>
+    Mesurer
+  </button>
+  <button data-tab="scan" onclick="switchTab('scan')" class="nav-center">
+    <span class="nav-center-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><path d="M7 12h10"/></svg></span>
+    Scanner
   </button>
   <button data-tab="trends" onclick="switchTab('trends')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
     Tendances
   </button>
-  <button data-tab="scan" onclick="switchTab('scan')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 8v8M11 8v8M15 8v8M19 8v8"/></svg>
-    Scanner
-  </button>
-  <button data-tab="meteo" onclick="switchTab('meteo')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
-    Météo
-  </button>
-  <button data-tab="rout" onclick="switchTab('rout')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-    Routines
-  </button>
-  <button data-tab="actions" onclick="switchTab('actions')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-    Actions
-  </button>
-
-  <button data-tab="family" onclick="switchTab('family')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-    Famille
-  </button>
-  <button data-tab="journal" onclick="switchTab('journal')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
-    Journal
-  </button>
-  <button data-tab="piscinier" onclick="switchTab('piscinier')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-    Pro
-  </button>
-  <button data-tab="ia" onclick="switchTab('ia')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l1.8 5.5L19 9.3l-5.2 1.8L12 17l-1.8-5.9L5 9.3l5.2-1.8L12 2z"/><path d="M19 15l.9 2.7L22 18.6l-2.1.7L19 22l-.9-2.7-2.1-.7 2.1-.9L19 15z"/></svg>
-    IA
-  </button>
-  <button data-tab="aide" onclick="switchTab('aide')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-    Aide
+  <button data-tab="more" onclick="switchTab('more')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+    Plus
   </button>
 </nav>
 
@@ -3750,6 +4264,7 @@ function initAppUI() {
   refreshMigrationBanner();
   updateSyncStatus();
   startRealtimeSync();
+  initAllMeasureSliders();
 
   const notifEnabled = loadKey(KEYS.notifEnabled, false);
   if (notifEnabled && 'Notification' in window && Notification.permission === 'granted') {
@@ -4944,15 +5459,44 @@ function renderDashboard() {
   const last = state.measures[0];
   const setInd = (id, status) => { const el = document.getElementById(id); if (el) el.style.background = statusColors[status]; };
 
+  // Helper : applique la couleur de fond du stat-card selon le statut de la mesure
+  const setCardStatus = (cardId, status) => {
+    const el = document.getElementById(cardId);
+    if (!el) return;
+    el.classList.remove('good','warn','bad','brand','purple','cyan');
+    if (status === 'good') el.classList.add('good');
+    else if (status === 'warn') el.classList.add('warn');
+    else if (status === 'bad') el.classList.add('bad');
+    else el.classList.add('brand'); // neutre = couleur brand
+  };
+
+  const hero = document.getElementById('dashHeroCard');
+  const heroStatus = document.getElementById('dashHeroStatus');
+  const heroSub = document.getElementById('dashHeroSub');
+  const heroIcon = document.getElementById('dashHeroIcon');
+  const heroAction = document.getElementById('dashHeroAction');
+  const heroActionText = document.getElementById('dashHeroActionText');
+
   if (!last) {
     document.getElementById('val-ph').textContent = '—';
-    document.getElementById('val-cl').innerHTML = '—<span class="small">mg/L</span>';
-    document.getElementById('val-tac').innerHTML = '—<span class="small">ppm</span>';
-    document.getElementById('val-cya').innerHTML = '—<span class="small">mg/L</span>';
+    document.getElementById('val-cl').innerHTML = '—<span class="unit">mg/L</span>';
+    document.getElementById('val-tac').innerHTML = '—<span class="unit">ppm</span>';
+    document.getElementById('val-cya').innerHTML = '—<span class="unit">mg/L</span>';
     setInd('ind-ph','neutral'); setInd('ind-cl','neutral'); setInd('ind-tac','neutral'); setInd('ind-cya','neutral');
-    document.getElementById('overallStatus').textContent = '—';
-    document.getElementById('overallBadge').className = 'hero-status status-neutral';
-    document.getElementById('overallText').textContent = 'Aucune mesure enregistrée';
+    // Hero : pas de mesure
+    if (hero) { hero.classList.remove('good','warn','bad'); }
+    if (heroStatus) heroStatus.textContent = 'Première mesure ?';
+    if (heroSub) heroSub.textContent = 'Ajoute un relevé pour commencer';
+    if (heroIcon) heroIcon.textContent = '💧';
+    if (heroAction) heroAction.style.display = 'block';
+    if (heroActionText) heroActionText.innerHTML = '<a onclick="switchTab(\'mes\')" style="color:#fff; text-decoration:underline; cursor:pointer;">Ajouter ma première mesure →</a>';
+    // Cards : tout en couleur brand neutre
+    setCardStatus('dashCardPh','neutral');
+    setCardStatus('dashCardCl','neutral');
+    setCardStatus('dashCardTac','neutral');
+    // Compat legacy
+    const overall = document.getElementById('overallStatus');
+    if (overall) overall.textContent = '—';
     return;
   }
 
@@ -4962,29 +5506,93 @@ function renderDashboard() {
   // Désinfectant dynamique : récupère selon le traitement actif
   const tCfg = getTreatment();
   const dVal = last[tCfg.inputKey];
-  document.getElementById('val-cl').innerHTML = fmt(dVal, 1) + '<span class="small">mg/L</span>';
-  document.getElementById('val-tac').innerHTML = fmt(last.tac, 0) + '<span class="small">ppm</span>';
-  document.getElementById('val-cya').innerHTML = fmt(last.cya, 0) + '<span class="small">mg/L</span>';
+  document.getElementById('val-cl').innerHTML = fmt(dVal, 1) + '<span class="unit">mg/L</span>';
+  document.getElementById('val-tac').innerHTML = fmt(last.tac, 0) + '<span class="unit">ppm</span>';
+  document.getElementById('val-cya').innerHTML = fmt(last.cya, 0) + '<span class="unit">mg/L</span>';
 
   const s = { ph: phStatus(last.ph), cl: clStatus(dVal), tac: tacStatus(last.tac), cya: cyaStatus(last.cya) };
   setInd('ind-ph', s.ph); setInd('ind-cl', s.cl); setInd('ind-tac', s.tac); setInd('ind-cya', s.cya);
+
+  // Appliquer couleur des stat-cards selon statut
+  setCardStatus('dashCardPh', s.ph);
+  setCardStatus('dashCardCl', s.cl);
+  setCardStatus('dashCardTac', s.tac);
+  // CYA garde sa couleur cyan tant qu'il y a une mesure
 
   const order = { good: 0, warn: 1, bad: 2, neutral: -1 };
   let worst = 'good';
   ['ph','cl','tac','cya'].forEach(k => { if (order[s[k]] > order[worst]) worst = s[k]; });
 
-  let pct = '—';
+  // HERO CARD : couleur + texte selon état global
+  if (hero) {
+    hero.classList.remove('good','warn','bad');
+    if (worst === 'good') hero.classList.add('good');
+    else if (worst === 'warn') hero.classList.add('warn');
+    else if (worst === 'bad') hero.classList.add('bad');
+  }
+
+  // Compute count of params measured
   let count = 0, score = 0;
   Object.values(s).forEach(st => {
     if (st === 'neutral') return;
     count++;
     score += st === 'good' ? 100 : st === 'warn' ? 60 : 20;
   });
-  if (count > 0) pct = Math.round(score / count);
+  const pct = count > 0 ? Math.round(score / count) : null;
 
-  document.getElementById('overallStatus').innerHTML = pct === '—' ? '—' : pct + '<span class="unit">/100</span>';
-  document.getElementById('overallBadge').className = 'hero-status status-' + worst;
-  document.getElementById('overallText').textContent = statusLabel[worst];
+  // Hero status text + action recommandée
+  if (heroStatus && heroSub && heroIcon && heroAction && heroActionText) {
+    if (worst === 'good') {
+      heroStatus.textContent = 'Eau parfaite';
+      heroSub.textContent = (pct !== null ? pct + '/100 · ' : '') + 'Tous les paramètres dans la cible';
+      heroIcon.textContent = '✨';
+      heroAction.style.display = 'none';
+    } else if (worst === 'warn') {
+      heroStatus.textContent = 'À surveiller';
+      heroSub.textContent = (pct !== null ? pct + '/100 · ' : '') + 'Quelques paramètres à ajuster';
+      heroIcon.textContent = '⚠️';
+      heroAction.style.display = 'block';
+      // Trouver le paramètre à ajuster
+      let toFix = '';
+      if (s.ph === 'warn' || s.ph === 'bad') toFix = 'pH à ajuster';
+      else if (s.cl === 'warn' || s.cl === 'bad') toFix = tCfg.short + ' à ajuster';
+      else if (s.tac === 'warn' || s.tac === 'bad') toFix = 'Alcalinité à corriger';
+      else if (s.cya === 'warn' || s.cya === 'bad') toFix = 'Stabilisant à équilibrer';
+      heroActionText.innerHTML = toFix + ' — <a onclick="switchTab(\'mes\')" style="color:#fff; text-decoration:underline; cursor:pointer;">Voir le diagnostic →</a>';
+    } else if (worst === 'bad') {
+      heroStatus.textContent = 'Eau dégradée';
+      heroSub.textContent = (pct !== null ? pct + '/100 · ' : '') + 'Intervention nécessaire';
+      heroIcon.textContent = '🚨';
+      heroAction.style.display = 'block';
+      let toFix = 'Plusieurs paramètres critiques';
+      if (s.ph === 'bad') toFix = 'pH critique';
+      else if (s.cl === 'bad') toFix = tCfg.short + ' critique';
+      else if (s.tac === 'bad') toFix = 'Alcalinité critique';
+      heroActionText.innerHTML = toFix + ' — <a onclick="switchTab(\'mes\')" style="color:#fff; text-decoration:underline; cursor:pointer;">Voir le diagnostic →</a>';
+    } else {
+      heroStatus.textContent = 'État inconnu';
+      heroSub.textContent = 'Pas assez de mesures';
+      heroIcon.textContent = '💧';
+      heroAction.style.display = 'none';
+    }
+  }
+
+  // Animer les valeurs (pulsation subtile pour signaler le changement)
+  animateValueChange(document.getElementById('val-ph'));
+  animateValueChange(document.getElementById('val-cl'));
+  animateValueChange(document.getElementById('val-tac'));
+  animateValueChange(document.getElementById('val-cya'));
+
+  // Recommandation produit Bayrol selon les mesures
+  if (typeof renderBayrolReco === 'function') renderBayrolReco();
+
+  // Compat legacy (overlay caché mais existant)
+  const overall = document.getElementById('overallStatus');
+  if (overall) overall.innerHTML = pct === null ? '—' : pct + '<span class="unit">/100</span>';
+  const overallBadge = document.getElementById('overallBadge');
+  if (overallBadge) overallBadge.className = 'hero-status status-' + worst;
+  const overallText = document.getElementById('overallText');
+  if (overallText) overallText.textContent = statusLabel[worst];
 }
 
 function getNumberInputs() {
@@ -5031,6 +5639,11 @@ function applyTreatmentToInputUI() {
   const freqEl = document.getElementById('testFreqText');
   if (freqEl) {
     freqEl.textContent = 'pH ' + t.testFreq.ph + ' · ' + t.short.toLowerCase() + ' ' + t.testFreq.desinf + ' · TAC ' + t.testFreq.tac + '.';
+  }
+  // Zones idéales des sliders mesures (pH et désinfectant)
+  if (typeof updateIdealZone === 'function') {
+    updateIdealZone('ph');
+    updateIdealZone('cl');
   }
 }
 
@@ -5081,6 +5694,28 @@ function analyzeMeasure() {
 function renderHistory() {
   const list = document.getElementById('historyList');
   const count = document.getElementById('historyCount');
+
+  // Mise à jour du header contextuel "Depuis quand dernière mesure"
+  const ctx = document.getElementById('mesureContext');
+  if (ctx) {
+    if (state.measures.length === 0) {
+      ctx.textContent = 'C\'est ta première mesure 🎉';
+    } else {
+      const last = state.measures[0];
+      const diffMs = Date.now() - last.ts;
+      const h = Math.floor(diffMs / 3600000);
+      const d = Math.floor(diffMs / 86400000);
+      let txt = 'Dernière mesure ';
+      if (h < 1) txt += 'il y a quelques minutes';
+      else if (h < 24) txt += 'il y a ' + h + ' h';
+      else if (d === 1) txt += 'hier';
+      else if (d < 7) txt += 'il y a ' + d + ' jours';
+      else if (d < 30) txt += 'il y a ' + Math.floor(d / 7) + ' semaines';
+      else txt += 'il y a plus d\'1 mois';
+      ctx.textContent = txt;
+    }
+  }
+
   if (state.measures.length === 0) {
     list.innerHTML = '<div class="empty"><div class="empty-icon">🧪</div>Aucune mesure enregistrée<br>pour le moment.</div>';
     count.textContent = 'aucune mesure';
@@ -5369,43 +6004,91 @@ function renderDiagnostic(advice, persisted) {
   const c = document.getElementById('adviceContainer');
   if (advice.length === 0) { c.innerHTML = ''; return; }
 
+  // Tri par criticité : bad d'abord, puis warn, puis good
+  const order = { bad: 0, warn: 1, good: 2 };
+  const sorted = [...advice].sort((a, b) => order[a.status] - order[b.status]);
+
   const counts = { good: 0, warn: 0, bad: 0 };
   advice.forEach(a => counts[a.status]++);
 
-  let summaryText;
+  // Couleur de la carte récap globale
+  let summaryClass = 'good';
+  let summaryTitle = 'Tout est au vert ✨';
+  let summarySub = counts.good + ' paramètre' + (counts.good > 1 ? 's' : '') + ' dans la cible';
+  let summaryIcon = '✅';
+
   if (counts.bad > 0) {
-    summaryText = '<strong>' + counts.bad + '</strong> action urgente' + (counts.bad > 1 ? 's' : '') + ' à mener';
-    if (counts.warn) summaryText += ', ' + counts.warn + ' ajustement' + (counts.warn > 1 ? 's' : '');
+    summaryClass = 'bad';
+    summaryTitle = counts.bad + ' action urgente' + (counts.bad > 1 ? 's' : '');
+    summarySub = 'À traiter en priorité' + (counts.warn ? ' · ' + counts.warn + ' à ajuster' : '');
+    summaryIcon = '🚨';
   } else if (counts.warn > 0) {
-    summaryText = '<strong>' + counts.warn + '</strong> paramètre' + (counts.warn > 1 ? 's' : '') + ' à ajuster';
-    if (counts.good) summaryText += ', ' + counts.good + ' OK';
-  } else {
-    summaryText = '<strong>Tout est au vert</strong> — ' + counts.good + ' paramètre' + (counts.good > 1 ? 's' : '') + ' dans la cible';
+    summaryClass = 'warn';
+    summaryTitle = counts.warn + ' paramètre' + (counts.warn > 1 ? 's' : '') + ' à ajuster';
+    summarySub = counts.good ? counts.good + ' déjà au bon niveau' : 'Quelques corrections à faire';
+    summaryIcon = '⚠️';
   }
 
-  const persistedNote = persisted ? '<div style="text-align:center; color: var(--leaf); font-size: 12px; margin-top: 10px;">✓ Mesure enregistrée dans l\'historique</div>' : '';
+  // Carte récap Hero
+  let html = '<div class="hero-card ' + summaryClass + '" style="margin-bottom: 14px;">';
+  html += '<div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:1;">';
+  html += '<div>';
+  html += '<div style="font-size:11px; opacity:0.85; text-transform:uppercase; letter-spacing:0.08em; font-weight:600; margin-bottom:4px;">Diagnostic</div>';
+  html += '<div style="font-family:var(--display); font-size:24px; font-weight:600; line-height:1.15;">' + summaryTitle + '</div>';
+  html += '<div style="font-size:13px; opacity:0.9; margin-top:4px;">' + summarySub + '</div>';
+  html += '</div>';
+  html += '<div style="font-size:36px; line-height:1; opacity:0.9;">' + summaryIcon + '</div>';
+  html += '</div>';
+  if (persisted) {
+    html += '<div style="margin-top:14px; background:rgba(255,255,255,0.18); border-radius:var(--r-md); padding:8px 12px; font-size:12px; backdrop-filter:blur(8px); position:relative; z-index:1;">✓ Mesure enregistrée dans l\'historique</div>';
+  }
+  html += '</div>';
 
-  const cardsHTML = advice.map(a => {
-    const actionsHTML = a.actions ? '<div class="advice-actions">' + a.actions.map(act => '<div class="advice-action"><span class="bullet">' + act.b + '</span><span>' + act.t + '</span></div>').join('') + '</div>' : '';
-    return '<div class="advice-card ' + a.status + '">' +
-      '<div class="advice-head">' +
-        '<div class="advice-icon">' + a.icon + '</div>' +
-        '<div class="advice-title"><span class="param">' + a.param + '</span>' + a.title + '</div>' +
-        '<div class="advice-value">' + a.value + '</div>' +
-      '</div>' +
-      '<div class="advice-body">' + a.body + '</div>' +
-      actionsHTML +
-    '</div>';
-  }).join('');
+  // Cartes individuelles (style Revolut)
+  sorted.forEach(a => {
+    // Couleurs selon statut
+    const colorMap = {
+      good: { bg: 'var(--good-soft)', border: 'var(--good)', text: 'var(--good)', iconBg: 'var(--good-gradient)' },
+      warn: { bg: 'var(--warn-soft)', border: 'var(--warn)', text: 'var(--warn)', iconBg: 'var(--warn-gradient)' },
+      bad:  { bg: 'var(--bad-soft)', border: 'var(--bad)', text: 'var(--bad)', iconBg: 'var(--bad-gradient)' }
+    };
+    const col = colorMap[a.status];
 
-  c.innerHTML = '<div class="card">' +
-    '<div class="card-title">Diagnostic</div>' +
-    '<div class="card-sub">' + advice.length + ' paramètre' + (advice.length > 1 ? 's' : '') + ' analysé' + (advice.length > 1 ? 's' : '') + '</div>' +
-    '<div class="advice-summary">' + summaryText + '</div>' +
-    cardsHTML +
-    persistedNote +
-  '</div>';
+    html += '<div class="card" style="padding:0; overflow:hidden; margin-bottom:10px;">';
 
+    // Header avec icône colorée gradient
+    html += '<div style="display:flex; align-items:center; gap:12px; padding:14px 16px; background:' + col.bg + '; border-bottom: 1px solid var(--line);">';
+    html += '<div style="width:36px; height:36px; border-radius:50%; background:' + col.iconBg + '; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; font-weight:600; box-shadow: var(--shadow-sm); flex-shrink:0;">' + a.icon + '</div>';
+    html += '<div style="flex:1; min-width:0;">';
+    html += '<div style="font-size:10px; font-weight:700; color:' + col.text + '; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:2px;">' + a.param + '</div>';
+    html += '<div style="font-family:var(--display); font-size:15px; font-weight:600; color:var(--ink); line-height:1.2;">' + a.title + '</div>';
+    html += '</div>';
+    html += '<div style="font-family:var(--mono); font-size:13px; font-weight:600; color:' + col.text + '; background:var(--bg-tertiary); padding:6px 10px; border-radius:var(--r-full); white-space:nowrap;">' + a.value + '</div>';
+    html += '</div>';
+
+    // Body
+    html += '<div style="padding:14px 16px;">';
+    html += '<div style="font-size:13px; line-height:1.55; color:var(--ink-dim);">' + a.body + '</div>';
+
+    // Actions
+    if (a.actions && a.actions.length) {
+      html += '<div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">';
+      a.actions.forEach(act => {
+        // Bullet style premium selon type
+        const bulletClass = act.b === '!' ? 'bad' : 'brand';
+        const bulletColor = bulletClass === 'bad' ? 'var(--bad)' : 'var(--brand)';
+        html += '<div style="display:flex; align-items:flex-start; gap:10px;">';
+        html += '<div style="width:22px; height:22px; border-radius:50%; background:' + (bulletClass === 'bad' ? 'var(--bad-soft)' : 'var(--brand-gradient-soft)') + '; color:' + bulletColor + '; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; margin-top:1px;">' + act.b + '</div>';
+        html += '<div style="font-size:13px; line-height:1.5; color:var(--ink); flex:1;">' + act.t + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+    html += '</div>';
+  });
+
+  c.innerHTML = html;
   setTimeout(() => c.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
 }
 
@@ -6772,10 +7455,246 @@ let toastTimer;
 function showToast(msg, isError) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.style.background = isError ? 'var(--coral)' : 'var(--leaf)';
+  t.classList.toggle('error', !!isError);
+  t.classList.remove('show');
+  // Force reflow pour redémarrer l'animation
+  void t.offsetWidth;
   t.classList.add('show');
+  // Vibration légère (mobile)
+  if (navigator.vibrate) navigator.vibrate(isError ? [60, 30, 60] : 30);
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// =================================================================
+// SLIDERS MESURES — synchronisation slider ↔ input + zone idéale
+// =================================================================
+const MS_IDEAL_ZONES = {
+  ph:   { min: 7.2, max: 7.4, sliderMin: 6.5, sliderMax: 8.5 },
+  cl:   { min: 1, max: 3, sliderMin: 0, sliderMax: 6 },
+  tac:  { min: 80, max: 120, sliderMin: 0, sliderMax: 200 },
+  cya:  { min: 30, max: 50, sliderMin: 0, sliderMax: 100 },
+  th:   { min: 10, max: 25, sliderMin: 0, sliderMax: 50 },
+  temp: { min: 24, max: 30, sliderMin: 10, sliderMax: 35 }
+};
+
+function updateIdealZone(key) {
+  // Adapte les zones selon le traitement actif (pour pH et cl)
+  const t = getTreatment();
+  let zone = Object.assign({}, MS_IDEAL_ZONES[key]);
+  if (key === 'ph') { zone.min = t.phIdealMin; zone.max = t.phIdealMax; }
+  if (key === 'cl') { zone.min = t.idealMin; zone.max = t.idealMax; }
+
+  const wrap = document.getElementById('zn-' + key);
+  if (!wrap) return;
+  const span = zone.sliderMax - zone.sliderMin;
+  const leftPct = Math.max(0, ((zone.min - zone.sliderMin) / span) * 100);
+  const widthPct = Math.min(100 - leftPct, ((zone.max - zone.min) / span) * 100);
+  wrap.style.left = leftPct + '%';
+  wrap.style.width = widthPct + '%';
+}
+
+function setupMeasureSlider(key) {
+  const slider = document.getElementById('sl-' + key);
+  const input = document.getElementById('in-' + key);
+  if (!slider || !input) return;
+
+  // Slider → input
+  slider.addEventListener('input', () => {
+    const val = parseFloat(slider.value);
+    const decimals = parseInt(slider.closest('.measure-slider').dataset.decimals || '1', 10);
+    input.value = val.toFixed(decimals).replace(/\.0$/, '');
+    input.classList.add('has-value');
+  });
+
+  // Input → slider
+  input.addEventListener('input', () => {
+    const v = parseFloat((input.value || '').replace(',', '.'));
+    if (!isNaN(v)) {
+      slider.value = v;
+      input.classList.add('has-value');
+    } else {
+      input.classList.remove('has-value');
+    }
+  });
+
+  // Initialise la zone idéale
+  updateIdealZone(key);
+}
+
+function clearMeasureSlider(key) {
+  const slider = document.getElementById('sl-' + key);
+  const input = document.getElementById('in-' + key);
+  if (input) { input.value = ''; input.classList.remove('has-value'); }
+  // Slider revient au milieu mais l'input vide signale "pas de mesure"
+  if (slider) {
+    const mid = (parseFloat(slider.min) + parseFloat(slider.max)) / 2;
+    slider.value = mid;
+  }
+}
+
+function initAllMeasureSliders() {
+  ['ph','cl','tac','cya','th','temp'].forEach(k => setupMeasureSlider(k));
+}
+
+// =================================================================
+// RECOMMANDATION PRODUIT BAYROL — affiche un produit adapté au problème
+// =================================================================
+// Mapping : catégorie de problème → produit Bayrol recommandé + URL bayrol.fr
+const BAYROL_RECO_MAP = {
+  'ph-high': {
+    productId: 'bayrol_phmoins_granul',
+    issue: 'pH trop élevé',
+    why: 'Ton pH est au-dessus de la cible. Le désinfectant perd en efficacité au-delà de 7,8.',
+    url: 'https://www.bayrol.fr/produits/traitement-manuel'
+  },
+  'ph-low': {
+    productId: 'bayrol_phplus_granul',
+    issue: 'pH trop bas',
+    why: 'Ton pH est sous la cible. L\'eau devient agressive pour les équipements.',
+    url: 'https://www.bayrol.fr/produits/traitement-manuel'
+  },
+  'cl-low': {
+    productId: 'bayrol_chloriklar',
+    issue: 'Chlore trop bas',
+    why: 'Risque de prolifération bactérienne ou d\'algues. Un choc remet la désinfection à niveau.',
+    url: 'https://www.bayrol.fr/produits/traitement-manuel'
+  },
+  'cl-zero': {
+    productId: 'bayrol_chlorifix',
+    issue: 'Chlore quasi-nul',
+    why: 'Désinfection insuffisante. Traitement choc immédiat recommandé.',
+    url: 'https://www.bayrol.fr/produits/traitement-manuel'
+  },
+  'br-low': {
+    productId: 'bayrol_aquabrome',
+    issue: 'Brome trop bas',
+    why: 'Le brominateur doit être rechargé en pastilles.',
+    url: 'https://www.bayrol.fr/produits/traitement-manuel'
+  },
+  'oxa-low': {
+    productId: 'bayrol_softeasy',
+    issue: 'Oxygène actif trop bas',
+    why: 'Le traitement hebdomadaire à l\'oxygène actif maintient ta désinfection.',
+    url: 'https://www.bayrol.fr/produits/traitement-manuel'
+  },
+  'tac-low': {
+    productId: 'bayrol_alca_plus',
+    issue: 'Alcalinité trop basse',
+    why: 'TAC faible = pH instable. Remonter le TAC stabilise tout le reste.',
+    url: 'https://www.bayrol.fr/produits/traitement-manuel'
+  },
+  'cya-low': {
+    productId: 'bayrol_stabichloran',
+    issue: 'Stabilisant trop bas',
+    why: 'Sans stabilisant, le chlore est détruit par les UV en quelques heures.',
+    url: 'https://www.bayrol.fr/produits/traitement-manuel'
+  },
+  'algae': {
+    productId: 'bayrol_desalgin_classic',
+    issue: 'Risque d\'algues',
+    why: 'Un anti-algues préventif ou curatif évite l\'eau verte.',
+    url: 'https://www.bayrol.fr/produits/traitement-manuel'
+  },
+  'th-high': {
+    productId: 'bayrol_calcinex',
+    issue: 'Eau dure (calcaire)',
+    why: 'Au-delà de 25 °f, risques de dépôts calcaires sur la ligne d\'eau.',
+    url: 'https://www.bayrol.fr/produits/traitement-manuel'
+  }
+};
+
+function detectBayrolReco(measure) {
+  // Retourne la clé du problème prioritaire, ou null si rien à recommander
+  if (!measure) return null;
+  const t = getTreatment();
+
+  // Priorité : désinfectant nul/bas > pH critique > TAC > CYA > TH
+  const dKey = t.inputKey;
+  const dVal = measure[dKey];
+  if (dVal != null) {
+    if (dVal < 0.3) {
+      if (t.id === 'brome') return 'br-low';
+      if (t.id === 'oxa') return 'oxa-low';
+      return 'cl-zero';
+    }
+    if (dVal < t.softMin) {
+      if (t.id === 'brome') return 'br-low';
+      if (t.id === 'oxa') return 'oxa-low';
+      return 'cl-low';
+    }
+  }
+
+  if (measure.ph != null) {
+    if (measure.ph > t.phSoftMax) return 'ph-high';
+    if (measure.ph < t.phSoftMin) return 'ph-low';
+    if (measure.ph > t.phIdealMax) return 'ph-high';
+    if (measure.ph < t.phIdealMin) return 'ph-low';
+  }
+
+  if (measure.tac != null && measure.tac < 60) return 'tac-low';
+  if (t.id === 'chlore' && measure.cya != null && measure.cya < 20) return 'cya-low';
+  if (measure.th != null && measure.th > 30) return 'th-high';
+
+  return null;
+}
+
+function renderBayrolReco() {
+  const card = document.getElementById('bayrolRecoCard');
+  if (!card) return;
+  const last = state.measures[0];
+  const problemKey = detectBayrolReco(last);
+
+  if (!problemKey) { card.style.display = 'none'; card.innerHTML = ''; return; }
+  const reco = BAYROL_RECO_MAP[problemKey];
+  if (!reco) { card.style.display = 'none'; card.innerHTML = ''; return; }
+
+  const product = PRODUCTS.find(p => p.id === reco.productId);
+  if (!product) { card.style.display = 'none'; return; }
+
+  card.style.display = 'block';
+  card.innerHTML =
+    '<div class="card" style="padding: 16px; background: linear-gradient(135deg, rgba(0, 84, 135, 0.12), rgba(25, 182, 208, 0.05)); border: 1px solid rgba(0, 84, 135, 0.25);">' +
+      '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">' +
+        '<div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #005487, #19b6d0); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 11px; letter-spacing: 0.05em;">B</div>' +
+        '<div>' +
+          '<div style="font-size: 10px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Recommandation Bayrol</div>' +
+          '<div style="font-family: var(--display); font-size: 15px; font-weight: 600; color: var(--ink);">' + reco.issue + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="font-size: 13px; color: var(--ink-dim); line-height: 1.45; margin-bottom: 12px;">' + reco.why + '</div>' +
+      '<div style="background: var(--bg-tertiary); border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px; margin-bottom: 12px;">' +
+        '<div style="font-size: 11px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 4px;">Produit conseillé</div>' +
+        '<div style="font-family: var(--display); font-size: 16px; font-weight: 600; color: var(--ink);">' + escapeHtml(product.brand + ' ' + product.name) + '</div>' +
+        (product.format ? '<div style="font-size: 12px; color: var(--ink-dim); margin-top: 2px;">' + escapeHtml(product.format) + '</div>' : '') +
+      '</div>' +
+      '<div class="btn-row">' +
+        '<button class="btn btn-secondary" onclick="openProductFromReco(\'' + product.id + '\')">Voir la dose pour ma piscine</button>' +
+        '<a href="' + reco.url + '" target="_blank" rel="noopener noreferrer" class="btn" style="text-decoration:none; background: linear-gradient(135deg, #005487, #19b6d0);">' +
+          'Site Bayrol ↗' +
+        '</a>' +
+      '</div>' +
+    '</div>';
+}
+
+function openProductFromReco(productId) {
+  switchTab('scan');
+  setTimeout(() => {
+    const p = PRODUCTS.find(x => x.id === productId);
+    if (p && typeof renderProductResult === 'function') {
+      renderProductResult(p, '(recommandation)');
+      const idle = document.getElementById('scanIdleView');
+      if (idle) idle.style.display = 'none';
+    }
+  }, 200);
+}
+
+// Anime une valeur qui change (pulsation subtile)
+function animateValueChange(el) {
+  if (!el) return;
+  el.classList.remove('value-update');
+  void el.offsetWidth;
+  el.classList.add('value-update');
 }
 
 
