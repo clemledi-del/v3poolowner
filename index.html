@@ -191,6 +191,9 @@
     --r-xl: 20px;
     --r-2xl: 28px;
     --r-full: 999px;
+
+    /* Hauteur réservée pour la nav flottante (nav ~76px + marge + safe-area) */
+    --nav-clearance: calc(110px + env(safe-area-inset-bottom));
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -217,7 +220,7 @@
       radial-gradient(ellipse 90% 50% at 80% 100%, rgba(10, 127, 168, 0.22), transparent 60%),
       linear-gradient(180deg, #03263d 0%, #021824 100%);
     background-attachment: fixed;
-    padding-bottom: max(100px, calc(100px + env(safe-area-inset-bottom)));
+    padding-bottom: var(--nav-clearance);
     padding-top: env(safe-area-inset-top);
     position: relative;
     overflow-x: hidden;
@@ -255,7 +258,7 @@
   .app {
     max-width: 480px;
     margin: 0 auto;
-    padding: 28px 18px 20px;
+    padding: 28px 18px var(--nav-clearance);
     position: relative;
     z-index: 1;
   }
@@ -297,6 +300,36 @@
     color: var(--ink-dim);
     line-height: 1.5;
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  /* Pastille météo cliquable */
+  .hdr-weather {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--brand-gradient-soft);
+    border: 1px solid var(--line-brand);
+    border-radius: var(--r-full);
+    cursor: pointer;
+    transition: transform 0.15s var(--ease), background 0.2s var(--ease);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .hdr-weather:hover { transform: translateY(-1px); }
+  .hdr-weather:active { transform: scale(0.95); }
+  .hdr-weather-icon {
+    font-size: 14px;
+    line-height: 1;
+  }
+  .hdr-weather-temp {
+    font-family: var(--mono);
+    font-weight: 600;
   }
   .header-meta .dot {
     display: inline-block;
@@ -1463,6 +1496,8 @@
   .view.active {
     display: block;
     animation: viewIn 0.4s var(--ease-out);
+    /* Sécurité : même si le padding de .app ne suffit pas pour une vue dense, on garantit l'espace */
+    padding-bottom: 20px;
   }
   @keyframes viewIn {
     from { opacity: 0; transform: translateY(8px); }
@@ -1577,6 +1612,177 @@
   [data-theme="light"] .toast {
     color: #fff;
   }
+
+  /* ============================================================
+     GLOSSAIRE CONTEXTUEL — tooltips éducatifs sur les termes
+     ============================================================ */
+  .glossary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--brand-gradient-soft);
+    border: 1.5px solid var(--line-brand);
+    color: var(--brand);
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--body);
+    cursor: pointer;
+    margin-left: 6px;
+    vertical-align: middle;
+    transition: all 0.2s var(--ease);
+    line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .glossary-btn:hover {
+    background: var(--brand-gradient);
+    color: #fff;
+    border-color: var(--brand);
+    transform: scale(1.1);
+  }
+  .glossary-btn:active { transform: scale(0.92); }
+
+  /* Modal glossaire */
+  .glossary-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: gloOverlay 0.25s var(--ease-out);
+  }
+  .glossary-overlay.open { display: flex; }
+  @keyframes gloOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .glossary-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-2xl);
+    max-width: 420px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: gloModalIn 0.35s var(--ease-bounce);
+  }
+  [data-theme="light"] .glossary-modal {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.12);
+  }
+  @keyframes gloModalIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .glossary-header {
+    padding: 20px 22px 16px;
+    background: var(--brand-gradient);
+    color: #fff;
+    border-radius: var(--r-2xl) var(--r-2xl) 0 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .glossary-header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .glossary-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.9;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+  }
+  .glossary-title {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.15;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+  }
+  .glossary-acronym {
+    font-size: 13px;
+    opacity: 0.9;
+    font-family: var(--mono);
+    position: relative;
+    z-index: 1;
+  }
+  .glossary-close {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 0;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: background 0.2s var(--ease);
+  }
+  .glossary-close:hover { background: rgba(255,255,255,0.3); }
+  .glossary-body {
+    padding: 20px 22px;
+  }
+  .glossary-section {
+    margin-bottom: 16px;
+  }
+  .glossary-section:last-child { margin-bottom: 0; }
+  .glossary-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--brand);
+    margin-bottom: 6px;
+  }
+  .glossary-section-content {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .glossary-section-content strong { color: var(--ink); font-weight: 600; }
+  .glossary-range {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .glossary-range-item {
+    padding: 6px 12px;
+    border-radius: var(--r-md);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .glossary-range-item.ideal { background: var(--good-soft); color: var(--good); }
+  .glossary-range-item.too-low { background: var(--warn-soft); color: var(--warn-deep); }
+  .glossary-range-item.too-high { background: var(--bad-soft); color: var(--bad); }
+  [data-theme="light"] .glossary-range-item.too-low { color: #b45309; }
+  [data-theme="light"] .glossary-range-item.too-high { color: #b91c1c; }
 
   /* TOAST */
   .toast {
@@ -2788,6 +2994,10 @@
     </div>
     <div class="header-meta">
       <div><span class="dot"></span><span id="hdrLocation">—</span></div>
+      <div id="hdrWeather" class="hdr-weather" style="display:none;" onclick="switchTab('meteo')">
+        <span class="hdr-weather-icon" id="hdrWeatherIcon">☀</span>
+        <span class="hdr-weather-temp" id="hdrWeatherTemp">—°</span>
+      </div>
       <div id="hdrVolume">— m³</div>
       <button class="settings-btn" onclick="switchTab('settings')" aria-label="Réglages">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -2837,30 +3047,30 @@
 
     <!-- GRILLE DE STAT CARDS COLORÉES -->
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;" id="dashStatsGrid">
-      <div class="stat-card brand" onclick="switchTab('mes')" id="dashCardPh">
+      <div class="stat-card brand" id="dashCardPh">
         <div>
-          <div class="stat-card-label">pH</div>
+          <div class="stat-card-label">pH <button type="button" class="glossary-btn" onclick="event.stopPropagation(); openGlossary('ph')" style="background:rgba(255,255,255,0.18); border-color:rgba(255,255,255,0.35); color:#fff;" aria-label="Qu'est-ce que le pH ?">?</button></div>
           <div class="stat-card-value" id="val-ph">—</div>
         </div>
         <div class="stat-card-meta" id="dashPhRange">cible 7,2 – 7,4</div>
       </div>
-      <div class="stat-card good" onclick="switchTab('mes')" id="dashCardCl">
+      <div class="stat-card good" id="dashCardCl">
         <div>
-          <div class="stat-card-label" id="dashDesinfLabel">Chlore</div>
+          <div class="stat-card-label" id="dashDesinfLabel">Chlore <button type="button" class="glossary-btn" onclick="event.stopPropagation(); openGlossary('desinfectant')" style="background:rgba(255,255,255,0.18); border-color:rgba(255,255,255,0.35); color:#fff;" aria-label="Qu'est-ce que le désinfectant ?">?</button></div>
           <div class="stat-card-value" id="val-cl">—<span class="unit">mg/L</span></div>
         </div>
         <div class="stat-card-meta" id="dashDesinfRange">cible 1 – 3</div>
       </div>
-      <div class="stat-card purple" onclick="switchTab('mes')" id="dashCardTac">
+      <div class="stat-card purple" id="dashCardTac">
         <div>
-          <div class="stat-card-label">Alcalinité</div>
+          <div class="stat-card-label">Alcalinité <button type="button" class="glossary-btn" onclick="event.stopPropagation(); openGlossary('tac')" style="background:rgba(255,255,255,0.18); border-color:rgba(255,255,255,0.35); color:#fff;" aria-label="Qu'est-ce que le TAC ?">?</button></div>
           <div class="stat-card-value" id="val-tac">—<span class="unit">ppm</span></div>
         </div>
         <div class="stat-card-meta">TAC cible 80 – 120</div>
       </div>
-      <div class="stat-card cyan" onclick="switchTab('mes')" id="dashCyaCard">
+      <div class="stat-card cyan" id="dashCyaCard">
         <div>
-          <div class="stat-card-label">Stabilisant</div>
+          <div class="stat-card-label">Stabilisant <button type="button" class="glossary-btn" onclick="event.stopPropagation(); openGlossary('cya')" style="background:rgba(255,255,255,0.18); border-color:rgba(255,255,255,0.35); color:#fff;" aria-label="Qu'est-ce que le stabilisant ?">?</button></div>
           <div class="stat-card-value" id="val-cya">—<span class="unit">mg/L</span></div>
         </div>
         <div class="stat-card-meta">cible 30 – 50</div>
@@ -2960,7 +3170,7 @@
     <div class="card" style="padding: 18px;">
       <div class="measure-slider" data-key="ph" data-min="6.5" data-max="8.5" data-step="0.1" data-decimals="1">
         <div class="ms-head">
-          <div class="ms-label">🧪 pH</div>
+          <div class="ms-label">🧪 pH <button type="button" class="glossary-btn" onclick="openGlossary('ph')" aria-label="Qu'est-ce que le pH ?">?</button></div>
           <div class="ms-target" id="phInputTarget">7,2 – 7,4</div>
         </div>
         <div class="ms-value-row">
@@ -2976,7 +3186,7 @@
 
       <div class="measure-slider" data-key="cl" data-min="0" data-max="6" data-step="0.1" data-decimals="1">
         <div class="ms-head">
-          <div class="ms-label" id="desinf-name">💧 Chlore libre (mg/L)</div>
+          <div class="ms-label" id="desinf-name">💧 Chlore libre (mg/L) <button type="button" class="glossary-btn" onclick="openGlossary('desinfectant')" aria-label="Qu'est-ce que le désinfectant ?">?</button></div>
           <div class="ms-target" id="desinf-target">1 – 3</div>
         </div>
         <div class="ms-value-row">
@@ -2992,7 +3202,7 @@
 
       <div class="measure-slider" data-key="tac" data-min="0" data-max="200" data-step="5" data-decimals="0">
         <div class="ms-head">
-          <div class="ms-label">⚖️ Alcalinité / TAC (ppm)</div>
+          <div class="ms-label">⚖️ Alcalinité / TAC (ppm) <button type="button" class="glossary-btn" onclick="openGlossary('tac')" aria-label="Qu'est-ce que le TAC ?">?</button></div>
           <div class="ms-target">80 – 120 · mensuel</div>
         </div>
         <div class="ms-value-row">
@@ -3008,7 +3218,7 @@
 
       <div class="measure-slider" data-key="cya" data-min="0" data-max="100" data-step="5" data-decimals="0" id="field-cya">
         <div class="ms-head">
-          <div class="ms-label">☀ Stabilisant CYA (mg/L)</div>
+          <div class="ms-label">☀ Stabilisant CYA (mg/L) <button type="button" class="glossary-btn" onclick="openGlossary('cya')" aria-label="Qu'est-ce que le stabilisant ?">?</button></div>
           <div class="ms-target">30 – 50 · mensuel</div>
         </div>
         <div class="ms-value-row">
@@ -3024,7 +3234,7 @@
 
       <div class="measure-slider" data-key="th" data-min="0" data-max="50" data-step="1" data-decimals="0">
         <div class="ms-head">
-          <div class="ms-label">💎 TH / Dureté (°f)</div>
+          <div class="ms-label">💎 TH / Dureté (°f) <button type="button" class="glossary-btn" onclick="openGlossary('th')" aria-label="Qu'est-ce que le TH ?">?</button></div>
           <div class="ms-target">10 – 25</div>
         </div>
         <div class="ms-value-row">
@@ -3040,7 +3250,7 @@
 
       <div class="measure-slider" data-key="temp" data-min="10" data-max="35" data-step="0.5" data-decimals="1">
         <div class="ms-head">
-          <div class="ms-label">🌡 Température (°C)</div>
+          <div class="ms-label">🌡 Température (°C) <button type="button" class="glossary-btn" onclick="openGlossary('temp')" aria-label="Pourquoi mesurer la température ?">?</button></div>
           <div class="ms-target">à noter en été</div>
         </div>
         <div class="ms-value-row">
@@ -3727,6 +3937,19 @@
 </nav>
 
 <div class="toast" id="toast">Enregistré</div>
+
+<!-- MODAL GLOSSAIRE -->
+<div class="glossary-overlay" id="glossaryOverlay" onclick="closeGlossary(event)">
+  <div class="glossary-modal" onclick="event.stopPropagation()">
+    <div class="glossary-header">
+      <button class="glossary-close" onclick="closeGlossary()" aria-label="Fermer">×</button>
+      <div class="glossary-eyebrow" id="gloEyebrow">Paramètre</div>
+      <div class="glossary-title" id="gloTitle">—</div>
+      <div class="glossary-acronym" id="gloAcronym"></div>
+    </div>
+    <div class="glossary-body" id="gloBody"></div>
+  </div>
+</div>
 
 <div class="install-banner" id="installBanner">
   <button class="install-close" onclick="dismissInstall()" aria-label="Fermer">✕</button>
@@ -6420,6 +6643,18 @@ function renderMeteo(data) {
     meteoSub.textContent = 'Prévisions sur 7 jours à ' + state.config.location.name + ', avec estimation de la température de l\'eau et alertes canicule.';
   }
 
+  // Pastille météo dans le header (visible partout dans l'app)
+  if (data && data.current) {
+    const hdrWeather = document.getElementById('hdrWeather');
+    const hdrIcon = document.getElementById('hdrWeatherIcon');
+    const hdrTemp = document.getElementById('hdrWeatherTemp');
+    if (hdrWeather && hdrIcon && hdrTemp) {
+      hdrIcon.textContent = wmoIcon(data.current.code);
+      hdrTemp.textContent = Math.round(data.current.temp) + '°';
+      hdrWeather.style.display = 'inline-flex';
+    }
+  }
+
   if (!data) {
     c.innerHTML = '<div class="card">' +
       '<div class="card-title">Météo indisponible</div>' +
@@ -7510,6 +7745,281 @@ function showToast(msg, isError) {
   if (navigator.vibrate) navigator.vibrate(isError ? [60, 30, 60] : 30);
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// =================================================================
+// GLOSSAIRE CONTEXTUEL — base de données des termes piscine
+// =================================================================
+const GLOSSARY = {
+  ph: {
+    eyebrow: 'Acidité de l\'eau',
+    title: 'pH',
+    acronym: 'Potentiel hydrogène',
+    sections: [
+      {
+        title: 'Définition',
+        content: 'Le pH mesure si ton eau est <strong>acide</strong> (pH bas) ou <strong>basique</strong> (pH haut). Échelle de 0 à 14, le 7 étant neutre.'
+      },
+      {
+        title: 'Pourquoi c\'est important',
+        content: 'C\'est <strong>le paramètre n°1</strong> de l\'entretien. Un pH déréglé rend le désinfectant inefficace, irrite la peau et les yeux, et dégrade les équipements (liner, joints, échelle).'
+      },
+      {
+        title: 'Plages selon ton traitement',
+        content: '<strong>Chlore</strong> : 7,2 – 7,4<br><strong>Brome</strong> : 7,4 – 7,8<br><strong>Oxygène actif</strong> : 7,0 – 7,4'
+      },
+      {
+        title: 'Si trop bas (eau acide)',
+        content: 'Ajouter du <strong>pH+</strong> (carbonate de sodium). Eau agressive pour les équipements.'
+      },
+      {
+        title: 'Si trop haut (eau basique)',
+        content: 'Ajouter du <strong>pH-</strong> (bisulfate de sodium). Désinfectant inefficace, dépôts calcaires.'
+      },
+      {
+        title: 'Fréquence',
+        content: 'À tester <strong>2 à 3 fois par semaine</strong>.'
+      }
+    ]
+  },
+  cl: {
+    eyebrow: 'Désinfectant',
+    title: 'Chlore libre',
+    acronym: 'Cl₂ — le désinfectant le plus utilisé',
+    sections: [
+      {
+        title: 'Définition',
+        content: 'Le <strong>chlore libre</strong> est la quantité de chlore actif qui peut encore désinfecter ton eau. Différent du "chlore total" qui inclut le chlore déjà consommé.'
+      },
+      {
+        title: 'Pourquoi c\'est important',
+        content: 'Tue les bactéries, virus, algues et organismes vivants. Sans chlore suffisant, ton eau devient un terrain favorable aux microbes.'
+      },
+      {
+        title: 'Plage idéale',
+        content: '<strong>1 à 3 mg/L</strong> (ou ppm) en entretien normal.<br>Le chlore se consomme avec : UV solaires, baigneurs, chaleur, pluies.'
+      },
+      {
+        title: 'Si trop bas',
+        content: 'Risque d\'<strong>eau verte</strong> et de bactéries. Faire un <strong>traitement choc</strong> immédiat. Vérifier aussi le stabilisant.'
+      },
+      {
+        title: 'Si trop haut (>5 mg/L)',
+        content: 'Irritations possibles, odeur "chimique". <strong>Suspendre l\'ajout</strong>, baigner moins, laisser baisser naturellement.'
+      },
+      {
+        title: 'Fréquence',
+        content: '<strong>2 à 3 fois par semaine</strong>, plus en forte chaleur ou fréquentation.'
+      }
+    ]
+  },
+  br: {
+    eyebrow: 'Désinfectant',
+    title: 'Brome',
+    acronym: 'Br — alternative au chlore',
+    sections: [
+      {
+        title: 'Définition',
+        content: 'Le <strong>brome</strong> est un désinfectant similaire au chlore mais <strong>sans odeur</strong> et <strong>stable à haute température</strong>. Idéal pour spas et piscines couvertes.'
+      },
+      {
+        title: 'Avantages vs chlore',
+        content: '✓ Pas d\'odeur ✓ Efficace à haute température ✓ Moins irritant pour la peau ✓ Stable même avec pH élevé'
+      },
+      {
+        title: 'Plage idéale',
+        content: '<strong>1 à 3 mg/L</strong> en entretien normal.'
+      },
+      {
+        title: 'Si trop bas',
+        content: 'Recharger le <strong>brominateur</strong> en pastilles. Régler le débit selon la fréquentation.'
+      },
+      {
+        title: 'Important',
+        content: 'Ne pas mélanger avec du chlore. Nécessite un <strong>brominateur dédié</strong>, pas le skimmer.'
+      }
+    ]
+  },
+  oxa: {
+    eyebrow: 'Désinfectant',
+    title: 'Oxygène actif',
+    acronym: 'O₂ actif — désinfection douce',
+    sections: [
+      {
+        title: 'Définition',
+        content: 'L\'<strong>oxygène actif</strong> est un désinfectant plus doux à base de peroxyde d\'hydrogène ou persulfate. Idéal pour la peau sensible.'
+      },
+      {
+        title: 'Avantages',
+        content: '✓ Doux pour peau et yeux ✓ Sans odeur ✓ Pas de sous-produits chlorés ✓ Plus écologique'
+      },
+      {
+        title: 'Inconvénients',
+        content: '✗ Se dégrade vite (chaleur, UV) ✗ Plus coûteux ✗ Suivi plus fréquent nécessaire'
+      },
+      {
+        title: 'Plage idéale',
+        content: '<strong>5 à 10 mg/L</strong> en entretien. À tester 2-3 fois par semaine.'
+      },
+      {
+        title: 'À savoir',
+        content: 'Combiner avec un <strong>anti-algues hebdomadaire</strong>. Filtration en continu si forte chaleur.'
+      }
+    ]
+  },
+  tac: {
+    eyebrow: 'Alcalinité',
+    title: 'TAC',
+    acronym: 'Titre Alcalimétrique Complet',
+    sections: [
+      {
+        title: 'Définition',
+        content: 'Le <strong>TAC</strong> mesure la <strong>capacité de l\'eau à stabiliser son pH</strong>. C\'est un "tampon" qui empêche le pH de varier brutalement.'
+      },
+      {
+        title: 'Pourquoi c\'est important',
+        content: 'Un TAC bien équilibré <strong>stabilise tous tes autres paramètres</strong>. Sans bon TAC, ton pH bouge dans tous les sens et tu corriges sans arrêt.'
+      },
+      {
+        title: 'Plage idéale',
+        content: '<strong>80 à 120 ppm</strong> (ou mg/L).<br>L\'unité °f (degrés français) : 8 à 12 °f.'
+      },
+      {
+        title: 'Si trop bas (<60 ppm)',
+        content: 'pH instable, varie sans raison. Ajouter <strong>TAC+ (bicarbonate de sodium)</strong>. Toujours corriger TAC avant pH.'
+      },
+      {
+        title: 'Si trop haut (>120 ppm)',
+        content: 'pH bloqué en haut, difficulté à le baisser. Vidange partielle et apport d\'eau neuve.'
+      },
+      {
+        title: 'Fréquence',
+        content: '<strong>1 fois par mois</strong>. Plus si pH instable.'
+      }
+    ]
+  },
+  cya: {
+    eyebrow: 'Stabilisant',
+    title: 'CYA',
+    acronym: 'Acide Cyanurique — bouclier UV',
+    sections: [
+      {
+        title: 'Définition',
+        content: 'Le <strong>stabilisant</strong> (acide cyanurique) <strong>protège le chlore des UV du soleil</strong>. Sans lui, le chlore est détruit en quelques heures en plein soleil.'
+      },
+      {
+        title: 'Pourquoi c\'est important',
+        content: 'En piscine extérieure, sans stabilisant tu doublerais ou triplerais ta consommation de chlore.'
+      },
+      {
+        title: 'Plage idéale',
+        content: '<strong>30 à 50 mg/L</strong>.<br>Maximum absolu : 100 mg/L (au-delà, le chlore devient inefficace).'
+      },
+      {
+        title: 'Si trop bas (<20 mg/L)',
+        content: 'Chlore consommé très vite. Ajouter du stabilisant (<strong>Stabichloran</strong>). Action lente : tester après 48h.'
+      },
+      {
+        title: 'Si trop haut (>70 mg/L)',
+        content: 'Effet inverse : chlore moins efficace même à dose normale. Seule solution : <strong>vidange partielle</strong> (1/3 du bassin).'
+      },
+      {
+        title: 'Pour qui',
+        content: 'Uniquement piscine au <strong>chlore</strong>. Inutile au brome ou oxygène actif.'
+      },
+      {
+        title: 'Fréquence',
+        content: '<strong>3 à 4 fois par saison</strong>. Surtout après vidange ou ajout d\'eau.'
+      }
+    ]
+  },
+  th: {
+    eyebrow: 'Dureté',
+    title: 'TH',
+    acronym: 'Titre Hydrotimétrique — dureté de l\'eau',
+    sections: [
+      {
+        title: 'Définition',
+        content: 'Le <strong>TH</strong> mesure la <strong>quantité de calcium et magnésium</strong> dans ton eau. C\'est ce qui rend l\'eau "calcaire" ou "douce".'
+      },
+      {
+        title: 'Pourquoi c\'est important',
+        content: 'Une eau trop dure cause des <strong>dépôts blancs</strong> sur la ligne d\'eau et les équipements. Une eau trop douce devient agressive pour les surfaces.'
+      },
+      {
+        title: 'Plage idéale',
+        content: '<strong>10 à 25 °f</strong> (degrés français) = <strong>100 à 250 mg/L</strong>.<br>Varie selon ta région et ta source d\'eau.'
+      },
+      {
+        title: 'Si trop bas (eau douce)',
+        content: 'Risques de corrosion. Ajouter un <strong>correcteur de dureté</strong>. Pas urgent.'
+      },
+      {
+        title: 'Si trop haut (eau dure)',
+        content: 'Dépôts calcaires. Utiliser <strong>Calcinex</strong> (anti-calcaire séquestrant). Nettoyer la ligne d\'eau régulièrement.'
+      },
+      {
+        title: 'Fréquence',
+        content: '<strong>Au début de la saison</strong>, puis rarement (sauf gros ajout d\'eau).'
+      }
+    ]
+  },
+  temp: {
+    eyebrow: 'Température',
+    title: 'Température de l\'eau',
+    acronym: '°C',
+    sections: [
+      {
+        title: 'Pourquoi mesurer',
+        content: 'La température influence <strong>tout</strong> : consommation de chlore, prolifération des algues, durée de filtration, confort de baignade.'
+      },
+      {
+        title: 'Effet sur la chimie',
+        content: '<strong>+10°C = double la consommation de chlore.</strong><br>Au-dessus de 28°C, les algues prolifèrent rapidement.'
+      },
+      {
+        title: 'Règle de la filtration',
+        content: '<strong>Heures filtration = Température ÷ 2</strong><br>20°C → 10h/jour<br>26°C → 13h/jour<br>30°C → 15h ou 24h non-stop'
+      },
+      {
+        title: 'Plages typiques',
+        content: 'Confort baignade : 26-30°C<br>Eau chaude : 28-32°C → surveillance accrue<br>Hivernage : <12°C → arrêt du traitement actif'
+      }
+    ]
+  }
+};
+
+function openGlossary(termKey) {
+  // Pour les désinfectants, on adapte selon le traitement actif
+  if (termKey === 'desinfectant') {
+    const t = (state.config && state.config.treatment) || 'chlore';
+    termKey = t === 'brome' ? 'br' : (t === 'oxa' ? 'oxa' : 'cl');
+  }
+
+  const data = GLOSSARY[termKey];
+  if (!data) return;
+
+  document.getElementById('gloEyebrow').textContent = data.eyebrow;
+  document.getElementById('gloTitle').textContent = data.title;
+  document.getElementById('gloAcronym').textContent = data.acronym || '';
+
+  let bodyHTML = '';
+  data.sections.forEach(s => {
+    bodyHTML += '<div class="glossary-section">';
+    bodyHTML += '<div class="glossary-section-title">' + escapeHtml(s.title) + '</div>';
+    bodyHTML += '<div class="glossary-section-content">' + s.content + '</div>';
+    bodyHTML += '</div>';
+  });
+  document.getElementById('gloBody').innerHTML = bodyHTML;
+
+  document.getElementById('glossaryOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGlossary(event) {
+  if (event && event.target !== event.currentTarget && !event.target.classList.contains('glossary-close')) return;
+  document.getElementById('glossaryOverlay').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 // =================================================================
