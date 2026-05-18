@@ -95,6 +95,9 @@
     --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.4);
     --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.35);
 
+    /* Couleur du logo Poolex : blanc en mode sombre */
+    --logo-color: #ffffff;
+
     /* === Legacy compat (pour ne pas casser le code existant) === */
     --abyss: #0a1828;
     --abyss-deep: #051120;
@@ -123,6 +126,9 @@
     --brand-soft: #06b6d4;
     --brand-gradient: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
     --brand-gradient-soft: linear-gradient(135deg, rgba(6,182,212,0.1) 0%, rgba(8,145,178,0.05) 100%);
+
+    /* Couleur du logo Poolex : bleu Poolex en mode clair */
+    --logo-color: #005487;
 
     --good: #10b981;
     --good-deep: #047857;
@@ -412,13 +418,17 @@
     top: calc(100% + 6px);
     left: 0;
     right: 0;
-    background: linear-gradient(180deg, #052033, #03192a);
-    border: 1px solid rgba(78, 192, 216, 0.25);
-    border-radius: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-lg);
     overflow: hidden;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+    box-shadow: var(--shadow-lg);
     z-index: 20;
     display: none;
+  }
+  [data-theme="light"] .pool-switcher-menu {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.12);
   }
   .pool-switcher-menu.open {
     display: block;
@@ -440,18 +450,21 @@
     color: var(--ink);
     text-align: left;
     transition: background 0.15s var(--ease);
+    border-bottom: 1px solid var(--line);
   }
+  .pool-switch-item:last-child { border-bottom: 0; }
   .pool-switch-item:hover, .pool-switch-item:active {
-    background: rgba(78, 192, 216, 0.08);
+    background: var(--brand-gradient-soft);
   }
   .pool-switch-item.active {
-    background: rgba(78, 192, 216, 0.06);
+    background: var(--brand-gradient-soft);
   }
   .pool-switch-item-text { flex: 1; min-width: 0; }
   .pool-switch-item-name {
     font-family: var(--display);
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
+    color: var(--ink);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -465,7 +478,7 @@
     white-space: nowrap;
   }
   .pool-switch-item-check {
-    color: var(--shallow);
+    color: var(--brand);
     font-size: 16px;
     font-weight: 600;
   }
@@ -2971,9 +2984,11 @@
       <div class="onb-dot" data-dot="4"></div>
       <div class="onb-dot" data-dot="5"></div>
       <div class="onb-dot" data-dot="6"></div>
+      <div class="onb-dot" data-dot="7"></div>
     </div>
 
     <div class="onb-step active" data-step="0">
+      <div id="onbLogoSlot" style="text-align: center; margin-bottom: 28px;"></div>
       <div class="onb-illustration"><div class="grad-circle">💧</div></div>
       <div class="onb-eyebrow">Bienvenue</div>
       <h1 class="onb-title">Ton bassin,<br><em>au quotidien.</em></h1>
@@ -3237,11 +3252,43 @@
         </div>
       </div>
 
-      <button class="onb-skip" onclick="finishOnboarding(true)">Ignorer la météo</button>
+      <button class="onb-skip" onclick="goToPoolIdStep(true)">Ignorer la météo</button>
 
       <div class="onb-actions">
         <button class="btn btn-ghost" onclick="onbBack()">Retour</button>
-        <button class="btn" id="onbFinish" onclick="finishOnboarding(false)">Terminer
+        <button class="btn" id="onbFinish" onclick="goToPoolIdStep(false)">Suivant
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 7 : Pool ID + sync auto -->
+    <div class="onb-step" data-step="7">
+      <div class="onb-eyebrow">Dernière étape</div>
+      <h1 class="onb-title">Ton <em>Pool ID</em></h1>
+      <p class="onb-desc">Un identifiant unique pour ta piscine. Il permet de synchroniser tes données avec ta famille (envoie-leur le code pour qu'ils retrouvent la même piscine).</p>
+
+      <div class="field" style="margin-top: 16px;">
+        <div class="field-label">
+          <span class="name">Choisis ton Pool ID</span>
+          <button type="button" onclick="generateRandomPoolId()" style="background: transparent; border: 0; color: var(--brand); font-size: 11px; font-weight: 600; cursor: pointer; font-family: var(--body);">🎲 Aléatoire</button>
+        </div>
+        <input class="input" type="text" id="onbPoolId" placeholder="ex. piscine-dupont, ma-piscine-2024" autocomplete="off" oninput="validatePoolId()" style="font-family: var(--mono); letter-spacing: 0.02em;">
+        <div id="poolIdHint" style="font-size: 11.5px; color: var(--ink-dim); margin-top: 8px; line-height: 1.5;">
+          ⚡ Lettres minuscules, chiffres et tirets. <strong>Garde-le précieusement</strong> pour partager avec ta famille.
+        </div>
+      </div>
+
+      <div style="background: var(--brand-gradient-soft); border: 1px solid var(--line-brand); border-radius: var(--r-md); padding: 12px 14px; margin-top: 16px; display: flex; align-items: flex-start; gap: 10px;">
+        <div style="font-size: 18px; flex-shrink: 0;">☁️</div>
+        <div style="font-size: 12.5px; color: var(--ink); line-height: 1.45;">
+          <strong>Sync automatique :</strong> tes mesures, photos et journaux seront sauvegardés dans le cloud et synchronisés avec tous les appareils utilisant ce Pool ID.
+        </div>
+      </div>
+
+      <div class="onb-actions">
+        <button class="btn btn-ghost" onclick="onbBack()">Retour</button>
+        <button class="btn" id="onbFinishFinal" onclick="finishOnboardingWithPoolId()" disabled>Terminer
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>
         </button>
       </div>
@@ -3251,6 +3298,9 @@
 
 <!-- MAIN APP -->
 <div class="app" id="mainApp" style="display:none;">
+  <!-- Bande logo Poolex en haut -->
+  <div id="appLogoSlot" style="text-align: center; padding: 0 0 16px; opacity: 0.85;"></div>
+
   <div class="header">
     <div class="header-title">
       <div class="header-eyebrow" id="hdrEyebrow">Ma piscine</div>
@@ -3358,11 +3408,11 @@
     </div>
 
     <div class="card" id="filtrationCard">
-      <div class="card-title">Filtration du jour</div>
+      <div class="card-title">Filtration du jour <button type="button" class="glossary-btn" onclick="openGlossary('filtration')" aria-label="Comment ça marche la filtration ?">?</button></div>
       <div class="card-sub">Selon la température de l'eau</div>
       <div class="field">
         <div class="field-label">
-          <span class="name">Température de l'eau</span>
+          <span class="name">Température de l'eau <button type="button" class="glossary-btn" onclick="openGlossary('temp')" aria-label="Pourquoi mesurer la température ?">?</button></span>
           <span class="target" id="tempEcho">— °C</span>
         </div>
         <input type="range" id="tempSlider" min="15" max="34" step="0.5" value="26">
@@ -3401,9 +3451,9 @@
     <!-- RECOMMANDATION PRODUIT BAYROL (s'affiche seulement si problème détecté) -->
     <div id="bayrolRecoCard" style="display:none; margin-bottom: 14px;"></div>
 
-    <div class="tip">
+    <div class="tip" onclick="openGlossary('equilibre')" style="cursor: pointer;">
       <div class="tip-icon">☀</div>
-      <div class="tip-text"><strong>Le trio gagnant :</strong> pH juste, chlore suffisant, filtration longue en journée. Ça évite 80 % des problèmes.</div>
+      <div class="tip-text"><strong>Le trio gagnant :</strong> pH juste, chlore suffisant, filtration longue en journée. Ça évite 80 % des problèmes. <span style="color: var(--brand); font-weight: 600;">En savoir plus →</span></div>
     </div>
 
     <div class="card" id="familySnapshotCard">
@@ -4113,36 +4163,77 @@
 
 
     <div class="card">
-      <div class="card-title" style="margin-bottom: 6px;">Connexion Supabase</div>
-      <div class="card-sub">Option technique : active la synchronisation temps réel entre les comptes famille.</div>
+      <div class="card-title" style="margin-bottom: 6px;">☁️ Synchronisation cloud</div>
+      <div class="card-sub">Tes données sont automatiquement sauvegardées et synchronisées avec ta famille via le Pool ID.</div>
       <div class="mini-status" id="syncStatus"><span class="led"></span><span>Synchronisation inactive</span></div>
-      <div class="field">
-        <div class="field-label"><span class="name">Nom du membre</span><span class="target">affiché dans le journal</span></div>
+
+      <!-- Pool ID actif (carte mise en avant) -->
+      <div style="background: var(--brand-gradient-soft); border: 1px solid var(--line-brand); border-radius: var(--r-md); padding: 14px; margin-top: 14px;">
+        <div style="font-size: 10px; color: var(--brand); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 8px;">Ton Pool ID</div>
+        <div id="settingsPoolIdDisplay" style="font-family: var(--mono); font-size: 16px; color: var(--ink); font-weight: 600; background: var(--bg-tertiary); padding: 10px 12px; border-radius: var(--r-sm); margin-bottom: 10px; user-select: all; word-break: keep-all; overflow-wrap: anywhere; line-height: 1.4; text-align: center;">—</div>
+        <button class="btn btn-secondary" onclick="copyPoolIdToClipboard()" style="width: 100%; padding: 10px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copier le Pool ID
+        </button>
+        <div style="font-size: 11.5px; color: var(--ink-dim); margin-top: 10px; line-height: 1.4;">
+          📤 Partage ce code avec ta famille pour qu'ils accèdent à la même piscine sur leur téléphone.
+        </div>
+      </div>
+
+      <!-- Infos membre -->
+      <div class="field" style="margin-top: 14px;">
+        <div class="field-label"><span class="name">Ton nom (affiché dans le journal)</span><span class="target">optionnel</span></div>
         <input class="input" id="memberName" placeholder="ex. Marin">
       </div>
-      <div class="input-row">
-        <div class="field">
-          <div class="field-label"><span class="name">ID espace famille</span></div>
-          <input class="input" id="syncPoolId" placeholder="maison-pourrieres">
+      <div class="field">
+        <div class="field-label"><span class="name">Ton rôle</span></div>
+        <select class="input" id="memberRole"><option>Propriétaire</option><option>Membre</option><option>Piscinier</option></select>
+      </div>
+
+      <!-- Toggle activation sync -->
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--bg-tertiary); border-radius: var(--r-md); margin-top: 14px;">
+        <div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--ink);">Sync activée</div>
+          <div style="font-size: 11.5px; color: var(--ink-dim); margin-top: 2px;">Désactive pour rester 100% local</div>
+        </div>
+        <label class="switch" style="flex-shrink: 0;">
+          <input type="checkbox" id="syncEnabledToggle" checked>
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+
+      <!-- Section : Partager avec la famille -->
+      <div style="margin-top: 18px;">
+        <div style="font-size: 11px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 10px;">📤 Partager avec ta famille</div>
+        <button class="btn" onclick="sharePoolInvite()" style="width: 100%; justify-content: center; margin-bottom: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Inviter ma famille
+        </button>
+        <button class="btn btn-ghost" onclick="openJoinPoolDialog()" style="width: 100%; justify-content: center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+          Rejoindre une autre piscine
+        </button>
+      </div>
+
+      <!-- Bouton Enregistrer (validation infos membre) -->
+      <button class="btn btn-secondary" onclick="saveSyncSettings()" style="width: 100%; justify-content: center; margin-top: 14px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Enregistrer mes infos
+      </button>
+
+      <!-- Configuration avancée (masquée) -->
+      <details style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line);">
+        <summary style="font-size: 11.5px; color: var(--ink-faint); cursor: pointer; padding: 4px 0; user-select: none;">⚙️ Configuration avancée (optionnel)</summary>
+        <div class="field" style="margin-top: 12px;">
+          <div class="field-label"><span class="name">Supabase URL custom</span><span class="target">vide = défaut</span></div>
+          <input class="input" id="syncUrl" placeholder="(par défaut : Poolex)" style="font-family: var(--mono); font-size: 12px;">
         </div>
         <div class="field">
-          <div class="field-label"><span class="name">Rôle</span></div>
-          <select class="input" id="memberRole"><option>Propriétaire</option><option>Membre</option><option>Piscinier</option></select>
+          <div class="field-label"><span class="name">Supabase anon key custom</span><span class="target">vide = défaut</span></div>
+          <input class="input" id="syncKey" placeholder="(par défaut : Poolex)" style="font-family: var(--mono); font-size: 12px;">
         </div>
-      </div>
-      <div class="field">
-        <div class="field-label"><span class="name">Supabase URL</span><span class="target">optionnel</span></div>
-        <input class="input" id="syncUrl" placeholder="https://xxxxx.supabase.co">
-      </div>
-      <div class="field">
-        <div class="field-label"><span class="name">Supabase anon key</span><span class="target">clé publique uniquement</span></div>
-        <input class="input" id="syncKey" placeholder="eyJ...">
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-secondary" onclick="saveSyncSettings()">Enregistrer</button>
-        <button class="btn" onclick="sharePoolInvite()">Inviter par SMS</button>
-      </div>
-      <div class="code-box" id="syncHelp" style="margin-top:12px;">Table simple acceptée : pool_states(id text primary key, data jsonb, updated_at timestamptz). L'app synchronise la famille, les membres, les relevés, actions et diagnostics toutes les 5 secondes.</div>
+        <div class="code-box" style="font-size: 11px;">Laisse vide pour utiliser la base Poolex partagée. Renseigne ces champs uniquement si tu héberges ta propre instance Supabase.</div>
+      </details>
     </div>
 
     <div class="card">
@@ -4249,6 +4340,7 @@
 
     <!-- Partie 2 : Promo Poolex'pert Mesure -->
     <div class="popup-section popup-promo">
+      <div id="popupLogoSlot" style="margin-bottom: 12px; text-align: center;"></div>
       <div class="popup-promo-badge">Poolex'pert Mesure</div>
       <div class="popup-promo-icon">📡</div>
       <h3 class="popup-promo-title">Automatise tes relevés</h3>
@@ -4313,6 +4405,14 @@
 
 <script>
 // STORAGE
+// =================================================================
+// SUPABASE — credentials hardcodés pour sync automatique
+// =================================================================
+const SUPABASE_URL = 'https://wjvxrjuqlrppdefqjqmu.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqdnhyanVxbHJwcGRlZnFqcW11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MDQxOTMsImV4cCI6MjA5NDE4MDE5M30.r2AoAzGgQiK5gSTVL0umGJ8tjcOsphHsuhxQ63KPUFE';
+// Cette clé "anon" est conçue pour être publique côté client.
+// Les politiques RLS Supabase gèrent les autorisations d'accès.
+
 const KEYS = {
   config: 'piscine:config',
   measures: 'piscine:measures',
@@ -4508,6 +4608,16 @@ function refreshPoolSwitcherMenu() {
   menu.innerHTML = html;
 }
 
+// =================================================================
+// LOGO POOLEX — SVG inline, s'adapte au thème (bleu clair / blanc sombre)
+// =================================================================
+function poolexLogoSvg(opts) {
+  opts = opts || {};
+  const height = opts.height || 24;
+  // La couleur du logo : --logo-color est définie dans :root et bascule selon le thème
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200.9127 51.7523" style="height:' + height + 'px; width:auto; display:inline-block; vertical-align:middle; fill: var(--logo-color);" aria-label="Logo Poolex"><path d="M193.9889,42.5279a.0686.0686,0,0,1-.0287,0H182.619a.8813.8813,0,0,1-.8392-.613l-2.4733-7.7791-3.96,4.3777a11.7831,11.7831,0,0,1-4.1894,3.11,16.0043,16.0043,0,0,1-6.0713.9046h-7.8692a.8776.8776,0,0,1-.7992-1.2433l3.46-7.61a.8826.8826,0,0,1,.8013-.5157h1.6823a7.0031,7.0031,0,0,0,2.4119-.3612,6.9871,6.9871,0,0,0,1.844-1.3743l8.8076-8.958L170.3956,7.2791a.8784.8784,0,0,1,.836-1.1553h11.34a.8782.8782,0,0,1,.835.61l1.7857,5.5606,2.86-3.2469a8.3322,8.3322,0,0,1,3.1119-2.285,12.0191,12.0191,0,0,1,4.1116-.6386h9.1872a.88.88,0,0,1,.8,1.2444l-3.4711,7.6133a.8788.8788,0,0,1-.8.5138h-.9456a6.5094,6.5094,0,0,0-2.3034.36,6.4146,6.4146,0,0,0-1.9,1.3742l-6.76,6.81,5.6477,17.1368a.87.87,0,0,1,.1392.4727A.88.88,0,0,1,193.9889,42.5279Z" transform="translate(-4.4297 -6.1238)"/><path d="M152.6791,42.5279H131.7883a.8844.8844,0,0,1-.7419-.4032.8741.8741,0,0,1-.0593-.84l15.75-34.644a.876.876,0,0,1,.8013-.5168h20.8877a.8774.8774,0,0,1,.8013,1.2444l-3.4639,7.6133a.8834.8834,0,0,1-.8.5138h-8.2519l-1.5687,3.4914h7.4548a.8788.8788,0,0,1,.8023,1.2434l-3.464,7.6072a.8776.8776,0,0,1-.7992.5168h-8.2529l-2.193,4.8044h7.4507a.8776.8776,0,0,1,.8013,1.2423L153.48,42.0132A.8787.8787,0,0,1,152.6791,42.5279Z" transform="translate(-4.4297 -6.1238)"/><path d="M127.3963,42.5279H105.9806a.88.88,0,0,1-.8013-1.2433L120.928,6.6406a.8791.8791,0,0,1,.8013-.5168h12.0739a.8884.8884,0,0,1,.74.4022.8774.8774,0,0,1,.06.84L122.8866,33.1585h7.9777a.8839.8839,0,0,1,.74.4052.8735.8735,0,0,1,.0583.8412l-3.4659,7.6113A.88.88,0,0,1,127.3963,42.5279Z" transform="translate(-4.4297 -6.1238)"/><path d="M94.9135,42.5279H79.5312a7.0191,7.0191,0,0,1-4.129-1.1594,4.2111,4.2111,0,0,1-1.6834-3.4977,4.6259,4.6259,0,0,1,.1924-1.2423,9.4824,9.4824,0,0,1,.5117-1.32L85.0806,11.6809a9.4,9.4,0,0,1,3.5652-4.3363c1.41-.8233,3.5273-1.2208,6.4755-1.2208h15.3833a6.6035,6.6035,0,0,1,4.1577,1.1809,4.06,4.06,0,0,1,1.7058,3.4813A4.3368,4.3368,0,0,1,116.18,12.02a7.7647,7.7647,0,0,1-.5352,1.3666L104.9511,36.9744a8.7843,8.7843,0,0,1-3.57,4.3419C99.9963,42.1185,97.8166,42.5279,94.9135,42.5279ZM89.8492,32.2314c-.0072.06-.0143.1238-.0235.1873-.0052.0542-.0144.1064-.0174.1514a.4263.4263,0,0,0,.21.3827,2.6744,2.6744,0,0,0,1.1154.2057,2.5781,2.5781,0,0,0,1.3855-.3991,4.3915,4.3915,0,0,0,.9281-1.32l6.7569-14.8788c.03-.0839.0645-.1709.0809-.2369l.0419-.2655c-.0184-.2129-.0911-.2631-.1494-.306a1.2877,1.2877,0,0,0-.965-.2568,2.8523,2.8523,0,0,0-1.5708.3862,3.461,3.461,0,0,0-1.0457,1.33L89.9443,31.9827c-.005.0256-.0419.1116-.0767.1985Z" transform="translate(-4.4297 -6.1238)"/><path d="M61.1189,42.5279H45.7243a7.0233,7.0233,0,0,1-4.1331-1.1594,4.22,4.22,0,0,1-1.6824-3.4977,4.8572,4.8572,0,0,1,.19-1.2382,10.32,10.32,0,0,1,.5137-1.3241L51.2706,11.6809a9.4169,9.4169,0,0,1,3.56-4.3363c1.4162-.8233,3.5355-1.2208,6.4836-1.2208H76.6936a6.61,6.61,0,0,1,4.1618,1.1809A4.0742,4.0742,0,0,1,82.56,10.786a4.3315,4.3315,0,0,1-.1944,1.2423,7.9381,7.9381,0,0,1-.526,1.3538L71.1442,36.9744a8.7964,8.7964,0,0,1-3.5723,4.3419C66.1914,42.1185,64.0169,42.5279,61.1189,42.5279Zm-5.0787-10.3c-.0081.0665-.0174.1331-.0255.2047-.02.2763.0174.3981.1913.52a2.6741,2.6741,0,0,0,1.12.2057,2.5471,2.5471,0,0,0,1.3784-.3991,4.2774,4.2774,0,0,0,.9312-1.318L66.392,16.5636a1.9858,1.9858,0,0,0,.0859-.2456l.0389-.2538c-.0174-.2174-.089-.2692-.1484-.3121a1.2986,1.2986,0,0,0-.9608-.2568,2.8344,2.8344,0,0,0-1.5739.3862,3.4617,3.4617,0,0,0-1.0488,1.3329Z" transform="translate(-4.4297 -6.1238)"/><path d="M17.2119,42.2424H5.2915a.8607.8607,0,0,1-.7849-1.2208l15.546-34.2a.8619.8619,0,0,1,.7828-.5045H42.8631a6.54,6.54,0,0,1,4.0994,1.1594,4.1647,4.1647,0,0,1,1.6322,3.4864,4.2276,4.2276,0,0,1-.173,1.1671,4.62,4.62,0,0,1-.4809,1.3277l-5.43,12.1088a9.0967,9.0967,0,0,1-3.0259,4.0564c-1.1338.7183-2.9082,1.0642-5.4317,1.0642H23.05L17.9958,41.74A.8651.8651,0,0,1,17.2119,42.2424ZM27.2536,21.4458h3.334l2.0875-4.785c.0113-.0261.02-.0522.0287-.0737a.3636.3636,0,0,1,.0214-.0563.8181.8181,0,0,1,.0481-.2609v-.0737a.5089.5089,0,0,0-.2149-.4319,1.1953,1.1953,0,0,0-.7336-.2056H29.8969Z" transform="translate(-4.4297 -6.1238)"/><path d="M104.3107,54.5951l-.0618.2907c-.1976.9273-.0605,1.5226.9918,1.5226A1.4708,1.4708,0,0,0,106.69,55.19c.192-.9-.1943-1.2323-1.4123-1.6894-1.6431-.609-2.3036-1.3431-1.9528-2.99a3.4778,3.4778,0,0,1,3.6782-2.908c1.7722,0,2.8978.7616,2.4944,2.6584l-.0583.2771h-1.9116c.1977-.9279-.0058-1.4677-.7667-1.4677a1.3087,1.3087,0,0,0-1.38,1.1494c-.1292.6091-.03.9827.7393,1.3427l1.3951.665a2.0115,2.0115,0,0,1,1.3266,2.6166c-.4456,2.0905-1.92,3.0321-4.0792,3.0321-2.2568,0-2.9195-1.0525-2.531-2.8795l.0857-.4016Z" transform="translate(-4.4297 -6.1238)"/><path d="M113.2038,47.7969l-1.4671,6.8947c-.2091.9833-.1292,1.7168.7975,1.7168s1.32-.7335,1.5289-1.7168l1.4672-6.8947h1.9939l-1.4672,6.8947a3.61,3.61,0,0,1-3.8347,3.1846c-1.62,0-3.0417-.54-2.48-3.1846l1.4671-6.8947Z" transform="translate(-4.4297 -6.1238)"/><path d="M116.7746,57.6825l2.1036-9.8856h1.9939l-2.1036,9.8856Z" transform="translate(-4.4297 -6.1238)"/><path d="M123.8339,47.7969l-.1566,7.31h.0411l3.0235-7.31h2.0625L124.43,57.6825h-2.5618l-.1668-9.8856Z" transform="translate(-4.4297 -6.1238)"/><path d="M135.06,47.7969l-.3485,1.6334h-3.53l-.4959,2.3264H134.01l-.3485,1.6334h-3.3228l-.5656,2.6584h3.6691l-.3474,1.634h-5.663l2.1037-9.8856Z" transform="translate(-4.4297 -6.1238)"/><path d="M134.0388,56.2284,139.127,49.43h-3.3925l.3473-1.6334h5.6915l-.321,1.5088-5.1316,6.7428h3.7524l-.3485,1.634H133.73Z" transform="translate(-4.4297 -6.1238)"/><path d="M144.0689,57.6825l2.1037-9.8856h1.9939L146.41,56.0485h3.5308l-.3474,1.634Z" transform="translate(-4.4297 -6.1238)"/><path d="M152.9461,49.5965c-.3119,1.4678-.88,2.5064-2.39,2.6447l.2057-.9695a1.318,1.318,0,0,0,.953-1.0936l.0468-.2217h-.72l.46-2.16h1.8271Z" transform="translate(-4.4297 -6.1238)"/><path d="M160.43,47.7969l-.3473,1.6334h-3.5308l-.4948,2.3264H159.38L159.033,53.39H155.71l-.5656,2.6584h3.669l-.3474,1.634h-5.6629l2.1025-9.8856Z" transform="translate(-4.4297 -6.1238)"/><path d="M161.148,47.7969H163.35l.5931,3.1982,1.94-3.1982h2.1744l-3.3388,4.8871,1.4009,4.9985h-2.243l-.7131-3.3508-2.1253,3.3508h-2.187L162.38,52.684Z" transform="translate(-4.4297 -6.1238)"/><path d="M168.9957,47.7969h3.49c2.0214,0,2.3984,1.4814,2.0831,2.9629a3.5453,3.5453,0,0,1-3.7764,2.9765h-1.0661l-.84,3.9462h-1.9928Zm1.0433,4.4717h.8855a1.6432,1.6432,0,0,0,1.6443-1.4814c.2068-.969-.064-1.5232-1.06-1.5232h-.8307Z" transform="translate(-4.4297 -6.1238)"/><path d="M181.7042,47.7969l-.3474,1.6334H177.826l-.4947,2.3264h3.3228l-.3473,1.6334h-3.3229l-.5656,2.6584h3.6691l-.3474,1.634h-5.663l2.1025-9.8856Z" transform="translate(-4.4297 -6.1238)"/><path d="M182.8377,47.7969H186.52c1.634,0,2.4476.8581,2.0888,2.5475a2.8143,2.8143,0,0,1-2.1665,2.4367l-.0057.0274c1.3186.18,1.3678.9278.9507,3.0189-.208,1.0381-.2674,1.578.0651,1.7722l-.0171.0829h-2.16a1.7641,1.7641,0,0,1-.0286-1.0387l.3486-1.8968c.137-.7753-.11-1.2461-.9119-1.2461h-1.0661l-.89,4.1816h-1.9939Zm1.0741,4.32h.8307a1.6582,1.6582,0,0,0,1.8111-1.4814c.1942-.9141-.1931-1.3712-1.0936-1.3712h-.9415Z" transform="translate(-4.4297 -6.1238)"/><path d="M196.0718,47.7969l-.3474,1.6334h-2.1607l-1.7551,8.2522h-1.9939L191.57,49.43h-2.16l.3474-1.6334Z" transform="translate(-4.4297 -6.1238)"/></svg>';
+}
+
 function escapeHtml(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
@@ -4664,6 +4774,92 @@ function onbBack() {
     return;
   }
   if (onbStep > 0) setOnbStep(onbStep - 1);
+}
+
+// =================================================================
+// POOL ID — génération, validation, création Supabase auto
+// =================================================================
+
+// Mots simples pour générer des Pool IDs lisibles
+const POOLID_ADJECTIVES = ['bleu', 'turquoise', 'azur', 'cristal', 'frais', 'calme', 'doux', 'pur', 'serein', 'lumineux'];
+const POOLID_NOUNS = ['piscine', 'bassin', 'oasis', 'lagon', 'spa', 'eau', 'vague', 'reflet'];
+
+function generateRandomPoolId() {
+  const adj = POOLID_ADJECTIVES[Math.floor(Math.random() * POOLID_ADJECTIVES.length)];
+  const noun = POOLID_NOUNS[Math.floor(Math.random() * POOLID_NOUNS.length)];
+  const num = Math.floor(Math.random() * 9000) + 1000; // 4 chiffres
+  const poolId = `${noun}-${adj}-${num}`;
+  const input = document.getElementById('onbPoolId');
+  if (input) {
+    input.value = poolId;
+    validatePoolId();
+  }
+}
+
+function validatePoolId() {
+  const input = document.getElementById('onbPoolId');
+  const hint = document.getElementById('poolIdHint');
+  const btn = document.getElementById('onbFinishFinal');
+  if (!input || !hint || !btn) return;
+
+  let val = (input.value || '').trim().toLowerCase().replace(/[^a-z0-9\-_]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  // Si la valeur a été nettoyée, on la met à jour
+  if (val !== input.value) input.value = val;
+
+  if (val.length === 0) {
+    hint.innerHTML = '⚡ Lettres minuscules, chiffres et tirets. <strong>Garde-le précieusement</strong> pour partager avec ta famille.';
+    hint.style.color = 'var(--ink-dim)';
+    btn.disabled = true;
+    return;
+  }
+  if (val.length < 4) {
+    hint.innerHTML = '⚠️ Au moins 4 caractères';
+    hint.style.color = 'var(--warn)';
+    btn.disabled = true;
+    return;
+  }
+  if (val.length > 40) {
+    hint.innerHTML = '⚠️ Maximum 40 caractères';
+    hint.style.color = 'var(--warn)';
+    btn.disabled = true;
+    return;
+  }
+  hint.innerHTML = '✓ Pool ID valide. Tu pourras le partager avec ta famille pour qu\'ils retrouvent cette piscine.';
+  hint.style.color = 'var(--good)';
+  btn.disabled = false;
+}
+
+function goToPoolIdStep(skipMeteo) {
+  // Capture l'état de la ville avant de passer à l'étape Pool ID
+  if (skipMeteo) {
+    onbData.location = null;
+    onbData._skipMeteo = true;
+  } else {
+    onbData._skipMeteo = false;
+  }
+  setOnbStep(7);
+  // Pré-génère un Pool ID
+  setTimeout(() => {
+    if (!document.getElementById('onbPoolId').value) {
+      generateRandomPoolId();
+    }
+  }, 100);
+}
+
+// Création automatique de l'entrée Supabase + finish onboarding
+async function finishOnboardingWithPoolId() {
+  const poolIdInput = document.getElementById('onbPoolId');
+  const poolId = (poolIdInput.value || '').trim().toLowerCase();
+  if (!poolId || poolId.length < 4) {
+    showToast('Pool ID invalide', true);
+    return;
+  }
+
+  // Stocker le Pool ID dans onbData pour utilisation dans finishOnboarding
+  onbData._poolId = poolId;
+
+  // Lancer le finishOnboarding classique avec le skipMeteo capturé
+  await finishOnboarding(onbData._skipMeteo === true);
 }
 
 function setOnbStep(n) {
@@ -4842,7 +5038,7 @@ function doCitySearch(query, resultsEl, onPick) {
   }, 300);
 }
 
-function finishOnboarding(skipMeteo) {
+async function finishOnboarding(skipMeteo) {
   if (onbStep === 2) onbData.name = document.getElementById('onbName').value.trim();
   if (onbStep === 3 || !onbData.volume) {
     if (onbData.volumeMode === 'm3') {
@@ -4856,6 +5052,14 @@ function finishOnboarding(skipMeteo) {
   if (!onbData.volume) { showToast('Le volume est nécessaire', true); setOnbStep(3); return; }
   if (!onbData.treatment) { showToast('Le traitement est nécessaire', true); setOnbStep(4); return; }
   if (!onbData.name) onbData.name = (onbData.bassinType === 'spa') ? 'Mon spa' : 'Ma piscine';
+
+  // Pool ID : généré pendant l'étape 7, fallback aléatoire si manquant
+  const poolId = onbData._poolId || (function() {
+    const adj = POOLID_ADJECTIVES[Math.floor(Math.random() * POOLID_ADJECTIVES.length)];
+    const noun = POOLID_NOUNS[Math.floor(Math.random() * POOLID_NOUNS.length)];
+    const num = Math.floor(Math.random() * 9000) + 1000;
+    return `${noun}-${adj}-${num}`;
+  })();
 
   state.config = {
     bassinType: onbData.bassinType,  // 'piscine' ou 'spa'
@@ -4880,7 +5084,14 @@ function finishOnboarding(skipMeteo) {
     routinesReset: { daily: 0, weekly: 0, monthly: 0 },
     actions: [],
     aiAnalyses: [],
-    sync: null,
+    // === SYNC AUTOMATIQUE pour les NOUVELLES piscines ===
+    sync: {
+      poolId: poolId,
+      enabled: true,
+      memberName: '',
+      role: 'owner'
+      // url et key sont hardcodés dans SUPABASE_URL/KEY (pas besoin de les stocker)
+    },
     reminders: { enabled: false, frequency: '2days', day: 6, time: '09:00' }
   };
   state.pools.push(newPool);
@@ -4889,6 +5100,10 @@ function finishOnboarding(skipMeteo) {
   if (state.addingPool) {
     applyPoolToState(newPool);
     delete state.addingPool;
+  } else {
+    // 1er onboarding : appliquer aussi l'état sync
+    state.sync = newPool.sync;
+    saveKey(KEYS.sync, state.sync);
   }
   persistAllPools();
   // Compat : on garde aussi l'écriture sur l'ancienne clé pour le cas où on aurait raté quelque chose
@@ -4901,6 +5116,16 @@ function finishOnboarding(skipMeteo) {
   initAppUI();
   refreshPoolSwitcherDisplay();
   showToast('Bienvenue ' + state.config.name);
+
+  // === CRÉATION AUTOMATIQUE DE L'ENTRÉE SUPABASE ===
+  try {
+    await pushRealtimeState();
+    await startRealtimeSync(true);
+    showToast('☁️ Piscine synchronisée dans le cloud');
+  } catch (e) {
+    console.warn('Échec sync initiale (mais piscine créée localement):', e);
+    // Pas de toast d'erreur pour ne pas alarmer : la piscine fonctionne en local
+  }
 }
 
 // APP INIT
@@ -6716,6 +6941,20 @@ function renderDiagnostic(advice, persisted) {
   const c = document.getElementById('adviceContainer');
   if (advice.length === 0) { c.innerHTML = ''; return; }
 
+  // Mapping nom de paramètre du diagnostic → clé du glossaire
+  const paramToGlossary = function(param) {
+    const p = (param || '').toLowerCase();
+    if (p.includes('ph')) return 'ph';
+    if (p.includes('chlore')) return 'cl';
+    if (p.includes('brome')) return 'br';
+    if (p.includes('oxygène') || p.includes('oxa')) return 'oxa';
+    if (p.includes('alcalin') || p.includes('tac')) return 'tac';
+    if (p.includes('stabilis') || p.includes('cya')) return 'cya';
+    if (p.includes('dureté') || p.includes('th')) return 'th';
+    if (p.includes('température') || p.includes('temp')) return 'temp';
+    return null;
+  };
+
   // Tri par criticité : bad d'abord, puis warn, puis good
   const order = { bad: 0, warn: 1, good: 2 };
   const sorted = [...advice].sort((a, b) => order[a.status] - order[b.status]);
@@ -6769,10 +7008,12 @@ function renderDiagnostic(advice, persisted) {
     html += '<div class="card" style="padding:0; overflow:hidden; margin-bottom:10px;">';
 
     // Header avec icône colorée gradient
+    const gloKey = paramToGlossary(a.param);
+    const gloBtn = gloKey ? ' <button type="button" class="glossary-btn" onclick="event.stopPropagation(); openGlossary(\'' + gloKey + '\')" style="background:rgba(255,255,255,0.95); border-color:transparent; color:' + col.text + '; vertical-align:middle;" aria-label="En savoir plus">?</button>' : '';
     html += '<div style="display:flex; align-items:center; gap:12px; padding:14px 16px; background:' + col.bg + '; border-bottom: 1px solid var(--line);">';
     html += '<div style="width:36px; height:36px; border-radius:50%; background:' + col.iconBg + '; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; font-weight:600; box-shadow: var(--shadow-sm); flex-shrink:0;">' + a.icon + '</div>';
     html += '<div style="flex:1; min-width:0;">';
-    html += '<div style="font-size:10px; font-weight:700; color:' + col.text + '; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:2px;">' + a.param + '</div>';
+    html += '<div style="font-size:10px; font-weight:700; color:' + col.text + '; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:2px;">' + a.param + gloBtn + '</div>';
     html += '<div style="font-family:var(--display); font-size:15px; font-weight:600; color:var(--ink); line-height:1.2;">' + a.title + '</div>';
     html += '</div>';
     html += '<div style="font-family:var(--mono); font-size:13px; font-weight:600; color:' + col.text + '; background:var(--bg-tertiary); padding:6px 10px; border-radius:var(--r-full); white-space:nowrap;">' + a.value + '</div>';
@@ -7930,7 +8171,6 @@ function hydrateAdvancedSettings() {
   state.reminders = Object.assign({ enabled:false, frequency:'2days', day:6, time:'09:00' }, loadKey(KEYS.reminders, {}));
   const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
   set('memberName', state.sync && state.sync.memberName);
-  set('syncPoolId', state.sync && state.sync.poolId);
   set('memberRole', state.sync && state.sync.role);
   set('syncUrl', state.sync && state.sync.url);
   set('syncKey', state.sync && state.sync.key);
@@ -7939,6 +8179,20 @@ function hydrateAdvancedSettings() {
   set('remTime', state.reminders.time);
   set('remEnabled', String(!!state.reminders.enabled));
   set('actAuthor', getMemberName());
+
+  // Pool ID affiché en lecture seule (carte mise en avant)
+  const poolIdDisplay = document.getElementById('settingsPoolIdDisplay');
+  if (poolIdDisplay) {
+    const creds = getSyncCreds();
+    poolIdDisplay.textContent = creds.poolId || 'Aucun (sync désactivée)';
+  }
+
+  // Toggle sync enabled
+  const toggleEl = document.getElementById('syncEnabledToggle');
+  if (toggleEl) {
+    toggleEl.checked = !state.sync || state.sync.enabled !== false;
+  }
+
   // Surligner le traitement actif dans les réglages
   const activeT = (state.config && state.config.treatment) || 'chlore';
   document.querySelectorAll('.choice-card[data-set-treatment]').forEach(c => {
@@ -8058,21 +8312,80 @@ function saveReminderSettings() {
   showToast('Rappels enregistrés ✓');
 }
 function saveSyncSettings() {
+  const currentSync = state.sync || {};
+  const enabledEl = document.getElementById('syncEnabledToggle');
+  // Champs URL/Key custom (uniquement si renseignés, sinon on garde les défauts hardcodés)
+  const customUrl = document.getElementById('syncUrl').value.trim();
+  const customKey = document.getElementById('syncKey').value.trim();
   state.sync = {
     memberName: document.getElementById('memberName').value.trim() || 'Membre',
-    poolId: document.getElementById('syncPoolId').value.trim() || slugify(state.config.name),
+    poolId: currentSync.poolId || slugify(state.config.name), // pas modifiable directement ici
     role: document.getElementById('memberRole').value,
-    url: document.getElementById('syncUrl').value.trim(),
-    key: document.getElementById('syncKey').value.trim(),
-    enabled: true
+    url: customUrl, // vide = utilise SUPABASE_URL hardcodé
+    key: customKey, // vide = utilise SUPABASE_KEY hardcodé
+    enabled: enabledEl ? enabledEl.checked : true
   };
   saveKey(KEYS.sync, state.sync);
   localStorage.setItem('piscine:memberName', state.sync.memberName);
   hydrateAdvancedSettings();
   updateSyncStatus();
+  if (state.sync.enabled) {
+    startRealtimeSync(true);
+    pushRealtimeState();
+    showToast('✓ Sync activée');
+  } else {
+    if (syncTimer) clearInterval(syncTimer);
+    showToast('Sync désactivée (mode local)');
+  }
+}
+
+// Copie le Pool ID actuel dans le presse-papiers
+function copyPoolIdToClipboard() {
+  const creds = getSyncCreds();
+  if (!creds.poolId) { showToast('Pas de Pool ID actif', true); return; }
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(creds.poolId).then(() => {
+      showToast('✓ Pool ID copié : ' + creds.poolId);
+    }).catch(() => {
+      fallbackCopy(creds.poolId);
+    });
+  } else {
+    fallbackCopy(creds.poolId);
+  }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); showToast('✓ Pool ID copié'); }
+  catch(e) { showToast('Copie manuelle : ' + text, true); }
+  document.body.removeChild(ta);
+}
+
+// Dialog "Rejoindre une piscine existante"
+function openJoinPoolDialog() {
+  const poolId = prompt('Saisis le Pool ID d\'une piscine existante pour rejoindre ses données :\n\n(format ex. piscine-bleu-1234)');
+  if (!poolId) return;
+  const cleanId = poolId.trim().toLowerCase().replace(/[^a-z0-9\-_]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  if (cleanId.length < 4) {
+    showToast('Pool ID invalide', true);
+    return;
+  }
+  // Confirme
+  if (!confirm('⚠️ Cela va remplacer tes données locales par celles du Pool ID "' + cleanId + '".\n\nContinuer ?')) return;
+  // Met à jour la sync
+  state.sync = Object.assign({}, state.sync || {}, {
+    poolId: cleanId,
+    enabled: true,
+    role: 'member',
+    memberName: (state.sync && state.sync.memberName) || ''
+  });
+  saveKey(KEYS.sync, state.sync);
+  showToast('Connexion à ' + cleanId + '...');
+  // Pull les données et applique
   startRealtimeSync(true);
-  pushRealtimeState();
-  showToast('Accès partagé enregistré ✓');
 }
 function slugify(str) { return (str || 'piscine').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40) || 'piscine'; }
 function getFullStatePayload() {
@@ -8135,34 +8448,48 @@ function updateSyncStatus(text, on) {
 }
 async function startRealtimeSync(force) {
   if (syncTimer) clearInterval(syncTimer);
-  const sync = state.sync || loadKey(KEYS.sync, {});
-  if (!sync || !sync.poolId || !sync.url || !sync.key) { updateSyncStatus(); return; }
+  const creds = getSyncCreds();
+  if (!creds.poolId || !creds.enabled) { updateSyncStatus(); return; }
   if (force) await pullRealtimeState();
   syncTimer = setInterval(pullRealtimeState, 5000);
   updateSyncStatus('Synchronisation temps réel active', true);
 }
+// Helper : retourne les credentials de sync effectifs
+// Utilise les constantes SUPABASE_URL/KEY par défaut, ou les valeurs custom si renseignées (compat avec l'ancien système)
+function getSyncCreds() {
+  const sync = state.sync || loadKey(KEYS.sync, {}) || {};
+  return {
+    url: (sync.url && sync.url.trim()) || SUPABASE_URL,
+    key: (sync.key && sync.key.trim()) || SUPABASE_KEY,
+    poolId: sync.poolId || null,
+    enabled: sync.enabled !== false, // true par défaut (sauf si explicitement désactivé)
+    memberName: sync.memberName || '',
+    role: sync.role || 'member'
+  };
+}
+
 async function supabaseFetch(method, body) {
-  const sync = state.sync || loadKey(KEYS.sync, {});
-  if (!sync || !sync.url || !sync.key || !sync.poolId) throw new Error('Sync non configurée');
-  const base = sync.url.replace(/\/$/, '') + '/rest/v1/pool_states';
-  const url = method === 'GET' ? base + '?id=eq.' + encodeURIComponent(sync.poolId) + '&select=id,data,updated_at' : base;
+  const creds = getSyncCreds();
+  if (!creds.poolId) throw new Error('Pool ID manquant');
+  const base = creds.url.replace(/\/$/, '') + '/rest/v1/pool_states';
+  const url = method === 'GET' ? base + '?id=eq.' + encodeURIComponent(creds.poolId) + '&select=id,data,updated_at' : base;
   return fetch(url, {
     method,
-    headers: { 'apikey': sync.key, 'Authorization':'Bearer ' + sync.key, 'Content-Type':'application/json', 'Prefer':'resolution=merge-duplicates,return=minimal' },
+    headers: { 'apikey': creds.key, 'Authorization':'Bearer ' + creds.key, 'Content-Type':'application/json', 'Prefer':'resolution=merge-duplicates,return=minimal' },
     body: body ? JSON.stringify(body) : undefined
   });
 }
 async function pushRealtimeState() {
-  const sync = state.sync || loadKey(KEYS.sync, {});
-  if (!sync || !sync.poolId || !sync.url || !sync.key) return;
+  const creds = getSyncCreds();
+  if (!creds.poolId || !creds.enabled) return;
   try {
-    await supabaseFetch('POST', { id: sync.poolId, data: getFullStatePayload(), updated_at: new Date().toISOString() });
+    await supabaseFetch('POST', { id: creds.poolId, data: getFullStatePayload(), updated_at: new Date().toISOString() });
     updateSyncStatus('Dernière synchro : ' + new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}), true);
-  } catch(e) { updateSyncStatus('Erreur sync : vérifie Supabase', false); }
+  } catch(e) { updateSyncStatus('Erreur sync : vérifie ta connexion', false); }
 }
 async function pullRealtimeState() {
-  const sync = state.sync || loadKey(KEYS.sync, {});
-  if (!sync || !sync.poolId || !sync.url || !sync.key) return;
+  const creds = getSyncCreds();
+  if (!creds.poolId || !creds.enabled) return;
   try {
     const res = await supabaseFetch('GET');
     const rows = await res.json();
@@ -8488,6 +8815,141 @@ const GLOSSARY = {
       {
         title: 'Plages typiques',
         content: 'Confort baignade : 26-30°C<br>Eau chaude : 28-32°C → surveillance accrue<br>Hivernage : <12°C → arrêt du traitement actif'
+      }
+    ]
+  },
+  filtration: {
+    eyebrow: 'Entretien quotidien',
+    title: 'Filtration',
+    acronym: 'Le poumon de ta piscine',
+    sections: [
+      {
+        title: 'Définition',
+        content: 'La <strong>filtration</strong> fait circuler l\'eau à travers un filtre (sable, cartouche, diatomée) pour éliminer débris, poussières et particules. C\'est le système qui maintient ton eau visuellement propre.'
+      },
+      {
+        title: 'Pourquoi c\'est important',
+        content: 'Sans filtration, ton eau devient <strong>trouble en 24-48h</strong> même avec un bon traitement chimique. La filtration ET la chimie travaillent ensemble.'
+      },
+      {
+        title: 'Règle d\'or',
+        content: '<strong>Heures de filtration = Température de l\'eau ÷ 2</strong><br><br>20°C → 10 h/jour<br>25°C → 12-13 h/jour<br>28°C → 14 h/jour<br>>30°C → <strong>en continu (24h)</strong>'
+      },
+      {
+        title: 'Quand filtrer',
+        content: 'Privilégie les <strong>heures les plus chaudes</strong> (10h-18h) : c\'est là que les UV consomment le plus de chlore et que les baigneurs sont nombreux.'
+      },
+      {
+        title: 'Entretien du filtre',
+        content: '<strong>Lavage à contre-courant</strong> (sable) : tous les 7-15 jours selon usage<br><strong>Cartouche</strong> : rincer à l\'eau claire toutes les 2 semaines, remplacer tous les 2-3 ans'
+      },
+      {
+        title: 'Spa',
+        content: 'Pour un spa : <strong>filtration en continu 24h/24</strong>. La gestion est automatique via l\'équipement, pas besoin de calcul.'
+      }
+    ]
+  },
+  choc: {
+    eyebrow: 'Traitement curatif',
+    title: 'Traitement choc',
+    acronym: 'Désinfection d\'urgence',
+    sections: [
+      {
+        title: 'Définition',
+        content: 'Le <strong>traitement choc</strong> consiste à ajouter une <strong>forte dose</strong> de désinfectant en une fois pour rattraper une eau dégradée.'
+      },
+      {
+        title: 'Quand faire un choc',
+        content: '• Eau verte ou trouble<br>• Chlore < 0,5 mg/L<br>• Après orage ou forte pluie<br>• Après remplissage important<br>• Après pic de fréquentation<br>• En début et fin de saison'
+      },
+      {
+        title: 'Comment procéder',
+        content: '1. Vérifier le <strong>pH (7.0-7.4)</strong> avant<br>2. Dissoudre le produit dans un seau<br>3. Verser près des buses de refoulement<br>4. <strong>Filtration en continu</strong> 24-48h<br>5. Ne pas baigner pendant 24h'
+      },
+      {
+        title: 'Doses indicatives (chlore)',
+        content: 'Choc préventif : <strong>5g par m³</strong> de chlore non stabilisé<br>Choc curatif (eau verte) : <strong>15-20g par m³</strong>'
+      },
+      {
+        title: 'Précaution',
+        content: '⚠️ Ne <strong>jamais mélanger</strong> chlore choc et autres produits dans le même seau. Risque de dégagement gazeux toxique.'
+      }
+    ]
+  },
+  algicide: {
+    eyebrow: 'Préventif et curatif',
+    title: 'Algicide',
+    acronym: 'Anti-algues',
+    sections: [
+      {
+        title: 'Définition',
+        content: 'L\'<strong>algicide</strong> (ou anti-algues) prévient et traite la prolifération des <strong>algues</strong> qui rendent l\'eau verte, trouble ou couvrent les parois d\'un dépôt glissant.'
+      },
+      {
+        title: 'Pourquoi c\'est utile',
+        content: 'En complément du désinfectant, surtout en <strong>été par forte chaleur</strong>. Les algues prolifèrent même avec un chlore correct si la température dépasse 28°C.'
+      },
+      {
+        title: 'Utilisation préventive',
+        content: 'Dose normale chaque semaine. Empêche l\'apparition d\'algues avant qu\'elles ne s\'installent.'
+      },
+      {
+        title: 'Utilisation curative (eau verte)',
+        content: '1. <strong>Choc chlore</strong> d\'abord<br>2. Brossage des parois<br>3. <strong>Anti-algues curatif</strong> (double dose)<br>4. Filtration continue 48h<br>5. Nettoyage du filtre après'
+      },
+      {
+        title: 'Types disponibles',
+        content: '• <strong>Préventif</strong> : entretien hebdomadaire<br>• <strong>Curatif</strong> : eau verte<br>• <strong>Hivernage</strong> : pour la période froide<br>• <strong>Non moussant</strong> : pour piscines à débordement'
+      }
+    ]
+  },
+  vidange: {
+    eyebrow: 'Renouvellement de l\'eau',
+    title: 'Vidange',
+    acronym: 'Quand renouveler ?',
+    sections: [
+      {
+        title: 'Pourquoi vidanger',
+        content: 'Au fil du temps, l\'eau accumule des résidus (chlore combiné, stabilisant, métaux, sels). Une vidange partielle ou totale <strong>renouvelle l\'eau</strong> et remet les paramètres à zéro.'
+      },
+      {
+        title: 'Fréquence piscine',
+        content: '<strong>Vidange partielle</strong> (1/3 du volume) : 1-2 fois par saison<br><strong>Vidange totale</strong> : tous les 4-7 ans selon usage<br><br>⚠️ Pas de vidange totale en plein été (risque sur le liner)'
+      },
+      {
+        title: 'Fréquence spa',
+        content: '<strong>Vidange totale tous les 3 mois</strong>. L\'eau du spa, chaude et peu volumineuse, se charge très vite (peau, transpiration, cosmétiques).'
+      },
+      {
+        title: 'Quand faire une vidange partielle',
+        content: '• Stabilisant > 70 mg/L (chlore inefficace)<br>• Eau dure (TH > 35 °f)<br>• Eau trouble malgré bon traitement<br>• Avant un traitement choc important'
+      },
+      {
+        title: 'Comment',
+        content: '1. <strong>Couper la filtration</strong><br>2. Vidanger via la bonde de fond ou pompe<br>3. <strong>Surveiller le niveau</strong> : ne pas descendre sous le skimmer<br>4. Compléter avec de l\'eau du réseau<br>5. Re-régler pH/désinfectant'
+      }
+    ]
+  },
+  equilibre: {
+    eyebrow: 'Équilibre chimique',
+    title: 'L\'équilibre de l\'eau',
+    acronym: 'Le secret d\'une eau parfaite',
+    sections: [
+      {
+        title: 'Le trio gagnant',
+        content: 'Une eau saine repose sur <strong>3 paramètres en équilibre</strong> :<br><br>1. <strong>pH</strong> juste (7.2-7.4 pour le chlore)<br>2. <strong>Désinfectant</strong> suffisant (1-3 mg/L)<br>3. <strong>Filtration</strong> longue (T÷2 heures)'
+      },
+      {
+        title: 'L\'ordre des actions',
+        content: 'Quand plusieurs paramètres sont déréglés, <strong>toujours dans cet ordre</strong> :<br><br>1. <strong>TAC</strong> d\'abord (stabilise le pH)<br>2. <strong>pH</strong> ensuite<br>3. <strong>Désinfectant</strong>/choc enfin<br>4. <strong>Anti-algues</strong> en dernier si besoin'
+      },
+      {
+        title: 'Pourquoi cet ordre',
+        content: 'Le <strong>TAC stabilise le pH</strong> : sans bon TAC, ton pH bouge sans cesse.<br>Le <strong>pH affecte l\'efficacité du chlore</strong> : à pH 8, le chlore est inefficace.<br>Le <strong>désinfectant ne tue pas tout seul</strong> sans bonne filtration.'
+      },
+      {
+        title: 'Règles d\'or quotidiennes',
+        content: '✓ Tester <strong>2-3 fois par semaine</strong> (pH + désinfectant)<br>✓ <strong>Filtration le jour</strong>, jamais la nuit en été<br>✓ <strong>Nettoyer le filtre</strong> régulièrement<br>✓ <strong>Couvrir la nuit</strong> (économie chlore +25%)<br>✓ Ne pas <strong>sur-chlorer</strong> : ça fixe le mauvais pH'
       }
     ]
   }
@@ -9137,6 +9599,14 @@ function closeIosModal() { document.getElementById('iosModal').classList.remove(
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('iosModal');
   if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeIosModal(); });
+
+  // Injecter le logo Poolex dans tous les slots
+  const logoOnb = document.getElementById('onbLogoSlot');
+  if (logoOnb) logoOnb.innerHTML = poolexLogoSvg({ height: 28 });
+  const logoApp = document.getElementById('appLogoSlot');
+  if (logoApp) logoApp.innerHTML = poolexLogoSvg({ height: 18 });
+  const logoPopup = document.getElementById('popupLogoSlot');
+  if (logoPopup) logoPopup.innerHTML = poolexLogoSvg({ height: 22 });
 
   // Fermer le sélecteur de piscine quand on clique ailleurs
   document.addEventListener('click', (e) => {
