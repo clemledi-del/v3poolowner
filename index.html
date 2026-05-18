@@ -1784,6 +1784,236 @@
   [data-theme="light"] .glossary-range-item.too-low { color: #b45309; }
   [data-theme="light"] .glossary-range-item.too-high { color: #b91c1c; }
 
+  /* ============================================================
+     POP-UP : Rappel test eau + promo Poolex'pert
+     ============================================================ */
+  .popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: popOverlay 0.3s var(--ease-out);
+  }
+  .popup-overlay.open { display: flex; }
+  @keyframes popOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .popup-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-2xl);
+    max-width: 440px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    animation: popModalIn 0.4s var(--ease-bounce);
+  }
+  [data-theme="light"] .popup-modal {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.12);
+  }
+  @keyframes popModalIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.92); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .popup-close {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--glass-strong);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    transition: all 0.2s var(--ease);
+    line-height: 1;
+  }
+  .popup-close:hover { background: var(--bg-tertiary); transform: scale(1.05); }
+  .popup-section {
+    padding: 24px 24px 20px;
+  }
+  /* Section 1 : Rappel */
+  .popup-reminder {
+    background: var(--brand-gradient);
+    color: #fff;
+    border-radius: var(--r-2xl) var(--r-2xl) 0 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .popup-reminder::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(255,255,255,0.22) 0%, transparent 60%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .popup-icon {
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+    animation: popIcon 0.6s var(--ease-bounce) 0.2s backwards;
+  }
+  @keyframes popIcon {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .popup-title {
+    font-family: var(--display);
+    font-size: 26px;
+    line-height: 1.15;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #fff;
+    letter-spacing: -0.02em;
+    position: relative;
+    z-index: 1;
+  }
+  .popup-title em {
+    font-style: italic;
+    opacity: 0.95;
+    font-weight: 500;
+  }
+  .popup-desc {
+    font-size: 14px;
+    line-height: 1.5;
+    opacity: 0.95;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
+  }
+  .popup-btn-primary {
+    background: #fff !important;
+    color: var(--brand-deep) !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18) !important;
+    font-weight: 700 !important;
+    position: relative;
+    z-index: 1;
+  }
+  .popup-btn-primary:hover { background: #fff !important; filter: brightness(1) !important; transform: translateY(-1px); }
+
+  /* Séparateur OU */
+  .popup-separator {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 24px 4px;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .popup-separator::before,
+  .popup-separator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* Section 2 : Promo Poolex */
+  .popup-promo {
+    text-align: center;
+    padding-top: 14px;
+  }
+  .popup-promo-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #0a7fa8, #19b6d0);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: var(--r-full);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 8px rgba(10, 127, 168, 0.3);
+  }
+  .popup-promo-icon {
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .popup-promo-title {
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .popup-promo-desc {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-dim);
+    margin-bottom: 14px;
+  }
+  .popup-promo-desc strong {
+    color: var(--ink);
+  }
+  .popup-promo-features {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border-radius: var(--r-md);
+    text-align: left;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  [data-theme="light"] .popup-promo-features {
+    background: #f8fafc;
+  }
+  .popup-promo-features li {
+    padding: 2px 0;
+  }
+  .popup-btn-promo {
+    background: linear-gradient(135deg, #0a7fa8, #19b6d0) !important;
+    color: #fff !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 14px rgba(10, 127, 168, 0.35) !important;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 24px !important;
+    width: auto !important;
+    font-weight: 600 !important;
+  }
+  .popup-btn-promo:hover { filter: brightness(1.1) !important; transform: translateY(-1px); }
+
+  .popup-dismiss-day {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--line);
+    color: var(--ink-faint);
+    padding: 14px;
+    font-family: var(--body);
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.2s var(--ease);
+  }
+  .popup-dismiss-day:hover { color: var(--ink-dim); }
+
   /* TOAST */
   .toast {
     position: fixed;
@@ -2740,6 +2970,7 @@
       <div class="onb-dot" data-dot="3"></div>
       <div class="onb-dot" data-dot="4"></div>
       <div class="onb-dot" data-dot="5"></div>
+      <div class="onb-dot" data-dot="6"></div>
     </div>
 
     <div class="onb-step active" data-step="0">
@@ -2747,7 +2978,7 @@
       <div class="onb-eyebrow">Bienvenue</div>
       <h1 class="onb-title">Ton bassin,<br><em>au quotidien.</em></h1>
       <p class="onb-desc">
-        Configure ta piscine en 5 étapes pour obtenir des conseils précis,
+        Configure ta piscine ou ton spa en quelques étapes pour obtenir des conseils précis,
         une météo locale et des rappels adaptés à ton volume et ton traitement.
       </p>
       <div class="onb-actions">
@@ -2757,10 +2988,43 @@
       </div>
     </div>
 
+    <!-- NOUVELLE ÉTAPE 1 : Piscine ou Spa ? -->
     <div class="onb-step" data-step="1">
-      <div class="onb-eyebrow">Étape 1 / 5</div>
+      <div class="onb-eyebrow">Étape 1 / 6</div>
+      <h1 class="onb-title">C'est <em>quoi ?</em></h1>
+      <p class="onb-desc">Piscine ou spa, on adapte les seuils, fréquences et conseils pour vraiment coller à ton usage.</p>
+
+      <div class="choice-cards">
+        <div class="choice-card" data-bassin="piscine" onclick="setBassinType('piscine')">
+          <div class="choice-icon">🏊</div>
+          <div class="choice-text">
+            <div class="choice-name">Piscine</div>
+            <div class="choice-sub">Bassin de 10 à 100 m³ généralement</div>
+          </div>
+          <div class="choice-check"></div>
+        </div>
+        <div class="choice-card" data-bassin="spa" onclick="setBassinType('spa')">
+          <div class="choice-icon">♨️</div>
+          <div class="choice-text">
+            <div class="choice-name">Spa / Jacuzzi</div>
+            <div class="choice-sub">Petit volume (1 à 3 m³), eau chaude</div>
+          </div>
+          <div class="choice-check"></div>
+        </div>
+      </div>
+
+      <div class="onb-actions" style="margin-top:18px;">
+        <button class="btn btn-ghost" onclick="onbBack()">Retour</button>
+        <button class="btn" id="onbBassinNext" onclick="onbNext()" disabled>Suivant
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="onb-step" data-step="2">
+      <div class="onb-eyebrow"><span id="onbNameEyebrow">Étape 2 / 6</span></div>
       <h1 class="onb-title">Comment <em>l'appeler ?</em></h1>
-      <p class="onb-desc">Un petit nom pour ta piscine. Optionnel mais ça fait plaisir.</p>
+      <p class="onb-desc">Un petit nom pour <span id="onbNameTypeText">ta piscine</span>. Optionnel mais ça fait plaisir.</p>
       <div class="field">
         <input class="input" type="text" id="onbName" placeholder="ex. La piscine de la maison" maxlength="40" autocomplete="off">
       </div>
@@ -2772,10 +3036,10 @@
       </div>
     </div>
 
-    <div class="onb-step" data-step="2">
-      <div class="onb-eyebrow">Étape 2 / 5</div>
+    <div class="onb-step" data-step="3">
+      <div class="onb-eyebrow">Étape 3 / 6</div>
       <h1 class="onb-title">Quel <em>volume ?</em></h1>
-      <p class="onb-desc">Indispensable pour calculer les doses de produits, le temps de filtration et les vidanges.</p>
+      <p class="onb-desc" id="onbVolumeDesc">Indispensable pour calculer les doses de produits, le temps de filtration et les vidanges.</p>
 
       <div class="choice-cards">
         <div class="choice-card selected" data-mode="m3" onclick="setVolumeMode('m3')">
@@ -2832,10 +3096,10 @@
       </div>
     </div>
 
-    <div class="onb-step" data-step="3">
-      <div class="onb-eyebrow">Étape 3 / 5</div>
+    <div class="onb-step" data-step="4">
+      <div class="onb-eyebrow">Étape 4 / 6</div>
       <h1 class="onb-title">Quel <em>traitement ?</em></h1>
-      <p class="onb-desc">Le désinfectant qui maintient ton eau saine. Ça détermine les seuils, conseils et produits adaptés.</p>
+      <p class="onb-desc" id="onbTreatmentDesc">Le désinfectant qui maintient ton eau saine. Ça détermine les seuils, conseils et produits adaptés.</p>
 
       <div class="choice-cards">
         <div class="choice-card" data-treatment="chlore" onclick="setTreatment('chlore')">
@@ -2872,8 +3136,8 @@
       </div>
     </div>
 
-    <div class="onb-step" data-step="4">
-      <div class="onb-eyebrow">Étape 4 / 5</div>
+    <div class="onb-step" data-step="5">
+      <div class="onb-eyebrow">Étape 5 / 6</div>
       <h1 class="onb-title">Ta <em>piscine ?</em></h1>
       <p class="onb-desc">Quelques infos pour personnaliser tes conseils. Tu peux passer si tu ne sais pas.</p>
 
@@ -2953,8 +3217,8 @@
       </div>
     </div>
 
-    <div class="onb-step" data-step="5">
-      <div class="onb-eyebrow">Étape 5 / 5</div>
+    <div class="onb-step" data-step="6">
+      <div class="onb-eyebrow">Étape 6 / 6</div>
       <h1 class="onb-title">Tu es <em>où ?</em></h1>
       <p class="onb-desc">On utilise ta ville pour la météo locale et l'estimation de la température de l'eau. Aucune donnée personnelle n'est envoyée ailleurs.</p>
 
@@ -3093,7 +3357,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="filtrationCard">
       <div class="card-title">Filtration du jour</div>
       <div class="card-sub">Selon la température de l'eau</div>
       <div class="field">
@@ -3107,6 +3371,30 @@
         <div class="big" id="filtHours">—</div>
         <div class="unit">heures de filtration</div>
         <div class="schedule" id="filtSchedule">—</div>
+      </div>
+    </div>
+
+    <!-- Carte spécifique SPA -->
+    <div class="card" id="spaCard" style="display:none;">
+      <div class="card-title">Spa : conseils</div>
+      <div class="card-sub">Eau chaude = exigences renforcées</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; align-items:flex-start; gap:10px; padding:10px; background:var(--brand-gradient-soft); border-radius:var(--r-md);">
+          <div style="font-size:18px;">♨️</div>
+          <div style="font-size:13px; line-height:1.45; color:var(--ink);"><strong>Filtration en continu</strong> : un spa filtre 24h/24, pas comme une piscine. Les cycles sont gérés par l'équipement.</div>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:10px; padding:10px; background:var(--brand-gradient-soft); border-radius:var(--r-md);">
+          <div style="font-size:18px;">🧪</div>
+          <div style="font-size:13px; line-height:1.45; color:var(--ink);"><strong>Test quotidien</strong> du désinfectant : à 35-38°C, il se consomme en quelques heures.</div>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:10px; padding:10px; background:var(--brand-gradient-soft); border-radius:var(--r-md);">
+          <div style="font-size:18px;">💧</div>
+          <div style="font-size:13px; line-height:1.45; color:var(--ink);"><strong>Vidange tous les 3 mois</strong> : l'eau du spa se charge rapidement (peau, transpiration). Une vidange complète est essentielle.</div>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:10px; padding:10px; background:var(--brand-gradient-soft); border-radius:var(--r-md);">
+          <div style="font-size:18px;">🔄</div>
+          <div style="font-size:13px; line-height:1.45; color:var(--ink);"><strong>Douche avant baignade</strong> : retire crèmes, déodorants, parfums qui saturent l'eau et déclenchent les algues.</div>
+        </div>
       </div>
     </div>
 
@@ -3938,6 +4226,48 @@
 
 <div class="toast" id="toast">Enregistré</div>
 
+<!-- POP-UP : Rappel test eau + promo Poolex'pert Mesure -->
+<div class="popup-overlay" id="testReminderOverlay" onclick="closeTestReminder(event)">
+  <div class="popup-modal" onclick="event.stopPropagation()">
+    <button class="popup-close" onclick="closeTestReminder()" aria-label="Fermer">×</button>
+
+    <!-- Partie 1 : Rappel utile -->
+    <div class="popup-section popup-reminder">
+      <div class="popup-icon">💧</div>
+      <h2 class="popup-title">Avez-vous testé<br><em>votre eau aujourd'hui ?</em></h2>
+      <p class="popup-desc">Un test régulier garde ton bassin sain et tes baignades agréables. Le pH et le désinfectant doivent être vérifiés <strong>2 à 3 fois par semaine</strong>.</p>
+      <button class="btn popup-btn-primary" onclick="testReminderAction()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Saisir une mesure
+      </button>
+    </div>
+
+    <!-- Séparateur -->
+    <div class="popup-separator">
+      <span class="popup-separator-text">OU</span>
+    </div>
+
+    <!-- Partie 2 : Promo Poolex'pert Mesure -->
+    <div class="popup-section popup-promo">
+      <div class="popup-promo-badge">Poolex'pert Mesure</div>
+      <div class="popup-promo-icon">📡</div>
+      <h3 class="popup-promo-title">Automatise tes relevés</h3>
+      <p class="popup-promo-desc">Le <strong>Diffuseur Connecté Poolex'pert Mesure</strong> analyse ton eau en continu et envoie les résultats directement dans l'app. <strong>Plus de bandelettes, plus d'oubli.</strong></p>
+      <ul class="popup-promo-features">
+        <li>📊 Mesure automatique pH, désinfectant, température</li>
+        <li>📱 Données synchronisées 24h/24</li>
+        <li>🔔 Alertes en cas de dérive</li>
+      </ul>
+      <a href="https://www.poolex.fr" target="_blank" rel="noopener noreferrer" class="btn popup-btn-promo" onclick="trackPromoClick()">
+        Découvrir
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l9.2-9.2M17 17V8.4H8.4"/></svg>
+      </a>
+    </div>
+
+    <button class="popup-dismiss-day" onclick="closeTestReminder(); dismissTestReminderForToday()">Ne plus me demander aujourd'hui</button>
+  </div>
+</div>
+
 <!-- MODAL GLOSSAIRE -->
 <div class="glossary-overlay" id="glossaryOverlay" onclick="closeGlossary(event)">
   <div class="glossary-modal" onclick="event.stopPropagation()">
@@ -4097,7 +4427,7 @@ function createNewPool() {
   document.getElementById('appNav').style.display = 'none';
   document.getElementById('onboarding').style.display = 'flex';
   onbStep = 0;
-  onbData = { name: '', volume: null, volumeMode: 'm3', location: null, treatment: null, poolType: null, cover: null, heat: null };
+  onbData = { bassinType: null, name: '', volume: null, volumeMode: 'm3', location: null, treatment: null, poolType: null, cover: null, heat: null };
   setupOnbListeners();
   setOnbStep(0);
 }
@@ -4240,6 +4570,7 @@ let state = {
 // ONBOARDING
 let onbStep = 0;
 let onbData = {
+  bassinType: null,   // 'piscine' | 'spa' — NOUVEAU
   name: '',
   volume: null,
   volumeMode: 'm3',
@@ -4250,12 +4581,63 @@ let onbData = {
   heat: null          // 'pac' | 'solaire' | 'echangeur' | 'none'
 };
 
+// Sélection du type de bassin (Piscine ou Spa) — adapte placeholders et défauts
+function setBassinType(type) {
+  onbData.bassinType = type;
+  document.querySelectorAll('.choice-card[data-bassin]').forEach(c => {
+    c.classList.toggle('selected', c.dataset.bassin === type);
+  });
+  // Adapter les textes des étapes suivantes
+  const isSpa = type === 'spa';
+  // Étape "Comment l'appeler" : texte adapté
+  const onbNameTypeText = document.getElementById('onbNameTypeText');
+  if (onbNameTypeText) onbNameTypeText.textContent = isSpa ? 'ton spa' : 'ta piscine';
+  const onbName = document.getElementById('onbName');
+  if (onbName) onbName.placeholder = isSpa ? 'ex. Mon spa, Le jacuzzi…' : 'ex. La piscine de la maison';
+  // Étape "Volume" : placeholder adapté
+  const onbVolume = document.getElementById('onbVolume');
+  if (onbVolume) {
+    onbVolume.placeholder = isSpa ? 'ex. 2' : 'ex. 50';
+    onbVolume.min = isSpa ? '0.5' : '5';
+  }
+  const onbVolumeDesc = document.getElementById('onbVolumeDesc');
+  if (onbVolumeDesc) {
+    onbVolumeDesc.textContent = isSpa
+      ? 'Pour un spa, généralement entre 1 et 3 m³. Indispensable pour calculer les doses précises.'
+      : 'Indispensable pour calculer les doses de produits, le temps de filtration et les vidanges.';
+  }
+  // Étape "Traitement" : conseil adapté
+  const onbTreatmentDesc = document.getElementById('onbTreatmentDesc');
+  if (onbTreatmentDesc) {
+    onbTreatmentDesc.textContent = isSpa
+      ? 'Pour un spa, le brome est généralement recommandé (sans odeur, stable à haute température).'
+      : 'Le désinfectant qui maintient ton eau saine. Ça détermine les seuils, conseils et produits adaptés.';
+  }
+  // Préselectionne le brome par défaut pour un spa
+  if (isSpa && !onbData.treatment) {
+    onbData.treatment = 'brome';
+  } else if (!isSpa && onbData.treatment === 'brome' && !document.querySelector('.choice-card[data-treatment].selected')) {
+    // Si on revient à piscine sans avoir explicitement choisi : reset
+    onbData.treatment = null;
+  }
+  // Activer le bouton "Suivant"
+  const btn = document.getElementById('onbBassinNext');
+  if (btn) btn.disabled = false;
+}
+
 function onbNext() {
-  if (onbStep === 1) onbData.name = document.getElementById('onbName').value.trim();
-  if (onbStep === 2) {
+  // Étape 1 : bassinType (Piscine/Spa)
+  if (onbStep === 1 && !onbData.bassinType) {
+    showToast('Choisis piscine ou spa', true);
+    return;
+  }
+  // Étape 2 : nom
+  if (onbStep === 2) onbData.name = document.getElementById('onbName').value.trim();
+  // Étape 3 : volume
+  if (onbStep === 3) {
     if (onbData.volumeMode === 'm3') {
       const v = parseFloat(document.getElementById('onbVolume').value.replace(',', '.'));
-      if (!v || v < 1) { showToast('Saisis un volume valide', true); return; }
+      if (!v || v < 0.5) { showToast('Saisis un volume valide', true); return; }
       onbData.volume = v;
     } else {
       const l = parseFloat(document.getElementById('onbLen').value.replace(',', '.'));
@@ -4265,11 +4647,24 @@ function onbNext() {
       onbData.volume = Math.round(l * w * d * 10) / 10;
     }
   }
-  if (onbStep === 3 && !onbData.treatment) { showToast('Choisis ton traitement', true); return; }
-  if (onbStep < 5) setOnbStep(onbStep + 1);
+  // Étape 4 : traitement (auto pour spa)
+  if (onbStep === 4 && !onbData.treatment) { showToast('Choisis ton traitement', true); return; }
+  // Si on est sur étape 4 (traitement) et qu'on est un spa, on saute l'étape 5 (caractéristiques piscine)
+  if (onbStep === 4 && onbData.bassinType === 'spa') {
+    setOnbStep(6); // Saute directement à la ville
+    return;
+  }
+  if (onbStep < 6) setOnbStep(onbStep + 1);
 }
 
-function onbBack() { if (onbStep > 0) setOnbStep(onbStep - 1); }
+function onbBack() {
+  // Si on est sur étape 6 (ville) et que c'est un spa, on revient au traitement (étape 4)
+  if (onbStep === 6 && onbData.bassinType === 'spa') {
+    setOnbStep(4);
+    return;
+  }
+  if (onbStep > 0) setOnbStep(onbStep - 1);
+}
 
 function setOnbStep(n) {
   onbStep = n;
@@ -4347,20 +4742,29 @@ function setupOnbListeners() {
 }
 
 function updateOnbValidation() {
+  // Bouton "Suivant" sur l'étape volume
   const nextBtn = document.getElementById('onbVolumeNext');
   if (nextBtn) {
     let ok = false;
+    const minVol = (onbData.bassinType === 'spa') ? 0.5 : 1;
     if (onbData.volumeMode === 'm3') {
-      const v = parseFloat(document.getElementById('onbVolume').value.replace(',', '.'));
-      ok = v && v >= 1;
+      const onbVolEl = document.getElementById('onbVolume');
+      const v = onbVolEl ? parseFloat(onbVolEl.value.replace(',', '.')) : NaN;
+      ok = v && v >= minVol;
     } else {
       const l = parseFloat(document.getElementById('onbLen').value.replace(',', '.'));
       const w = parseFloat(document.getElementById('onbWid').value.replace(',', '.'));
       const d = parseFloat(document.getElementById('onbDepth').value.replace(',', '.'));
-      ok = l && w && d && l*w*d >= 0.5;
+      ok = l && w && d && l*w*d >= 0.3;
     }
     nextBtn.disabled = !ok;
   }
+  // Bouton "Suivant" sur l'étape bassinType
+  const bassinNext = document.getElementById('onbBassinNext');
+  if (bassinNext) bassinNext.disabled = !onbData.bassinType;
+  // Bouton "Suivant" sur l'étape traitement
+  const treatmentNext = document.getElementById('onbTreatmentNext');
+  if (treatmentNext) treatmentNext.disabled = !onbData.treatment;
   const finishBtn = document.getElementById('onbFinish');
   if (finishBtn) finishBtn.disabled = false;
 }
@@ -4439,20 +4843,22 @@ function doCitySearch(query, resultsEl, onPick) {
 }
 
 function finishOnboarding(skipMeteo) {
-  if (onbStep === 1) onbData.name = document.getElementById('onbName').value.trim();
-  if (onbStep === 2 || !onbData.volume) {
+  if (onbStep === 2) onbData.name = document.getElementById('onbName').value.trim();
+  if (onbStep === 3 || !onbData.volume) {
     if (onbData.volumeMode === 'm3') {
       const v = parseFloat((document.getElementById('onbVolume').value || '').replace(',', '.'));
-      if (v && v >= 1) onbData.volume = v;
+      if (v && v >= 0.5) onbData.volume = v;
     }
   }
   const typedCity = document.getElementById('onbCity') ? document.getElementById('onbCity').value.trim() : '';
   if (!onbData.location && typedCity && !skipMeteo) onbData.location = { name: typedCity };
-  if (!onbData.volume) { showToast('Le volume est nécessaire', true); setOnbStep(2); return; }
-  if (!onbData.treatment) { showToast('Le traitement est nécessaire', true); setOnbStep(3); return; }
-  if (!onbData.name) onbData.name = 'Ma piscine';
+  if (!onbData.bassinType) onbData.bassinType = 'piscine'; // sécurité
+  if (!onbData.volume) { showToast('Le volume est nécessaire', true); setOnbStep(3); return; }
+  if (!onbData.treatment) { showToast('Le traitement est nécessaire', true); setOnbStep(4); return; }
+  if (!onbData.name) onbData.name = (onbData.bassinType === 'spa') ? 'Mon spa' : 'Ma piscine';
 
   state.config = {
+    bassinType: onbData.bassinType,  // 'piscine' ou 'spa'
     name: onbData.name,
     volume: onbData.volume,
     location: skipMeteo ? null : onbData.location,
@@ -4534,6 +4940,8 @@ function initAppUI() {
   updateSyncStatus();
   startRealtimeSync();
   initAllMeasureSliders();
+  applyBassinTypeUI();
+  maybeShowTestReminder();
 
   const notifEnabled = loadKey(KEYS.notifEnabled, false);
   if (notifEnabled && 'Notification' in window && Notification.permission === 'granted') {
@@ -4682,6 +5090,34 @@ const TREATMENTS = {
 function getTreatment() {
   const t = state.config && state.config.treatment;
   return TREATMENTS[t] || TREATMENTS.chlore;
+}
+
+// Helper : est-on en mode spa ?
+function isSpa() {
+  return !!(state.config && state.config.bassinType === 'spa');
+}
+
+// Helper : libellé contextuel ("piscine" ou "spa")
+function bassinLabel() {
+  return isSpa() ? 'spa' : 'piscine';
+}
+
+// Applique les adaptations UI selon le type de bassin (piscine ou spa)
+function applyBassinTypeUI() {
+  const spa = isSpa();
+  const filtrationCard = document.getElementById('filtrationCard');
+  const spaCard = document.getElementById('spaCard');
+  // En spa : on cache la carte filtration (toujours en continu) et on affiche la carte spa
+  if (filtrationCard) filtrationCard.style.display = spa ? 'none' : '';
+  if (spaCard) spaCard.style.display = spa ? '' : 'none';
+  // Masquer le TH (peu pertinent pour un spa rempli d'eau du réseau renouvelée tous les 3 mois)
+  const thSliderEl = document.querySelector('.measure-slider[data-key="th"]');
+  if (thSliderEl) thSliderEl.style.display = spa ? 'none' : '';
+  // Adapter l'eyebrow du header
+  const hdrEyebrow = document.getElementById('hdrEyebrow');
+  if (hdrEyebrow && state.config) {
+    hdrEyebrow.textContent = (spa ? 'MON SPA : ' : 'MA PISCINE : ') + (state.config.name || '').toUpperCase();
+  }
 }
 
 // =================================================================
@@ -5882,6 +6318,7 @@ function getNumberInputs() {
 function applyTreatmentToInputUI() {
   // Met à jour le champ "désinfectant" pour refléter le traitement actif
   const t = getTreatment();
+  const spa = isSpa();
   const nameEl = document.getElementById('desinf-name');
   const targetEl = document.getElementById('desinf-target');
   const inputEl = document.getElementById('in-cl');
@@ -5891,11 +6328,12 @@ function applyTreatmentToInputUI() {
     inputEl.placeholder = t.inputPlaceholder;
     inputEl.step = t.inputStep;
   }
-  // Le stabilisant n'est utilisé qu'avec le chlore : on masque le champ ailleurs
+  // Le stabilisant n'est utilisé qu'avec le chlore en piscine extérieure (pas en spa)
+  const showCya = (t.id === 'chlore' && !spa);
   const cyaField = document.getElementById('field-cya');
-  if (cyaField) cyaField.style.display = (t.id === 'chlore') ? '' : 'none';
+  if (cyaField) cyaField.style.display = showCya ? '' : 'none';
   const cyaCard = document.getElementById('dashCyaCard');
-  if (cyaCard) cyaCard.style.display = (t.id === 'chlore') ? '' : 'none';
+  if (cyaCard) cyaCard.style.display = showCya ? '' : 'none';
   // pH dynamique selon le traitement
   const phStr = t.phIdealMin.toFixed(1).replace('.', ',') + ' – ' + t.phIdealMax.toFixed(1).replace('.', ',');
   const phInputTarget = document.getElementById('phInputTarget');
@@ -5904,10 +6342,15 @@ function applyTreatmentToInputUI() {
   if (dashPhRange) dashPhRange.textContent = 'cible ' + phStr;
   const trendPhRange = document.getElementById('trendCardPhRange');
   if (trendPhRange) trendPhRange.textContent = 'zone idéale : ' + phStr;
-  // Fréquence de tests selon traitement
+  // Fréquence de tests selon traitement et bassin
   const freqEl = document.getElementById('testFreqText');
   if (freqEl) {
-    freqEl.textContent = 'pH ' + t.testFreq.ph + ' · ' + t.short.toLowerCase() + ' ' + t.testFreq.desinf + ' · TAC ' + t.testFreq.tac + '.';
+    if (spa) {
+      // Spa : test bien plus fréquent (eau chaude = consommation accélérée)
+      freqEl.textContent = 'pH tous les jours · ' + t.short.toLowerCase() + ' tous les jours · TAC chaque semaine. Eau chaude = consommation accélérée.';
+    } else {
+      freqEl.textContent = 'pH ' + t.testFreq.ph + ' · ' + t.short.toLowerCase() + ' ' + t.testFreq.desinf + ' · TAC ' + t.testFreq.tac + '.';
+    }
   }
   // Zones idéales des sliders mesures (pH et désinfectant)
   if (typeof updateIdealZone === 'function') {
@@ -7748,6 +8191,67 @@ function showToast(msg, isError) {
 }
 
 // =================================================================
+// POP-UP RAPPEL TEST EAU + PROMO POOLEX'PERT
+// =================================================================
+const POOLEX_PROMO_URL = 'https://www.poolex.fr'; // ⬅️ Remplace par l'URL exacte de la fiche Poolex'pert Mesure quand elle sera dispo
+const TEST_REMINDER_DISMISS_KEY = 'piscine:testReminderDismissed';
+
+function shouldShowTestReminder() {
+  // Ne pas montrer si l'utilisateur l'a fermé aujourd'hui
+  const dismissedDate = localStorage.getItem(TEST_REMINDER_DISMISS_KEY);
+  if (dismissedDate) {
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    if (dismissedDate === today) return false;
+  }
+  // Logique : afficher si aucune mesure du tout
+  if (!state.measures || state.measures.length === 0) return true;
+  return false;
+}
+
+function openTestReminder() {
+  const overlay = document.getElementById('testReminderOverlay');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeTestReminder(event) {
+  // Si appelé avec event, vérifier qu'on clique bien à l'extérieur du modal
+  if (event && event.target !== event.currentTarget && !event.target.classList.contains('popup-close')) return;
+  const overlay = document.getElementById('testReminderOverlay');
+  if (overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function dismissTestReminderForToday() {
+  const today = new Date().toISOString().slice(0, 10);
+  localStorage.setItem(TEST_REMINDER_DISMISS_KEY, today);
+}
+
+function testReminderAction() {
+  closeTestReminder();
+  switchTab('mes');
+}
+
+function trackPromoClick() {
+  // Tracking simple côté client (compteur dans localStorage, juste pour info)
+  try {
+    const k = 'piscine:poolexPromoClicks';
+    const cur = parseInt(localStorage.getItem(k) || '0', 10) + 1;
+    localStorage.setItem(k, String(cur));
+  } catch(e) {}
+}
+
+function maybeShowTestReminder() {
+  // Délai léger pour laisser l'UI se charger avant le pop-up
+  setTimeout(() => {
+    if (shouldShowTestReminder()) {
+      openTestReminder();
+    }
+  }, 900);
+}
+
+// =================================================================
 // GLOSSAIRE CONTEXTUEL — base de données des termes piscine
 // =================================================================
 const GLOSSARY = {
@@ -8927,9 +9431,19 @@ function renderProductCatalog() {
   const wrap = document.getElementById('productCatalog');
   if (!wrap) return;
 
-  // Liste des marques disponibles
+  // Filtre par traitement actif (par défaut : on cache les incompatibles)
+  if (typeof window._catalogShowAll === 'undefined') window._catalogShowAll = false;
+  const currentT = (state.config && state.config.treatment) || 'chlore';
+
+  // Filtrer en fonction du traitement
+  let allProducts = PRODUCTS;
+  if (!window._catalogShowAll) {
+    allProducts = PRODUCTS.filter(p => !p.compatibility || p.compatibility.length === 0 || p.compatibility.indexOf(currentT) >= 0);
+  }
+
+  // Liste des marques disponibles parmi les produits filtrés
   const brands = {};
-  PRODUCTS.forEach(p => {
+  allProducts.forEach(p => {
     const b = p.brand || 'Autres';
     brands[b] = (brands[b] || 0) + 1;
   });
@@ -8938,9 +9452,23 @@ function renderProductCatalog() {
 
   let html = '';
 
+  // Bandeau filtre traitement
+  const tLabel = (TREATMENTS[currentT] || {}).label || currentT;
+  html += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; padding: 10px 12px; background: var(--brand-gradient-soft); border: 1px solid var(--line-brand); border-radius: var(--r-md); font-size: 12px;">';
+  html += '<span style="font-size: 14px;">🔍</span>';
+  html += '<span style="flex:1; color: var(--ink);">';
+  if (window._catalogShowAll) {
+    html += 'Affichage : <strong>tous les produits</strong> (y compris incompatibles avec ' + escapeHtml(tLabel) + ')';
+  } else {
+    html += 'Affichage : produits compatibles <strong>' + escapeHtml(tLabel) + '</strong> uniquement';
+  }
+  html += '</span>';
+  html += '<button onclick="toggleCatalogShowAll()" style="background: transparent; border: 1px solid var(--line-brand); color: var(--brand); padding: 4px 10px; border-radius: var(--r-full); font-size: 11px; font-weight: 600; cursor: pointer;">' + (window._catalogShowAll ? 'Filtrer' : 'Tout voir') + '</button>';
+  html += '</div>';
+
   // Filtre par marque (chips)
   html += '<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;">';
-  html += '<button onclick="filterCatalog(\'all\')" class="filter-chip' + (window._catalogBrandFilter === 'all' ? ' active' : '') + '" style="border:1px solid var(--line); background:' + (window._catalogBrandFilter === 'all' ? 'rgba(78,192,216,0.15)' : 'var(--glass)') + '; padding:5px 10px; border-radius:14px; font-size:11px; color:var(--ink); cursor:pointer;">Tous (' + PRODUCTS.length + ')</button>';
+  html += '<button onclick="filterCatalog(\'all\')" class="filter-chip' + (window._catalogBrandFilter === 'all' ? ' active' : '') + '" style="border:1px solid var(--line); background:' + (window._catalogBrandFilter === 'all' ? 'rgba(78,192,216,0.15)' : 'var(--glass)') + '; padding:5px 10px; border-radius:14px; font-size:11px; color:var(--ink); cursor:pointer;">Tous (' + allProducts.length + ')</button>';
   brandList.forEach(b => {
     const active = window._catalogBrandFilter === b;
     html += '<button onclick="filterCatalog(' + JSON.stringify(b).replace(/"/g, '&quot;') + ')" class="filter-chip' + (active ? ' active' : '') + '" style="border:1px solid var(--line); background:' + (active ? 'rgba(78,192,216,0.15)' : 'var(--glass)') + '; padding:5px 10px; border-radius:14px; font-size:11px; color:var(--ink); cursor:pointer;">' + escapeHtml(b) + ' (' + brands[b] + ')</button>';
@@ -8948,7 +9476,7 @@ function renderProductCatalog() {
   html += '</div>';
 
   Object.keys(PRODUCT_CATEGORIES).forEach(catId => {
-    let items = getProductsByCategory(catId);
+    let items = allProducts.filter(p => p.category === catId);
     if (window._catalogBrandFilter !== 'all') {
       items = items.filter(p => p.brand === window._catalogBrandFilter);
     }
@@ -8978,6 +9506,13 @@ function renderProductCatalog() {
 
 function filterCatalog(brand) {
   window._catalogBrandFilter = brand;
+  renderProductCatalog();
+}
+
+function toggleCatalogShowAll() {
+  window._catalogShowAll = !window._catalogShowAll;
+  // Reset filtre marque
+  window._catalogBrandFilter = 'all';
   renderProductCatalog();
 }
 
